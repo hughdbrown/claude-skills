@@ -30,9 +30,22 @@ When the user invokes `/hdb:rust-dev <task description>`:
    - **Core logic** — algorithms, business logic (depends on leaf modules)
    - **Integration points** — handlers, CLI wiring, tests (depends on core logic)
 
+3. **Verify third-party crate APIs before writing code that uses them.** For any crate you haven't used recently or any unfamiliar feature (template filters, integration crates, macro attributes):
+   - Check the docs for your **exact version combination** — e.g., `askama 0.12` + `axum 0.8` may not be compatible with `askama_axum 0.4`
+   - If an integration crate bridges two dependencies, verify all three versions are compatible before writing any handlers or templates
+   - When in doubt, write a minimal standalone example (`examples/smoke.rs`) and `cargo check` it before building on the API
+
+4. **Identify domain-specific constraints and edge cases.** Before writing core logic, document the domain invariants that the compiler cannot check:
+   - Sign conventions and ordering of operands in domain formulas
+   - Numerical edge cases (division by zero, trig inputs outside valid ranges, limits as values approach zero or infinity)
+   - Unit conversions and coordinate systems
+   - Business rules or domain constraints that produce **wrong answers** (not compiler errors) when violated
+
+   These domain bugs are invisible to the compiler and typically cost more debugging time than type errors.
+
 ### Phase 2: Batch write
 
-3. **Write all code before compiling.** Generate all files in dependency order (leaves first, integration last). Ensure internal consistency across files:
+5. **Write all code before compiling.** Generate all files in dependency order (leaves first, integration last). Ensure internal consistency across files:
    - Type names, field names, and method signatures match at every call site
    - Imports reference the correct module paths
    - Trait implementations satisfy all required methods
@@ -41,7 +54,9 @@ When the user invokes `/hdb:rust-dev <task description>`:
 
    **Do not run `cargo check` or `cargo build` between files.** The goal is zero intermediate compilations.
 
-4. **Self-review before compiling.** Before triggering the first compile, scan the generated code for these common Rust-specific issues:
+6. **Self-review before compiling.** Before triggering the first compile, scan the generated code for these common issues:
+
+   **Rust-specific:**
    - Missing `use` imports
    - Mismatched `&str` vs `String` at function boundaries
    - `move` closures that should borrow, or borrows that need `clone()`
@@ -49,30 +64,36 @@ When the user invokes `/hdb:rust-dev <task description>`:
    - `async` functions that need `.await` or missing `Send` bounds
    - Public vs private visibility (`pub`, `pub(crate)`)
 
+   **Domain-specific:**
+   - Do formulas match the reference specification? (sign conventions, operand order, edge cases)
+   - Are trig/math inputs clamped to valid ranges? (e.g., `acos` argument within `[-1, 1]`)
+   - Are division-by-zero and degenerate cases handled? (e.g., guard against zero denominators)
+   - Do string format specifiers match the template engine's actual syntax? (e.g., Askama filter syntax vs `format!` syntax)
+
 ### Phase 3: Compile and fix
 
-5. **Use `cargo check` for the first pass, not `cargo build`.** `cargo check` skips codegen and linking, running 2-3x faster. It catches all type errors, borrow errors, and lifetime issues.
+7. **Use `cargo check` for the first pass, not `cargo build`.** `cargo check` skips codegen and linking, running 2-3x faster. It catches all type errors, borrow errors, and lifetime issues.
 
    ```bash
    cargo check 2>&1
    ```
 
-6. **Fix all errors in a single batch.** Read the full compiler output, identify every error, and fix them all before recompiling. Do not fix one error and recompile — that wastes a full compile cycle on partial progress.
+8. **Fix all errors in a single batch.** Read the full compiler output, identify every error, and fix them all before recompiling. Do not fix one error and recompile — that wastes a full compile cycle on partial progress.
 
    Common batch-fix patterns:
    - If multiple files have the same import error, fix them all at once with parallel edits
    - If a type rename caused errors across 5 files, fix all 5 before recompiling
    - If the borrow checker rejects a pattern, fix the API design (not just the one call site) to prevent cascading errors
 
-7. **Iterate until clean.** Repeat the check-fix cycle. Each cycle should resolve multiple errors. If a cycle fixes only one error, you are being too incremental — look for the root cause.
+9. **Iterate until clean.** Repeat the check-fix cycle. Each cycle should resolve multiple errors. If a cycle fixes only one error, you are being too incremental — look for the root cause.
 
-8. **Run `cargo build` only when `cargo check` is clean** and you need to execute the binary or run tests.
+10. **Run `cargo build` only when `cargo check` is clean** and you need to execute the binary or run tests.
 
-9. **Run `cargo test` to verify correctness.** If tests fail, fix the failures and re-run. Use `cargo test -- --nocapture` when you need to see output from failing tests.
+11. **Run `cargo test` to verify correctness.** If tests fail, fix the failures and re-run. Use `cargo test -- --nocapture` when you need to see output from failing tests.
 
 ### Phase 4: Validate
 
-10. **Run clippy for lint issues.**
+12. **Run clippy for lint issues.**
 
     ```bash
     cargo clippy 2>&1
@@ -80,7 +101,7 @@ When the user invokes `/hdb:rust-dev <task description>`:
 
     Fix any warnings. Clippy catches idiomatic issues that `cargo check` misses.
 
-11. **Run `cargo fmt --check`** to verify formatting. Apply `cargo fmt` if needed.
+13. **Run `cargo fmt --check`** to verify formatting. Apply `cargo fmt` if needed.
 
 ## Build Optimization Reference
 
@@ -175,6 +196,11 @@ anyhow = "1.0"
 thiserror = "2"
 ```
 
+### API design
+
+- **Use enums instead of boolean flags or boolean tuples.** Replace `(bool, bool)` parameter pairs with a named enum. `ScrapeTargets::Both` is self-documenting; `(true, false)` is not.
+- **Use `StatusCode` with error responses in web handlers.** Don't return error HTML without a corresponding HTTP status code.
+
 ### Ownership at API boundaries
 
 Design function signatures to minimize ownership friction:
@@ -186,10 +212,12 @@ Design function signatures to minimize ownership friction:
 
 ### Module organization
 
+- **Use `lib.rs` + `main.rs` split for all non-trivial projects.** Put all logic in `lib.rs` (and its submodules); `main.rs` only parses args and calls into the library. This is the single most impactful structural decision: it enables integration tests in `tests/`, which cannot import from a binary crate.
 - One `mod.rs` (or `module_name.rs`) per logical subsystem
-- Re-export the public API from `mod.rs` so callers use `use crate::bemt::design_propeller` not `use crate::bemt::optimizer::design_propeller`
+- Re-export the public API from `mod.rs` so callers use short paths (e.g., `use crate::bemt::design_propeller` not `use crate::bemt::optimizer::design_propeller`)
 - Keep `mod.rs` files thin — orchestration and re-exports, not implementation
-- Tests go in the same file as the code they test (`#[cfg(test)] mod tests`) for unit tests, or in `tests/` for integration tests
+- Unit tests go in the same file as the code they test (`#[cfg(test)] mod tests`)
+- **Integration tests go in `tests/`.** These test the public API through `use your_crate::...`. Use test fixtures (files in `tests/fixtures/`) for data-driven tests. This is only possible with the `lib.rs` split.
 
 ### Dependency management
 
@@ -225,6 +253,13 @@ tower-http = { version = "0.6", features = ["fs"] }   # HTTP middleware (static 
 reqwest = { version = "0.12", features = ["rustls-tls"] }  # HTTP client
 askama = "0.12"                                       # Compile-time HTML templates
 ```
+
+- **Avoid `askama_axum` and similar integration crates that lag behind framework releases.** Instead, render templates manually and return `Html`:
+  ```rust
+  let html = template.render().map_err(|e| /* error handling */)?;
+  Ok(Html(html))
+  ```
+  This avoids version coupling between the template engine and the web framework.
 
 ### Asynchronous operation
 
@@ -295,6 +330,45 @@ git2 = "0.19"                                           # libgit2 bindings
 - Requires `libgit2` (bundled by default via `libgit2-sys`). No system dependency needed.
 - For simple operations (status, add, commit), shelling out to `git` via `std::process::Command` is simpler and avoids the compile-time cost of `git2`.
 
+## Crate Compatibility
+
+When using multiple crates that integrate with each other, verify version compatibility **before** writing application code:
+
+- **Integration crates** (e.g., `askama_axum`, `tower-http`, `sqlx` with runtime features) bridge two or more dependencies. All bridged versions must be compatible. Check the integration crate's `Cargo.toml` for its dependency version requirements.
+- **Test compatibility early.** After adding a new integration crate, run `cargo check` on a minimal use before writing handlers or business logic. Discovering incompatibility after writing 500 lines of handler code wastes the entire batch.
+- **When an integration crate lags behind its dependencies**, drop it and implement the glue manually. For example, if a template integration crate doesn't support the latest version of your web framework, render templates manually and wrap the output. A few lines of manual glue is better than pinning to an old framework version.
+- **Pin integration crate versions explicitly** (e.g., `askama_axum = "=0.4.0"`) when you need a specific compatible combination, to prevent `cargo update` from breaking it.
+
+## Testing Strategies
+
+### Golden-value tests for numerical and domain code
+
+For code that computes numerical results (solvers, financial calculations, data transformations), compile-time correctness is necessary but not sufficient — the code can compile and produce wrong answers. Use golden-value tests:
+
+1. **Obtain reference values** from a known-good source (published tables, reference implementation, manual calculation)
+2. **Create test fixtures** with input data and expected outputs
+3. **Assert with tolerances** — use approximate comparison for floating-point results:
+   ```rust
+   assert!((result - expected).abs() < 1e-6, "expected {expected}, got {result}");
+   ```
+4. **Test edge cases explicitly** — zero inputs, boundary values, degenerate cases that are valid but extreme
+
+### Integration tests with fixtures
+
+For code that processes external data (HTML, files, API responses):
+
+1. **Store representative fixtures** in `tests/fixtures/` — real-world examples, not hand-crafted minimal inputs
+2. **Test the public API end-to-end** — parse, transform, and verify the output in a single test
+3. **Include malformed inputs** — test that bad data produces clear errors, not panics
+
+### Web application state
+
+Prefer simpler state patterns that avoid ownership complexity:
+
+- **Pass configuration (not connections) in web state.** For example, store a database path as a `String` and open a connection per request, rather than sharing `Arc<Mutex<Connection>>` across handlers. This eliminates lock contention and simplifies ownership.
+- Use `Arc<T>` for truly shared read-only state (config, compiled templates, static data)
+- Use per-request resources for anything with mutable state or cleanup requirements
+
 ## Guidelines
 
 - **Batch over incremental.** The single most impactful practice is writing more code before compiling. Each compile cycle costs 10-30 seconds; eliminating 10 unnecessary cycles saves 2-5 minutes per task.
@@ -302,4 +376,7 @@ git2 = "0.19"                                           # libgit2 bindings
 - **Fix root causes, not symptoms.** If the borrow checker rejects a pattern in 3 places, the API design is wrong — fix the signature, not the call sites.
 - **Keep the dependency tree shallow.** Every new crate dependency adds compile time. Check if the standard library or an existing dependency already provides the functionality.
 - **Use the type system, don't fight it.** If you're writing a lot of `.clone()`, `Rc`, or `unsafe`, step back and reconsider the data ownership model.
+- **Verify crate APIs before committing to them.** The cost of discovering an API mismatch after writing 10 handlers is far higher than testing one minimal example first. This applies especially to template engines, integration crates, and anything with macro-based DSLs.
+- **Domain bugs cost more than type bugs.** The compiler catches type errors, borrow errors, and lifetime issues. It cannot catch wrong formulas, incorrect sign conventions, or numerical edge cases. Invest verification effort proportional to the risk: domain-critical code needs golden-value tests, not just `cargo check`.
+- **Split `lib.rs` from `main.rs` by default.** This is a one-time structural decision that enables integration testing, benchmarking, and reuse. Do it at project creation, not as a refactor later.
 - **Respect the user's CLAUDE.md.** The user's global instructions override defaults. Check for project-specific conventions before applying generic Rust patterns.
