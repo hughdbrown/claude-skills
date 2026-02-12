@@ -4,7 +4,70 @@ Custom Claude Code skills derived from production software development experienc
 
 ## Installation
 
-Symlink each skill directory into `~/.claude/skills/`:
+### Using GNU stow (recommended)
+
+[GNU stow](https://www.gnu.org/software/stow/) is a symlink manager that creates and maintains symlinks from a target directory into a package directory. It keeps this repo as the single source of truth — adding, updating, or removing skills requires no manual symlink management.
+
+Install stow:
+
+```bash
+# macOS
+brew install stow
+
+# Debian/Ubuntu
+sudo apt install stow
+
+# Fedora
+sudo dnf install stow
+```
+
+Ensure the target directory exists:
+
+```bash
+mkdir -p ~/.claude/skills
+```
+
+Deploy all skills by running stow from the parent directory of this repo, with `~/.claude/skills/` as the target:
+
+```bash
+cd /path/to/parent-of-this-repo
+stow -t ~/.claude/skills --ignore='README\.md' claude-skills
+```
+
+For example, if this repo is cloned to `~/workspace/claude-skills`:
+
+```bash
+cd ~/workspace
+stow -t ~/.claude/skills --ignore='README\.md' claude-skills
+```
+
+This creates symlinks for each skill directory:
+
+```
+~/.claude/skills/hdb-design/         -> ~/workspace/claude-skills/hdb-design/
+~/.claude/skills/hdb-rust-developer/ -> ~/workspace/claude-skills/hdb-rust-developer/
+~/.claude/skills/hdb-golang-developer/ -> ~/workspace/claude-skills/hdb-golang-developer/
+```
+
+**After adding new skills** to the repo, restow to pick up the changes:
+
+```bash
+cd ~/workspace
+stow -R -t ~/.claude/skills --ignore='README\.md' claude-skills
+```
+
+**To remove all symlinks** (uninstall):
+
+```bash
+cd ~/workspace
+stow -D -t ~/.claude/skills claude-skills
+```
+
+**How stow works here:** Stow treats the repo directory (`claude-skills`) as a "package" whose internal directory structure mirrors the target (`~/.claude/skills/`). Each subdirectory in the repo becomes a symlinked subdirectory in the target. The `--ignore` flag prevents non-skill files like `README.md` from being linked. Stow automatically ignores `.git` directories.
+
+### Manual symlinks
+
+If you prefer not to install stow, symlink each skill directory individually:
 
 ```bash
 ln -s /path/to/claude-skills/hdb-design ~/.claude/skills/hdb-design
