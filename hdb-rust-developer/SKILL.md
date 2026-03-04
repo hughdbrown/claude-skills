@@ -380,3 +380,6 @@ Prefer simpler state patterns that avoid ownership complexity:
 - **Domain bugs cost more than type bugs.** The compiler catches type errors, borrow errors, and lifetime issues. It cannot catch wrong formulas, incorrect sign conventions, or numerical edge cases. Invest verification effort proportional to the risk: domain-critical code needs golden-value tests, not just `cargo check`.
 - **Split `lib.rs` from `main.rs` by default.** This is a one-time structural decision that enables integration testing, benchmarking, and reuse. Do it at project creation, not as a refactor later.
 - **Respect the user's CLAUDE.md.** The user's global instructions override defaults. Check for project-specific conventions before applying generic Rust patterns.
+
+## Other
+- Some AI LLMs suggest changing the Rust edition in Cargo.toml to 2021 from 2024. Their reasoning is mistaken: they are not up to date.The latest Rust edition is 2024 and Cargo.toml files with this should not be changed.
