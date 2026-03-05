@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from unittest.mock import patch
 
 import pytest
@@ -12,23 +13,36 @@ from splitpr_05.executor import ExecutionError, _validate_preconditions
 # ── Helpers ──────────────────────────────────────────────────────────
 
 
+class _Sentinel:
+    """Dedicated sentinel type for omitting keys from metadata dicts."""
+
+
+_OMIT = _Sentinel()
+
+
 def _meta(
-    source_branch: str = "feature-branch",
-    base_branch: str = "main",
-    repo_toplevel: str = "/home/user/repo",
-    head_rev: str = "abc123def456abc123def456abc123def456abc1",
+    source_branch: str | _Sentinel = "feature-branch",
+    base_branch: str | _Sentinel = "main",
+    repo_toplevel: str | _Sentinel = "/home/user/repo",
+    head_rev: str | _Sentinel = "abc123def456abc123def456abc123def456abc1",
 ) -> dict[str, str]:
-    """Build a metadata dict with sensible defaults."""
-    m: dict[str, str] = {}
-    if source_branch:
-        m["source_branch"] = source_branch
-    if base_branch:
-        m["base_branch"] = base_branch
-    if repo_toplevel:
-        m["repo_toplevel"] = repo_toplevel
-    if head_rev:
-        m["head_rev"] = head_rev
-    return m
+    """Build a metadata dict with sensible defaults.
+
+    Use ``_OMIT`` to exclude a key entirely; pass ``""`` to include it
+    with an empty-string value.
+    """
+    sources = [
+        ("source_branch", source_branch),
+        ("base_branch", base_branch),
+        ("repo_toplevel", repo_toplevel),
+        ("head_rev", head_rev),
+    ]
+
+    return {
+        key: val
+        for key, val in sources
+        if val is not _OMIT
+    }
 
 
 GIT_OPS = "splitpr_05.executor.git_ops"
@@ -100,16 +114,17 @@ def test_repo_mismatch_raises(_is_git, _toplevel):
 
 @patch(f"{GIT_OPS}.has_uncommitted_changes", return_value=False)
 @patch(f"{GIT_OPS}.get_head_rev", return_value="abc123def456abc123def456abc123def456abc1")
+@patch(f"{GIT_OPS}.get_repo_toplevel")
 @patch(f"{GIT_OPS}.is_git_repo", return_value=True)
 def test_missing_repo_toplevel_logs_warning_and_skips(
-    _is_git, _head, _uncommitted, caplog
+    _is_git, mock_toplevel, _head, _uncommitted, caplog
 ):
     """When repo_toplevel is absent, the check is skipped with a warning."""
-    meta = _meta(repo_toplevel="")
-    import logging
+    meta = _meta(repo_toplevel=_OMIT)
     with caplog.at_level(logging.WARNING):
         _validate_preconditions("feature", "main", meta, dry_run=False)
     assert "repo_toplevel" in caplog.text
+    mock_toplevel.assert_not_called()
 
 
 # ── HEAD revision mismatch ──────────────────────────────────────────
@@ -128,17 +143,18 @@ def test_head_rev_mismatch_raises(_is_git, _toplevel, _head):
 
 
 @patch(f"{GIT_OPS}.has_uncommitted_changes", return_value=False)
+@patch(f"{GIT_OPS}.get_head_rev")
 @patch(f"{GIT_OPS}.get_repo_toplevel", return_value="/home/user/repo")
 @patch(f"{GIT_OPS}.is_git_repo", return_value=True)
 def test_missing_head_rev_logs_warning_and_skips(
-    _is_git, _toplevel, _uncommitted, caplog
+    _is_git, _toplevel, mock_head, _uncommitted, caplog
 ):
     """When head_rev is absent, the check is skipped with a warning."""
-    meta = _meta(head_rev="")
-    import logging
+    meta = _meta(head_rev=_OMIT)
     with caplog.at_level(logging.WARNING):
         _validate_preconditions("feature", "main", meta, dry_run=False)
     assert "head_rev" in caplog.text
+    mock_head.assert_not_called()
 
 
 # ── Uncommitted changes ─────────────────────────────────────────────
