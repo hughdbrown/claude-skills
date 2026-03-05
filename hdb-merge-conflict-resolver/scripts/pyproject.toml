@@ -1,0 +1,16 @@
+[project]
+name = "mergefix"
+version = "0.1.0"
+description = "AI-assisted git merge conflict resolver"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.1",
+    "anthropic>=0.39",
+]
+
+[project.scripts]
+mergefix = "mergefix.cli:cli"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends._legacy:_Backend"
