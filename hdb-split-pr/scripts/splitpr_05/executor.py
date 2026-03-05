@@ -46,7 +46,7 @@ def execute_plan(
         logger.warning("No PRs found in the plan. Nothing to execute.")
         return {}
 
-    _validate_preconditions(source_branch, base_branch, dry_run)
+    _validate_preconditions(source_branch, base_branch, meta, dry_run)
 
     original_branch: str = git_ops.get_current_branch()
     total_prs: int = len(prs)
@@ -113,6 +113,7 @@ def execute_plan(
 def _validate_preconditions(
     source_branch: str,
     base_branch: str,
+    meta: dict[str, str],
     dry_run: bool,
 ) -> None:
     """Validate that the repository is in a good state for execution."""
@@ -129,6 +130,43 @@ def _validate_preconditions(
         raise ExecutionError(
             "No base_branch in database metadata. "
             "Was the plan created correctly?"
+        )
+
+    # ── Repo identity check ──────────────────────────────────────────
+    expected_repo: str = meta.get("repo_toplevel", "")
+    if expected_repo:
+        actual_repo: str = git_ops.get_repo_toplevel()
+        if actual_repo != expected_repo:
+            raise ExecutionError(
+                f"Repository mismatch.\n"
+                f"  Database was built against: {expected_repo}\n"
+                f"  Current repository:         {actual_repo}\n"
+                f"Run splitpr_05 from the same repo that splitpr_00 analyzed."
+            )
+    else:
+        logger.warning(
+            "Database does not contain repo_toplevel metadata. "
+            "Skipping repo identity check. "
+            "(Re-run splitpr_00 to record it.)"
+        )
+
+    # ── HEAD revision check ──────────────────────────────────────────
+    expected_rev: str = meta.get("head_rev", "")
+    if expected_rev:
+        actual_rev: str = git_ops.get_head_rev()
+        if actual_rev != expected_rev:
+            raise ExecutionError(
+                f"HEAD revision mismatch.\n"
+                f"  Database was built at: {expected_rev[:12]}\n"
+                f"  Current HEAD:          {actual_rev[:12]}\n"
+                f"The branch has changed since the plan was created. "
+                f"Re-run splitpr_00 to generate a fresh plan."
+            )
+    else:
+        logger.warning(
+            "Database does not contain head_rev metadata. "
+            "Skipping HEAD revision check. "
+            "(Re-run splitpr_00 to record it.)"
         )
 
     if not dry_run and git_ops.has_uncommitted_changes():

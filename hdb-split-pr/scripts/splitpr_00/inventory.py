@@ -47,6 +47,8 @@ def run_inventory(
     db.set_metadata(conn, "base_branch", base_branch)
     db.set_metadata(conn, "source_branch", source_branch)
     db.set_metadata(conn, "merge_base_sha", merge_base)
+    db.set_metadata(conn, "repo_toplevel", git_ops.get_repo_toplevel())
+    db.set_metadata(conn, "head_rev", git_ops.get_head_rev())
     db.set_metadata(conn, "model", model)
     db.set_metadata(conn, "script_version", __version__)
     db.set_metadata(

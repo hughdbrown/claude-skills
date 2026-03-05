@@ -466,6 +466,11 @@ def get_repo_toplevel() -> str:
     return _run(["git", "rev-parse", "--show-toplevel"])
 
 
+def get_head_rev() -> str:
+    """Return the full SHA of HEAD."""
+    return _run(["git", "rev-parse", "HEAD"])
+
+
 def get_remote_url(remote: str = "origin") -> str | None:
     """Return the push URL for a remote, or None if the remote is missing."""
     try:

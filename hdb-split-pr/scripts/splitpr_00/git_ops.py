@@ -49,6 +49,16 @@ def get_current_branch() -> str:
     return _run(["git", "rev-parse", "--abbrev-ref", "HEAD"])
 
 
+def get_repo_toplevel() -> str:
+    """Return the absolute path to the repository root."""
+    return _run(["git", "rev-parse", "--show-toplevel"])
+
+
+def get_head_rev() -> str:
+    """Return the full SHA of HEAD."""
+    return _run(["git", "rev-parse", "HEAD"])
+
+
 def detect_base_branch(explicit: str | None = None) -> str:
     """Determine the base branch.
 
