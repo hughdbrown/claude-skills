@@ -157,8 +157,8 @@ def _validate_preconditions(
         if actual_rev != expected_rev:
             raise ExecutionError(
                 f"HEAD revision mismatch.\n"
-                f"  Database was built at: {expected_rev[:12]}\n"
-                f"  Current HEAD:          {actual_rev[:12]}\n"
+                f"  Database was built at: {expected_rev}\n"
+                f"  Current HEAD:          {actual_rev}\n"
                 f"The branch has changed since the plan was created. "
                 f"Re-run splitpr_00 to generate a fresh plan."
             )

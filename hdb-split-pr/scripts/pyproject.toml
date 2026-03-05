@@ -13,7 +13,7 @@ splitpr_00 = "splitpr_00.cli:cli"
 splitpr_05 = "splitpr_05.cli:cli"
 
 [tool.setuptools.packages.find]
-include = ["splitpr_00*", "splitpr_05*"]
+include = ["splitpr_common*", "splitpr_00*", "splitpr_05*"]
 
 [build-system]
 requires = ["setuptools>=68"]

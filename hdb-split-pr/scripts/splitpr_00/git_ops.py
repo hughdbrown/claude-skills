@@ -2,89 +2,25 @@
 
 Every git command in the project goes through this module. No other module
 calls subprocess directly.
+
+Read-only primitives are imported from splitpr_common.git_ops; this module
+adds model-dependent helpers that return FileChange / Commit objects.
 """
 
 from __future__ import annotations
 
-import subprocess
+from splitpr_common.git_ops import (  # noqa: F401 — re-exported
+    GitError,
+    _run,
+    detect_base_branch,
+    get_current_branch,
+    get_diff_stat,
+    get_head_rev,
+    get_merge_base,
+    get_repo_toplevel,
+    is_git_repo,
+)
 from splitpr_00.models import Commit, FileChange
-
-
-class GitError(Exception):
-    """Raised when a git command fails."""
-
-    def __init__(self, cmd: list[str], returncode: int, stderr: str):
-        self.cmd = cmd
-        self.returncode = returncode
-        self.stderr = stderr
-        super().__init__(
-            f"git command failed (rc={returncode}): {' '.join(cmd)}\n{stderr}"
-        )
-
-
-def _run(args: list[str], timeout: int = 60) -> str:
-    """Run a git command, return stdout. Raise GitError on failure."""
-    result = subprocess.run(
-        args,
-        capture_output=True,
-        text=True,
-        timeout=timeout,
-    )
-    if result.returncode != 0:
-        raise GitError(args, result.returncode, result.stderr.strip())
-    return result.stdout.strip()
-
-
-def is_git_repo() -> bool:
-    """Check if the current directory is inside a git work tree."""
-    try:
-        _run(["git", "rev-parse", "--is-inside-work-tree"])
-        return True
-    except (GitError, subprocess.TimeoutExpired):
-        return False
-
-
-def get_current_branch() -> str:
-    """Return the current branch name, or 'HEAD' if detached."""
-    return _run(["git", "rev-parse", "--abbrev-ref", "HEAD"])
-
-
-def get_repo_toplevel() -> str:
-    """Return the absolute path to the repository root."""
-    return _run(["git", "rev-parse", "--show-toplevel"])
-
-
-def get_head_rev() -> str:
-    """Return the full SHA of HEAD."""
-    return _run(["git", "rev-parse", "HEAD"])
-
-
-def detect_base_branch(explicit: str | None = None) -> str:
-    """Determine the base branch.
-
-    If explicit is given, verify it exists and return it.
-    Otherwise try 'master' then 'main'.
-    Raises GitError if none found.
-    """
-    if explicit:
-        _run(["git", "rev-parse", "--verify", explicit])
-        return explicit
-    for candidate in ("master", "main"):
-        try:
-            _run(["git", "rev-parse", "--verify", candidate])
-            return candidate
-        except GitError:
-            continue
-    raise GitError(
-        ["git", "rev-parse", "--verify", "master|main"],
-        1,
-        "Neither 'master' nor 'main' branch exists. Use --base to specify.",
-    )
-
-
-def get_merge_base(base: str) -> str:
-    """Return the merge-base SHA between base and HEAD."""
-    return _run(["git", "merge-base", base, "HEAD"])
 
 
 def list_commits(merge_base: str) -> list[Commit]:
@@ -230,11 +166,6 @@ def get_commit_numstat(sha: str) -> list[FileChange]:
             deletions=deletions,
         ))
     return files
-
-
-def get_diff_stat(base: str) -> str:
-    """Return the --stat output for the full diff."""
-    return _run(["git", "diff", "--stat", f"{base}..HEAD"])
 
 
 def get_file_diff(base: str, file_path: str, max_lines: int = 500) -> str:
