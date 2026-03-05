@@ -1,0 +1,17 @@
+[project]
+name = "splitpr"
+version = "0.1.0"
+description = "Decompose oversize git branches into focused PRs with dependency ordering"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.1",
+    "anthropic>=0.39",
+]
+
+[project.scripts]
+splitpr_00 = "splitpr_00.cli:cli"
+splitpr_05 = "splitpr_05.cli:cli"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
