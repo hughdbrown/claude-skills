@@ -6,13 +6,15 @@ Uses tool_use with forced tool_choice for reliable structured JSON output.
 
 from __future__ import annotations
 
-import time
-import logging
 from typing import Any
 
 import anthropic
 
-logger = logging.getLogger(__name__)
+from splitpr_common.ai import (  # noqa: F401
+    AIError,
+    call_structured,
+    create_client,
+)
 
 # ── Schemas ──────────────────────────────────────────────────────────
 
@@ -251,76 +253,6 @@ Keep tasks focused — each task should be completable in one sitting.\
 """
 
 
-# ── Core API call ────────────────────────────────────────────────────
-
-
-class AIError(Exception):
-    """Raised when Claude returns an unexpected or unparseable response."""
-
-    pass
-
-
-def create_client() -> anthropic.Anthropic:
-    """Create an Anthropic client. Raises if ANTHROPIC_API_KEY is not set."""
-    return anthropic.Anthropic()
-
-
-def call_claude_structured(
-    client: anthropic.Anthropic,
-    model: str,
-    system_prompt: str,
-    user_content: str,
-    tool_name: str,
-    tool_description: str,
-    schema: dict[str, Any],
-    max_tokens: int = 8192,
-    max_retries: int = 3,
-) -> dict[str, Any]:
-    """Send a message to Claude with a forced tool call, return the parsed result.
-
-    Uses tool_choice to guarantee structured JSON output matching the schema.
-    Retries on rate limits and API errors with exponential backoff.
-    """
-    for attempt in range(max_retries):
-        try:
-            response = client.messages.create(
-                model=model,
-                max_tokens=max_tokens,
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_content}],
-                tools=[
-                    {
-                        "name": tool_name,
-                        "description": tool_description,
-                        "input_schema": schema,
-                    }
-                ],
-                tool_choice={"type": "tool", "name": tool_name},
-            )
-            for block in response.content:
-                if block.type == "tool_use":
-                    return block.input
-            raise AIError(
-                f"No tool_use block in response (attempt {attempt + 1}): "
-                f"{[b.type for b in response.content]}"
-            )
-        except anthropic.RateLimitError:
-            if attempt < max_retries - 1:
-                wait = 2 ** (attempt + 1)
-                logger.warning(f"Rate limited, waiting {wait}s...")
-                time.sleep(wait)
-            else:
-                raise
-        except anthropic.APIConnectionError:
-            if attempt < max_retries - 1:
-                wait = 2 ** (attempt + 1)
-                logger.warning(f"API connection error, waiting {wait}s...")
-                time.sleep(wait)
-            else:
-                raise
-    raise AIError("Exhausted retries")
-
-
 # ── High-level AI functions ──────────────────────────────────────────
 
 
@@ -330,7 +262,7 @@ def classify_commits(
     commits_text: str,
 ) -> dict[str, Any]:
     """Classify commits into themes. Returns the parsed tool response."""
-    return call_claude_structured(
+    return call_structured(
         client=client,
         model=model,
         system_prompt=CLASSIFY_SYSTEM,
@@ -347,7 +279,7 @@ def analyze_dependencies(
     analysis_text: str,
 ) -> dict[str, Any]:
     """Analyze dependencies between themes. Returns parsed tool response."""
-    return call_claude_structured(
+    return call_structured(
         client=client,
         model=model,
         system_prompt=DEPENDENCY_SYSTEM,
@@ -364,7 +296,7 @@ def resolve_crosscutting(
     resolution_text: str,
 ) -> dict[str, Any]:
     """Resolve cross-cutting file assignments. Returns parsed tool response."""
-    return call_claude_structured(
+    return call_structured(
         client=client,
         model=model,
         system_prompt=CROSSCUTTING_SYSTEM,
@@ -381,7 +313,7 @@ def generate_tasks(
     task_text: str,
 ) -> dict[str, Any]:
     """Generate tasks for a single PR. Returns parsed tool response."""
-    return call_claude_structured(
+    return call_structured(
         client=client,
         model=model,
         system_prompt=TASKS_SYSTEM,
