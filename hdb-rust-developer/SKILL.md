@@ -113,10 +113,10 @@ Add to `.cargo/config.toml`:
 
 ```toml
 [target.aarch64-apple-darwin]
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/lld"]
+rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.lld"]
 ```
 
-Requires: `brew install lld`. Cuts link time 50-80% on incremental builds.
+Requires: `brew install lld`. On macOS the linker must be invoked as `ld64.lld` (not `lld`), which is the Mach-O compatible driver. Using plain `lld` will fail with "Invoke ld64.lld (macOS) instead". Cuts link time 50-80% on incremental builds.
 
 ### Compilation caching
 
