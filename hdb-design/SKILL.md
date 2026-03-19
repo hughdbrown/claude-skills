@@ -84,7 +84,7 @@ Per task: (1) write tests (compile but fail), (2) confirm correct failures (add 
 ## Guidelines
 
 - **Ground decisions** in existing codebase patterns — cite specific files.
-- **Keep stages small** — ≤5 files, clear deliverable, working system after each.
+- **Isolate risk** — put unknowns and external dependencies in early stages so later work isn't blocked.
 - **Be specific** — name files, functions, types. Vague tasks waste time.
 - **Flag trade-offs** — present options with pros/cons for the developer.
 - **Adapt to scope** — small: 1 stage, no PRD. Large: 5+ stages, consider sub-designs.
