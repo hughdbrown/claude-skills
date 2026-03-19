@@ -87,7 +87,7 @@ Per task: (1) write tests (compile but fail), (2) confirm correct failures (add 
 - **Keep stages small** — ≤5 files, clear deliverable, working system after each.
 - **Be specific** — name files, functions, types. Vague tasks waste time.
 - **Flag trade-offs** — present options with pros/cons for the developer.
-- **Spike when uncertain** — add a time-boxed spike as a preliminary task.
+- **Adapt to scope** — small: 1 stage, no PRD. Large: 5+ stages, consider sub-designs.
 
 ## Example
 
