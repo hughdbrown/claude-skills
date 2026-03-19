@@ -97,7 +97,7 @@ User: `/hdb:design webhook notifications for review completion`
 
 **Clarify**: "Multiple URLs per repo? Retry logic? Configurable payload format?"
 
-**Explore**: `Glob("**/*.go")` maps structure. `Read` on `go.mod`, `internal/config/config.go`. `Grep("ReviewComplete\|jobDone")` finds the completion flow in `internal/worker/run.go` and `internal/storage/jobs.go`.
+**Explore**: `Glob("**/*.go")` maps structure (12 packages). `Read` on `go.mod` (no HTTP client deps → stdlib is sufficient), `internal/config/config.go` (uses `[[repos]]` TOML array pattern). `Grep("ReviewComplete\|jobDone")` finds the hook in `internal/worker/run.go:142` and state tracking in `internal/storage/jobs.go:89`.
 
 **PRD**:
 - **Overview**: HTTP POST on review completion for external tools.
