@@ -5,8 +5,6 @@ description: Design a new software feature with a PRD and detailed implementatio
 
 # hdb:design
 
-Design a new software feature with a PRD and detailed implementation task list.
-
 ## Usage
 
 ```
@@ -15,152 +13,109 @@ Design a new software feature with a PRD and detailed implementation task list.
 
 ## Description
 
-Collaboratively designs a new software feature with the developer. Explores the existing codebase to ground all technical decisions in the project's actual architecture, conventions, and dependencies. Produces two deliverables:
+Designs a new software feature grounded in the project's actual codebase. Produces:
 
-1. **Product Requirements Document (PRD)** — what the feature does, technical decisions, how it operates, and ordered implementation stages.
-2. **Detailed Task List** — within each stage, test-first scoped steps covering tests to write, code to implement, config changes, environment variables, dependencies, and documentation.
+1. **PRD** — overview, goals, acceptance criteria (as test descriptions), technical decisions, design, test strategy, rollback plan, and implementation stages.
+2. **Task List** — test-first implementation steps within each stage, with tests, code, verification commands, and risks.
 
-Both deliverables are written to files in the project for reference during implementation.
+Output files: `docs/design/<feature-slug>-prd.md` and `docs/design/<feature-slug>-tasks.md` (or user-specified location).
 
 ## Instructions
 
-When the user invokes `/hdb:design <feature description>`:
-
 ### Phase 0: Triage
 
-1. **Estimate the feature's scope.** Based on the description, classify as:
-   - **Small** (single file, <50 lines, no new patterns) — skip the PRD. Produce only a task list and proceed directly to Phase 3.
-   - **Medium** (2-5 files, follows existing patterns) — produce both PRD and task list.
-   - **Large** (spans multiple subsystems, introduces new patterns) — produce both PRD and task list. Consider whether the feature should be split into separate designs; if so, recommend the split and design each part independently.
+1. **Classify scope** — state the classification and reasoning before proceeding:
+   - **Small** (single file, <50 lines, no new patterns): produce task list only → skip to Phase 3.
+   - **Medium** (2–5 files, existing patterns): produce PRD + task list → all phases.
+   - **Large** (multiple subsystems, new patterns): produce PRD + task list. If the feature should be split into sub-designs, recommend the split and design each independently.
+   - **Ambiguous** (no concrete problem or solution stated): do not design yet → go to Phase 1 to clarify, then re-classify.
 
-   State the classification and reasoning before proceeding.
+   Do not over-scope. The feature description is the scope — no tangential improvements or abstractions beyond what is needed.
 
-### Phase 1: Understand the request and codebase
+### Phase 1: Understand
 
-2. **Clarify the feature request.** If the description is vague or ambiguous, ask targeted questions:
-   - What problem does this solve? Who is the target user?
-   - Are there constraints (performance, compatibility, backward compatibility)?
-   - What is explicitly out of scope?
-   - Are there existing issues, RFCs, or prior discussions to reference?
+2. **Clarify (if needed).** Ask targeted questions only when the description lacks a concrete what or how. Use `AskUserQuestion` with at most 3–4 questions:
+   - What problem does this solve? Who is the user?
+   - Constraints (performance, compatibility)?
+   - What is out of scope?
+   - Prior art (issues, RFCs, discussions)?
 
-   If the description is already clear and specific, proceed without interrogating the user.
+   If clear, proceed directly to exploration.
 
-3. **Explore the codebase in parallel** to understand:
-   - Project structure (directories, key files, entry points)
-   - Tech stack (language, framework, build system, package manager, dependencies)
-   - Existing conventions (naming, file layout, test patterns, config format, error handling)
-   - Architecture (how components interact, data flow, API boundaries)
-   - Related existing code that touches the area this feature will affect
+3. **Explore the codebase** — use parallel tool calls to investigate concurrently:
+   - `Glob` to map project structure and find source/test files
+   - `Read` root config files (go.mod, Cargo.toml, package.json) for tech stack
+   - `Grep` for conventions (error handling patterns, test patterns, naming)
+   - `Grep` for feature-related keywords; `Read` matching files
+   - For unfamiliar codebases, use `Agent` subagents for deeper parallel exploration
 
-   These aspects are independent — use subagents or parallel tool calls to investigate them concurrently.
+4. **Identify integration points.** List the specific files and functions the feature will touch. For each, note the existing pattern (naming, error handling, test style) new code must follow. If a decision requires a pattern the codebase doesn't have (novel pattern), flag it and present options in Phase 2.
 
-4. **Identify integration points** where the new feature connects to existing code, and note which existing patterns the feature should follow.
+   Phase 1 is done when you can name every file, function, and convention the feature will touch or follow.
 
-### Phase 2: Draft the PRD
+### Phase 2: PRD
 
 5. **Write the PRD** with these sections:
 
-   **Overview** — One-paragraph summary of the feature and the problem it solves.
+   - **Overview**: One paragraph — what the feature does and the problem it solves.
+   - **Goals and Non-Goals**: Bulleted. Non-goals prevent scope creep.
+   - **Acceptance Criteria (as test descriptions)**: Each criterion written as `TestName`: When X, assert Y. These are specifications, not real tests yet. If you cannot state a criterion as a test, the design is too vague — refine it.
+     - `TestFeature_HappyPath`: When valid input is provided, expected output is produced.
+     - `TestFeature_InvalidInput`: When input is empty, `ErrInvalidInput` is returned.
+     - `TestFeature_EdgeCase`: When concurrent requests arrive, each is handled independently.
+   - **Technical Decisions**: For each choice (library, storage, protocol, data format), cite the specific codebase file or pattern that justifies it. For novel patterns with no precedent, present at least two options with trade-offs, recommend one, and flag for developer confirmation. If a decision depends on runtime behavior you can't determine from code, recommend a time-boxed spike as a preliminary task.
+   - **Design and Operation**: User perspective (commands, inputs, outputs), system perspective (data flow, state, concurrency), error handling (failure modes and responses), edge cases.
+   - **Test Strategy**: Testing levels needed (unit, integration, e2e), test infrastructure (fixtures, httptest, temp dirs, mocks), key scenarios, performance/concurrency tests if applicable.
+   - **Rollback and Safety**: Can the feature be disabled without data loss? Are migrations reversible? One sentence suffices for trivial features.
+   - **Implementation Stages**: Ordered phases. Each stage must produce a working system, touch ≤5 files, and have a deliverable verifiable in under a minute.
 
-   **Goals and Non-Goals** — What the feature will and will not do. Non-goals prevent scope creep during implementation.
+6. **Present the PRD** to the user and wait for explicit approval before proceeding. Incorporate feedback.
 
-   **Acceptance Criteria (as test descriptions)** — Numbered list of specific, verifiable conditions written as test names and assertions. Each criterion should be testable: "When X happens, Y is the result." Example format:
-   - `TestFeature_HappyPath`: When valid input is provided, the expected output is produced.
-   - `TestFeature_InvalidInput`: When input is empty, an `ErrInvalidInput` error is returned.
-   - `TestFeature_EdgeCase`: When concurrent requests arrive, each is handled independently.
+### Phase 3: Task List
 
-   These are not yet real tests — they are specifications in test language. They define the behavioral contract the implementation must satisfy. If you cannot write a criterion as a test description, the design is too vague — refine it.
+7. **Build tasks for each stage.** Each task is test-first and specific ("Add error return to `ProcessFile()` and propagate through `RunJob()`" — not "add error handling"):
 
-   **Technical Decisions** — Concrete choices about libraries, storage, protocols, APIs, and data formats. Ground every decision in what the project already uses. When the project has no precedent for a choice, present the trade-offs and recommend an option. Flag decisions that the developer should weigh in on.
+   - **Tests**: test functions, assertions, fixtures needed — tests come first.
+   - **Code**: minimum implementation to pass tests. Include files to create/modify, functions/types to add, config changes, env vars, dependencies, data migrations, and API surface as applicable.
+   - **Verify**: exact command to run tests (e.g., `go test ./internal/webhook/...`).
+   - **Risks**: known blockers for this stage.
 
-   **Design and Operation** — How the feature works:
-   - User perspective: commands, UI, inputs, outputs, observable behavior
-   - System perspective: data flow, state transitions, concurrency, persistence
-   - Error handling: what can go wrong, how each failure mode is handled
-   - Edge cases: empty inputs, concurrent access, partial failures, large data
+8. **Order tasks** top-to-bottom within each stage, no forward dependencies. Note which tasks can run in parallel.
 
-   **Test Strategy** — What levels of testing are needed (unit, integration, e2e)? What test infrastructure is required (test fixtures, httptest servers, temp directories, mock agents)? What are the key scenarios to cover? Are there performance or concurrency tests needed?
+9. **Validate coverage.** For each acceptance criterion and Design section, name the task that covers it. If any has no task, add one.
 
-   **Rollback and Safety** — Can this feature be disabled without data loss? If it adds a database migration, is the migration reversible? If it changes CLI behavior, is backward compatibility maintained? For trivial features, a single sentence suffices.
+10. **Present the task list** to the user. Incorporate feedback.
 
-   **Implementation Stages** — Ordered phases that build on each other. Each stage must:
-   - Produce a working (if incomplete) system when finished
-   - Touch no more than ~5 files (if a stage needs more, split it)
-   - Have a clear deliverable that can be verified in under a minute (a passing test suite, a working command, a visible output)
+### Phase 4: Write Files
 
-6. **Present the PRD to the user** for review. Wait for feedback and incorporate it before proceeding to the task list. If the user approves without changes, continue.
-
-### Phase 3: Build the task list
-
-7. **For each implementation stage**, produce a task list. Each task follows **test-first ordering** and must be cleanly scoped:
-
-   - **Tests to write** — test functions, what they assert, test fixtures or infrastructure needed. Tests come first in every task.
-   - **Code to implement** — the minimum code that makes those tests pass. Include whichever of the following apply:
-     - **Files**: directories and files to create or modify, with the purpose of each change
-     - **Code**: functions, types, interfaces, structs, methods, or constants to add or change
-     - **Config**: config file changes, feature flags, default values
-     - **Environment**: environment variables to add, with descriptions and defaults
-     - **Dependencies**: libraries, modules, or crates to import (with version constraints if relevant)
-     - **Data**: database migrations, schema changes, seed data
-     - **API surface**: CLI commands, HTTP endpoints, or SDK methods to add
-   - **Verification** — the command to run tests and confirm green
-   - **Documentation**: README sections, doc comments, man pages, or guide pages to write or update (if applicable)
-
-   Example task:
-
-   > **Task 2.1: Webhook delivery sender**
-   > - **Tests**: In `internal/webhook/sender_test.go`:
-   >   - `TestSend_SuccessfulDelivery` — httptest server returns 200, verify delivery recorded as success
-   >   - `TestSend_ServerError` — httptest server returns 500, verify delivery recorded as failed
-   >   - `TestSend_Timeout` — httptest server delays beyond timeout, verify error returned
-   > - **Code**: In `internal/webhook/sender.go`:
-   >   - `Send(ctx, url, secret, payload) (*DeliveryResult, error)` — HTTP POST with HMAC signature, timeout from context
-   > - **Verify**: `go test ./internal/webhook/...`
-
-   **Risks**: For each stage, note known risks or blockers. E.g., "This stage depends on WAL mode; if tests use an in-memory DB, delivery tracking tests will need a file-backed DB."
-
-8. **Order tasks within each stage** so they can be executed top-to-bottom. Earlier tasks must not depend on later ones. If two tasks are independent, note that they can be done in parallel.
-
-9. **Validate coverage.** Walk through each acceptance criterion and each section of the Design and Operation section. Confirm that at least one task addresses each. Flag any gaps before presenting to the user.
-
-10. **Present the task list to the user** for review. Incorporate feedback.
-
-### Phase 4: Write deliverables
-
-11. **Write the PRD and task list to files.** Ask the user where they would like the files. Suggest:
+11. **Write deliverables** using the `Write` tool. Default locations:
     - `docs/design/<feature-slug>-prd.md`
     - `docs/design/<feature-slug>-tasks.md`
 
-    If the project has no `docs/` directory, offer to create it or suggest the project root.
+    If no `docs/` directory exists, ask the user for an alternative.
 
-12. **Offer next steps:**
-    - Start implementing stage 1
-    - Commit the design documents
-    - Refine a specific section
+12. **Offer next steps**: start implementing stage 1, commit the design documents, or refine a section.
 
 ## Implementation Protocol
 
-When implementing each stage (whether immediately or in a later session), follow this sequence per task:
+Per task, follow this sequence:
 
-1. Write the test file(s) with all tests for this task. Tests should compile but fail.
-2. Run the tests. Confirm they fail for the right reasons (missing functions, wrong return values — not compilation errors). If they don't compile, add minimal stubs to make them compile.
-3. Write the implementation code — only enough to make the tests pass.
-4. Run the tests. If green, the task is done. If red, fix the implementation (not the tests, unless the test has a bug).
-5. Run the project's linter/formatter (e.g., `go vet`, `go fmt`). Fix any issues.
-6. Move to the next task.
+1. Write all tests for this task. Tests should compile but fail.
+2. Run tests — confirm they fail for the right reasons (not compilation errors). Add minimal stubs if needed.
+3. Write implementation — only enough to make tests pass.
+4. Run tests. Green = done. Red = fix implementation (not tests, unless the test has a bug).
+5. Run linter/formatter. Fix issues.
+6. Move to next task.
 
-**Do not write code that no test exercises.** If you find yourself adding a helper function, error path, or configuration option that no test covers, either write a test for it or delete it.
+**No untested code.** Every helper, error path, or config option must be exercised by a test — or deleted. Tests are the specification; if a test and the PRD disagree, fix the test first, then the code. Never weaken assertions to make a test pass.
 
 ## Guidelines
 
-- **Ground decisions in the codebase.** Match the project's existing patterns, tools, and conventions. Do not introduce new frameworks, languages, or paradigms without strong justification.
-- **Keep stages small and incremental.** Each stage should touch no more than ~5 files, add clear demonstrable value, and leave the system in a working state.
-- **Be specific in tasks.** "Add error handling" is too vague. "Add an error return to `ProcessFile()` in `internal/worker/process.go` and propagate it through `RunJob()` to the caller" is actionable.
-- **Flag risks and open questions.** If a decision has meaningful trade-offs, present the options with pros and cons and let the developer choose.
-- **Do not over-scope.** The feature description is the scope. Do not introduce tangential improvements, refactors, or "nice to haves" unless the developer asks for them.
-- **Respect the project's complexity budget.** A simple feature gets a simple design. Do not add abstractions, extension points, or configurability beyond what is needed now.
-- **Spike when uncertain.** If a technical decision depends on behavior you can't determine from reading code (e.g., "will SQLite handle 1000 concurrent webhook deliveries?"), recommend a time-boxed spike before finalizing the design. The spike is a task in a preliminary stage, and the PRD notes which decisions depend on its results.
-- **Tests are the specification, code is the implementation.** During implementation, treat tests as the authority on what the code should do. If a test and the PRD disagree, the test is wrong — fix the test first, then fix the code. Never make a test pass by weakening its assertions.
+- **Ground every decision** in the codebase's existing patterns, tools, and conventions.
+- **Keep stages small** — ≤5 files, clear deliverable, working system after each stage.
+- **Be specific** — name files, functions, types, and patterns. Vague tasks waste implementation time.
+- **Flag risks and trade-offs** — present options with pros/cons and let the developer choose.
+- **Spike when uncertain** — if a decision depends on behavior you can't determine from code, add a time-boxed spike as a preliminary task.
 
 ## Example
 
@@ -168,52 +123,49 @@ User: `/hdb:design webhook notifications for review completion`
 
 Agent:
 
-1. Triages as **medium** — touches config, storage, worker, and CLI (4 areas) but follows existing patterns throughout.
+1. **Triage**: Classifies as **medium** — touches config, storage, worker, and CLI (4 areas) but follows existing patterns.
 
-2. Asks clarifying questions: "Should webhooks support multiple URLs per repo? Do you need retry logic for failed deliveries? Should the payload format be configurable or fixed?"
+2. **Clarify**: Asks: "Should webhooks support multiple URLs per repo? Do you need retry logic? Should the payload format be configurable or fixed?"
 
-3. Explores the codebase in parallel: reads the daemon server, config system, storage layer, and worker pool to understand how reviews are processed and completed.
+3. **Explore**: Uses `Glob("**/*.go")` to map structure, `Read` on `go.mod` and `internal/config/config.go`, `Grep("ReviewComplete\|jobDone")` to find the review completion flow. Identifies `internal/worker/run.go` (job processing) and `internal/storage/jobs.go` (results storage) as integration points.
 
-4. Drafts the PRD:
-   - **Overview**: Send HTTP POST notifications when code reviews complete, so external tools (CI, chat, dashboards) can react to review results.
-   - **Goals**: Deliver webhooks reliably, support multiple URLs per repo, include review verdict and findings in payload. **Non-goals**: payload transformation, authentication beyond a shared secret, UI for webhook management.
+4. **PRD**:
+   - **Overview**: HTTP POST notifications on review completion for external tool integration.
+   - **Goals**: Reliable delivery, multiple URLs per repo, review verdict in payload. **Non-goals**: payload transformation, auth beyond shared secret, webhook management UI.
    - **Acceptance Criteria**:
-     - `TestWebhookDelivery_SendsPostOnReviewComplete`: When a review job transitions to `done` and a webhook URL is configured, an HTTP POST is sent to that URL within 5 seconds.
-     - `TestWebhookDelivery_NoConfigNoSend`: When no webhook URL is configured, no HTTP request is made.
-     - `TestWebhookConfig_ParsesTOML`: A `[[webhooks]]` section in config.toml produces a valid `WebhookConfig` struct.
-     - `TestWebhookPayload_IncludesVerdict`: The POST body contains the review verdict and findings count.
-   - **Technical decisions**: Use stdlib `net/http` (no new deps), store webhook config in existing TOML, add `webhook_deliveries` table to SQLite for delivery tracking.
-   - **Design**: After worker marks a job as `done`, enqueue a delivery for each configured webhook URL. A delivery goroutine sends the POST and records the result.
-   - **Test strategy**: Unit tests with `httptest` servers for delivery. Integration tests for the worker-to-webhook pipeline using the test agent. Temp directories for SQLite in tests.
-   - **Rollback**: Webhook feature is additive. Removing `[[webhooks]]` from config disables it. The `webhook_deliveries` table can be dropped without affecting core functionality.
-   - **Stages**: (1) Config and storage, (2) Delivery engine, (3) Worker integration, (4) CLI management commands.
+     - `TestWebhookDelivery_SendsPostOnReviewComplete`: Job transitions to `done` with webhook configured → POST sent within 5s.
+     - `TestWebhookDelivery_NoConfigNoSend`: No webhook URL → no HTTP request.
+     - `TestWebhookConfig_ParsesTOML`: `[[webhooks]]` in config.toml → valid `WebhookConfig`.
+     - `TestWebhookPayload_IncludesVerdict`: POST body contains verdict and findings count.
+   - **Technical decisions**: stdlib `net/http` (project has no HTTP client deps — unjustified to add one), webhook config in existing TOML (matches `[[repos]]` pattern), `webhook_deliveries` table in SQLite (project already uses `internal/storage`).
+   - **Design**: Worker marks job `done` → enqueue delivery per URL → delivery goroutine POSTs and records result.
+   - **Test strategy**: `httptest` servers for delivery unit tests, integration tests for worker→webhook pipeline, `t.TempDir()` for SQLite.
+   - **Rollback**: Additive — remove `[[webhooks]]` from config to disable.
+   - **Stages**: (1) Config and storage, (2) Delivery engine, (3) Worker integration, (4) CLI management.
 
-5. Presents PRD for feedback. User says: "Skip retry logic for v1, we can add it later." Agent updates the PRD.
+5. **User feedback**: "Skip retry logic for v1." Agent updates PRD accordingly.
 
-6. Builds the task list with test-first ordering. Stage 1 example:
+6. **Task list** (Stage 1 excerpt):
 
    > **Task 1.1: Webhook config parsing**
-   > - **Tests**: In `internal/config/config_test.go`:
-   >   - `TestConfig_WebhookSection` — TOML with `[[webhooks]]` produces `WebhookConfig` structs
-   >   - `TestConfig_NoWebhooks` — TOML without webhooks section produces empty slice
-   > - **Code**: Add `[[webhooks]]` section to `Config` struct and `WebhookConfig` type with fields `URL`, `Secret`, `Events` in `internal/config/config.go`
+   > - **Tests** (`internal/config/config_test.go`):
+   >   - `TestConfig_WebhookSection` — TOML with `[[webhooks]]` → `WebhookConfig` structs
+   >   - `TestConfig_NoWebhooks` — no webhooks section → empty slice
+   > - **Code**: Add `WebhookConfig` type and `[[webhooks]]` to `Config` in `internal/config/config.go`
    > - **Verify**: `go test ./internal/config/...`
 
    > **Task 1.2: Webhook delivery storage**
-   > - **Tests**: In `internal/storage/webhooks_test.go`:
-   >   - `TestInsertWebhookDelivery` — insert a delivery record, read it back, verify fields
-   >   - `TestListWebhookDeliveries` — insert multiple, list by job ID, verify count and order
-   > - **Code**: Add `webhook_deliveries` table migration in `internal/storage/migrations.go`. Add `InsertWebhookDelivery` and `ListWebhookDeliveries` methods in `internal/storage/webhooks.go`
+   > - **Tests** (`internal/storage/webhooks_test.go`):
+   >   - `TestInsertWebhookDelivery` — insert, read back, verify fields
+   >   - `TestListWebhookDeliveries` — insert multiple, list by job ID, verify count/order
+   > - **Code**: Migration in `internal/storage/migrations.go`, methods in `internal/storage/webhooks.go`
    > - **Verify**: `go test ./internal/storage/...`
+   > - **Risks**: Tests need file-backed SQLite for WAL mode — use `t.TempDir()` per existing conventions.
 
-   > **Risks**: Storage tests need a file-backed SQLite DB for WAL mode; in-memory won't work. Use `t.TempDir()` per existing test conventions.
+7. **Validate**: Each acceptance criterion maps to at least one task. All Design sections covered.
 
-7. Validates coverage: each acceptance criterion maps to at least one task. All PRD design sections are covered.
+8. **Write files**: `docs/design/webhook-notifications-prd.md` and `docs/design/webhook-notifications-tasks.md`.
 
-8. Writes `docs/design/webhook-notifications-prd.md` and `docs/design/webhook-notifications-tasks.md`.
+9. **Next steps**: "Would you like to start implementing stage 1, commit the design files, or refine anything?"
 
-9. Offers: "Would you like me to commit the design files as the first commit on this branch?"
-
-10. Offers: "The design documents are written. Would you like to start implementing stage 1, commit the documents, or refine anything?"
-
-11. During implementation, follows the test-first protocol: writes tests, confirms they fail, writes code, confirms they pass, moves to the next task. Each completed task gets its own commit with the stage and task number in the commit message header.
+10. **Implementation**: Test-first per the protocol — write tests, confirm failure, implement, confirm green, lint, commit per task.
