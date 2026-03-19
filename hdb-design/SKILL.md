@@ -13,7 +13,7 @@ description: Design a new software feature with a PRD and detailed implementatio
 
 ## Description
 
-Designs a new software feature grounded in the project's actual codebase. Produces two deliverables written to `docs/design/<feature-slug>-{prd,tasks}.md`:
+Designs a new software feature in five phases (triage → understand → PRD → tasks → write), grounded in the project's actual codebase. Produces two deliverables written to `docs/design/<feature-slug>-{prd,tasks}.md`:
 
 1. **PRD** — overview, goals, acceptance criteria (as test descriptions), technical decisions, design, test strategy, rollback, and implementation stages.
 2. **Task List** — test-first steps per stage: tests, code, verification commands, risks.
