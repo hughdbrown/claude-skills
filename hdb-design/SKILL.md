@@ -34,9 +34,14 @@ Designs a new software feature grounded in the project's actual codebase. Produc
 
 2. **Clarify (if needed)** using `AskUserQuestion` — only when the description lacks a concrete what or how. At most 3–4 questions: problem/user, constraints, out-of-scope, prior art. If clear, skip to exploration.
 
-3. **Explore the codebase** with parallel tool calls: `Glob` for structure, `Read` config files for tech stack, `Grep` for conventions and feature keywords, `Agent` subagents for unfamiliar codebases.
+3. **Explore the codebase** with parallel tool calls. Every technical decision in the PRD must cite a specific file or pattern discovered here:
+   - `Glob("**/*.{go,rs,py,ts}")` → project structure and file layout
+   - `Read` build/config files (go.mod, Cargo.toml, package.json) → tech stack and dependencies
+   - `Grep` for error handling, test patterns, naming conventions → coding standards
+   - `Grep` for feature-related keywords → related existing code
+   - For unfamiliar codebases: use `Agent` subagents to explore multiple areas concurrently
 
-4. **Identify integration points.** List specific files, functions, and patterns the feature will touch. Flag novel patterns (no codebase precedent) for Phase 2 decisions. Done when you can name every file and convention involved.
+4. **Identify integration points.** For each, record: the file path, the function/type involved, and the convention new code must follow (naming, error handling, test style). Flag novel patterns (no codebase precedent) for Phase 2 decisions. Done when every file and convention is named.
 
 ### Phase 2: PRD
 
@@ -98,7 +103,7 @@ User: `/hdb:design webhook notifications for review completion`
 - **Overview**: HTTP POST on review completion for external tools.
 - **Goals**: Reliable delivery, multiple URLs, verdict in payload. **Non-goals**: payload transforms, auth beyond shared secret, webhook UI.
 - **Acceptance Criteria**: `TestWebhookDelivery_SendsPostOnComplete` (POST within 5s), `TestWebhookDelivery_NoConfigNoSend` (no URL → no request), `TestWebhookConfig_ParsesTOML`, `TestWebhookPayload_IncludesVerdict`.
-- **Technical decisions**: stdlib `net/http` (no HTTP client deps exist), TOML config (matches `[[repos]]`), SQLite `webhook_deliveries` table (existing `internal/storage`).
+- **Technical decisions**: stdlib `net/http` (no HTTP client deps in `go.mod` — adding one is unjustified for simple POST requests), TOML config with `[[webhooks]]` (matches existing `[[repos]]` pattern in `config.go`), SQLite `webhook_deliveries` table (follows existing `internal/storage/jobs.go` table pattern).
 - **Design**: Job done → enqueue per URL → goroutine POSTs and records result.
 - **Stages**: (1) Config + storage, (2) Delivery engine, (3) Worker integration, (4) CLI commands.
 
