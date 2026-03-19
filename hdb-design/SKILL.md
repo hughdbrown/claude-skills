@@ -107,7 +107,7 @@ User: `/hdb:design webhook notifications for review completion`
 - **Design**: Job done → enqueue per URL → goroutine POSTs and records result.
 - **Stages**: (1) Config + storage, (2) Delivery engine, (3) Worker integration, (4) CLI commands.
 
-**User feedback**: "Skip retry for v1." PRD updated.
+**User feedback**: "Skip retry for v1." → removed retry section from PRD, simplified stages.
 
 **Task list** (Stage 1):
 
