@@ -99,7 +99,7 @@ User: `/hdb:design webhook notifications for review completion`
 
 **Explore**: `Glob("**/*.go")` maps structure (12 packages). `Read` on `go.mod` (no HTTP client deps → stdlib is sufficient), `internal/config/config.go` (uses `[[repos]]` TOML array pattern). `Grep("ReviewComplete\|jobDone")` finds the hook in `internal/worker/run.go:142` and state tracking in `internal/storage/jobs.go:89`.
 
-**PRD**:
+**PRD** (written to `webhook-prd.md`):
 - **Overview**: HTTP POST on review completion for external tools.
 - **Goals**: Reliable delivery, multiple URLs, verdict in payload. **Non-goals**: payload transforms, auth beyond shared secret, webhook UI.
 - **Acceptance Criteria**: `TestWebhookDelivery_SendsPostOnComplete` (POST within 5s), `TestWebhookDelivery_NoConfigNoSend` (no URL → no request), `TestWebhookConfig_ParsesTOML`, `TestWebhookPayload_IncludesVerdict`.
