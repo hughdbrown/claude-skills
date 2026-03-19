@@ -122,4 +122,4 @@ User: `/hdb:design webhook notifications for review completion`
 > - **Verify**: `go test ./internal/storage/...`
 > - **Risks**: File-backed SQLite for WAL — use `t.TempDir()`.
 
-**Validate**: All criteria mapped to tasks. **Write files**. **Offer next steps**.
+**Validate**: `TestWebhookConfig_ParsesTOML` → Task 1.1, `TestWebhookDelivery_SendsPostOnComplete` → Task 2.1. All covered. `Write` to `docs/design/`. **Next**: implement stage 1.
