@@ -152,17 +152,22 @@ class StreamingEditor:
             self.lines[index] = self.lines[index].replace(old, new)
             self.dirty += 1
 
-    def replace_all(self, old: str, new: str) -> None:
-        for i, line in enumerate(self.lines):
-            if old in line:
-                self.lines[i] = line.replace(old, new)
+    def replace_all(self, old: str, new: str, *, reverse: bool = True) -> None:
+        """Replace in every line. Reverse order preserves line numbers
+        when compiler errors reference specific lines."""
+        indices = range(len(self.lines) - 1, -1, -1) if reverse else range(len(self.lines))
+        for i in indices:
+            if old in self.lines[i]:
+                self.lines[i] = self.lines[i].replace(old, new)
                 self.dirty += 1
 
-    def replace_pattern(self, pattern: str, replacement: str) -> None:
+    def replace_pattern(self, pattern: str, replacement: str, *, reverse: bool = True) -> None:
+        """Regex replace. Reverse order preserves line numbers from compiler output."""
         regex = re.compile(pattern)
-        for i, line in enumerate(self.lines):
-            result = regex.sub(replacement, line)
-            if result != line:
+        indices = range(len(self.lines) - 1, -1, -1) if reverse else range(len(self.lines))
+        for i in indices:
+            result = regex.sub(replacement, self.lines[i])
+            if result != self.lines[i]:
                 self.lines[i] = result
                 self.dirty += 1
 
@@ -198,7 +203,9 @@ if __name__ == "__main__":
     main()
 ```
 
-**Key principle:** Writing this 50-line script takes 2 minutes and fixes 15 files in 0.1 seconds. An agent manually editing those 15 files would take 15+ minutes. **Always prefer writing a script.**
+**Key principles:**
+- Writing this 50-line script takes 2 minutes and fixes 15 files in 0.1 seconds. An agent manually editing those 15 files would take 15+ minutes. **Always prefer writing a script.**
+- **Process lines in reverse order** when transforms might insert or delete lines. This preserves the line numbers reported by `cargo check`, so subsequent fixes targeting specific lines remain valid.
 
 **When to write a StreamingEditor script:**
 - Same text appears in fixable AND non-fixable contexts (`.show(` on Panel vs Window)
