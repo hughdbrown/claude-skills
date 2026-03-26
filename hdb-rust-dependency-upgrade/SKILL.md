@@ -155,9 +155,12 @@ class StreamingEditor:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        if self.dirty > 0 and exc_type is None:
-            self.path.write_text("\n".join(self.lines) + "\n")
+        if self.dirty and exc_type is None:
+            with open(self.path, encoding="utf-8", mode="w") as handle:
+                handle.write("\n".join(self.lines))
+                handle.write("\n")
             print(f"  fixed ({self.dirty} changes): {self.path}")
+            self.dirty = 0
 
     def replace_all(self, old: str, new: str) -> None:
         """Replace substring in every line. Always reverse order."""
