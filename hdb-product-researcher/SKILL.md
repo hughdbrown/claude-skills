@@ -1,5 +1,5 @@
 ---
-name: hdb-product-researcher
+name: hdb:product-researcher
 description: Use when given a product idea or existing products to research — analyzes functionality, market positioning, competitive landscape, feature desirability, and community sentiment from Reddit
 ---
 
@@ -10,7 +10,7 @@ Research products and their market to produce a competitive analysis grounded in
 ## Usage
 
 ```
-/hdb-product-researcher <product idea or product names/URLs>
+/hdb:product-researcher <product idea or product names/URLs>
 ```
 
 ## Description
