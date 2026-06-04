@@ -1,0 +1,105 @@
+# justfile — house-style programming mdBook (test / build / deploy)
+#
+# Copy into a new book's root. Adjust `pdf` and `langs` for the book.
+# Recipes: `just` lists them; `just test` is the gate `deploy` depends on.
+
+pdf   := "book/pandoc/pdf/your-title.pdf"
+langs := "rust"          # comma list the book uses: go | python | rust | "go,rust"
+
+# List recipes
+default:
+    @just --list
+
+# ---- build -------------------------------------------------------------
+# mdbook build also runs the code-sample preprocessor (book.toml), so a broken
+# sample fails the HTML + PDF build.
+
+# Build HTML + PDF (also runs the code-sample checker via the preprocessor)
+build:
+    mdbook build
+
+# Live-reload HTML while drafting
+serve:
+    mdbook serve --open
+
+# Build and open the PDF
+pdf: build
+    @open "{{pdf}}" 2>/dev/null || xdg-open "{{pdf}}" 2>/dev/null || true
+
+# Open the HTML
+html: build
+    @open book/html/index.html 2>/dev/null || xdg-open book/html/index.html 2>/dev/null || true
+
+clean:
+    mdbook clean
+
+rebuild: clean build
+
+# ---- verification gate -------------------------------------------------
+# Run after every major change, not just at the end. `deploy` depends on it.
+test: check-code chapter-audit check-refs cargo-test check-warnings
+    @echo "OK: all checks passed."
+
+# Compile/run every included code sample (go test / pytest / rustc --test)
+check-code:
+    uv run --script scripts/check_code_samples.py --langs {{langs}}
+
+# Reformat included samples in place (gofmt / rustfmt / ruff format), then check.
+fmt-code:
+    uv run --script scripts/check_code_samples.py --langs {{langs}} --update
+
+# Markdown source health: fences, un-externalized inline code, Unicode, SUMMARY
+chapter-audit:
+    uv run --script scripts/chapter-audit.py
+
+# Every Chapter/§/Listing/Figure/Appendix reference and intra-book link resolves.
+check-refs:
+    uv run --script scripts/check-refs.py
+
+# Rust code/ workspace: compile + test every crate (no-op without code/Cargo.toml)
+cargo-test:
+    @test -f code/Cargo.toml && cargo test --manifest-path code/Cargo.toml --workspace || echo "no code/ workspace; skipping cargo test"
+
+# Fail on ANY mdbook/pandoc warning ("Missing character" = a PDF-font glyph gap)
+check-warnings:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    out="$(mdbook build 2>&1)"
+    echo "$out"
+    if echo "$out" | grep -Eqi 'WARNING|Missing character'; then
+        echo "check-warnings: warning detected" >&2
+        exit 1
+    fi
+    echo "check-warnings: no warnings."
+
+# Word/line counts per chapter
+stats:
+    @echo "Lines  Words  File" && wc -lw src/*.md | sort -t/ -k2
+
+# ---- deploy ------------------------------------------------------------
+# Publish HTML to the gh-pages branch via git worktree (no extra tooling).
+# Set REMOTE if not `origin`. `deploy` rebuilds and re-runs the full gate first.
+remote := "origin"
+
+deploy: test build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -rf .gh-pages
+    git worktree add --force .gh-pages gh-pages 2>/dev/null \
+        || git worktree add --force -b gh-pages .gh-pages
+    rm -rf .gh-pages/*
+    cp -R book/html/. .gh-pages/
+    touch .gh-pages/.nojekyll
+    git -C .gh-pages add -A
+    git -C .gh-pages commit -m "Deploy site $(git rev-parse --short HEAD)" || echo "no changes"
+    git -C .gh-pages push {{remote}} gh-pages
+    git worktree remove --force .gh-pages
+    @echo "Deployed to gh-pages."
+
+# Install/pin the toolchain (run once per machine).
+install-tools:
+    cargo install mdbook        --version '0.4.52' --force
+    cargo install mdbook-pandoc --version '0.10.6' --force
+    cargo install mdbook-admonish --force
+    cargo install ast-grep --force
+    @echo "Also need: uv, pandoc >= 3.x with xelatex, and the lang toolchains (go/rustc/python)."
