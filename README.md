@@ -37,8 +37,7 @@ stow -t ~/.claude/skills --ignore='README\.md' claude-skills
 For example, if this repo is cloned to `~/workspace/claude-skills`:
 
 ```bash
-cd ~/workspace
-stow -t ~/.claude/skills --ignore='README\.md' claude-skills
+(cd ~/workspace && stow -t ~/.claude/skills --ignore='README\.md' claude-skills)
 ```
 
 This creates symlinks for each skill directory:
