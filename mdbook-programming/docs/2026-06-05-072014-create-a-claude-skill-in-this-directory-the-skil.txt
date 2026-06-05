@@ -1,0 +1,3470 @@
+╭─── Claude Code v2.1.162 ─────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                 Welcome back Hugh!                 │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ What's new              │
+│                        ▘▘ ▝▝                       │ `claude agents --json`… │
+│   Opus 4.8 · Claude Max · hughdbrown@gmail.com's   │ `--tools`: explicitly … │
+│   Organization                                     │ `/effort` now confirms… │
+│   ~/…/hughdbrown/claude-skills/mdbook-programming  │ /release-notes for more │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+
+❯ Create a Claude skill in this directory. The skill relates to creating,       
+  writing, editing, and reviewing mdBooks that are generally about programming. 
+  The skill should incorporate all best-practices relating to making such       
+  MarkDown books.                                                               
+                                                                                
+  The skill should draw on the skill for making mdBooks for  math (already used 
+  for trigonometry, calculus, algebra, precalculus, and geometry). This skill   
+  is found in:                                                                  
+  - ../mdbook-math-book                                                         
+  - ~/.claude/skills/mdbook-math-book                                           
+                                                                                
+  Other sources of inspiration:                                                 
+  - general programming books under ~/projects/books/                           
+  ```                                                                           
+  ~/projects/books hughbrown% ls -alrt                                          
+  total 32                                                                      
+  -rw-r--r--   1 hughbrown  staff  2014 Apr  9 16:57 book-setup.md              
+  -rw-r--r--@  1 hughbrown  staff  8196 Apr 21 18:14 .DS_Store                  
+  drwxr-xr-x   3 hughbrown  staff    96 Apr 29 16:45 system-interview           
+  drwxr-xr-x   3 hughbrown  staff    96 May  9 19:42 polars                     
+  drwxr-xr-x   3 hughbrown  staff    96 May 15 14:51 golang                     
+  drwxr-xr-x   3 hughbrown  staff    96 May 15 14:51 github                     
+  drwxr-xr-x  15 hughbrown  staff   480 May 15 14:52 rust                       
+  drwxr-xr-x   9 hughbrown  staff   288 May 17 21:51 ..                         
+  drwxr-xr-x  12 hughbrown  staff   384 Jun  1 18:12 .                          
+  drwxr-xr-x  17 hughbrown  staff   544 Jun  2 00:29 nvidia-dgx-spark-user      
+  drwxr-xr-x@ 13 hughbrown  staff   416 Jun  2 00:33 terminal                   
+  ```                                                                           
+                                                                                
+  - rust books under ~/projects/books/rust/                                     
+  ```                                                                           
+  ~/projects/books/rust hughbrown% ls -alrt                                     
+  total 0                                                                       
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:14 rust-axum                   
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:17 rust-tauri                  
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:18 rust-tokio                  
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:18 rust-ratatui                
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:21 rust-testing                
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:23 rust-serde                  
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:25 rust-internal-tools         
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:26 rust-cli                    
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:30 rust-dioxus                 
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  8 14:32 rust-yew                    
+  drwxr-xr-x   3 hughbrown  staff   96 Apr  9 05:50 rust-interview              
+  drwxr-xr-x  10 hughbrown  staff  320 Apr 11 14:21 rust-collections            
+  drwxr-xr-x  10 hughbrown  staff  320 Apr 13 15:28 async-rust                  
+  ```                                                                           
+  All of these mdBook projects have .md and .txt files under their docs/ and    
+  docs/design/ directories.                                                     
+                                                                                
+  The programming languages under consideration are: golang, python, and Rust.  
+                                                                                
+  All code samples in a programming mdBook should have code samples that can be 
+  independently verified. The code should be outside the text and only          
+  included by mdBook mechanisms.                                                
+                                                                                
+  The skill should have a `scripts/` subdirectory that has useful, reusable     
+  skills for working on programming mdBooks.                                    
+                                                                                
+  There should be a `justfile` for testing, building, and deploying the         
+  finished book.                                                                
+
+⏺ I'll start by invoking the skill-writing skill (this is a "create a skill"
+  task), and explore the source material in parallel.
+
+⏺ Skill(write-a-skill)
+  ⎿  Successfully loaded skill
+
+  Listed 1 directory (ctrl+o to expand)
+
+⏺ Let me read the math skill thoroughly and explore the programming book
+  structures in parallel.
+
+  Read 2 files, listed 1 directory (ctrl+o to expand)
+
+⏺ The paths differ. Let me locate the math skill correctly.
+
+  Listed 1 directory (ctrl+o to expand)
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-math-book
+      && echo "=== tree ===" && ls -R . | head -80; echo; echo "=== SKILL.md
+      size ===" && wc -…)
+  ⎿  === tree ===
+     REFERENCE.md
+     scripts
+     … +19 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+  Read 2 files (ctrl+o to expand)
+
+⏺ Now let me examine the math scripts and explore the existing programming
+  books' structure.
+
+  Read 3 files (ctrl+o to expand)
+
+⏺ Now let me explore the actual programming books to understand their structure
+  and how they currently handle code samples.
+
+⏺ Bash(cd ~/projects/books
+      echo "=== async-rust tree (depth 2) ==="; find rust/async-rust -maxdepth 2
+      -not -path '*/book/*' -not -path '*/.git/*' | head -50…)
+  ⎿  === async-rust tree (depth 2) ===
+     rust/async-rust
+     rust/async-rust/justfile
+     … +95 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ The golang-with-ai book is the most mature programming book with a code-sample
+  harness. Let me examine it in depth.
+
+⏺ Bash(cd ~/projects/books/golang/golang-with-ai
+      echo "=== book.toml ==="; cat book.toml…)
+  ⎿  === book.toml ===
+     [book]
+     title = "Expert Go with AI Assistants"
+     … +177 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ This is exactly the model. Let me read the two checker scripts, the
+  source-excerpts manifest/README, the lessons-learned doc, and see how a
+  chapter actually includes code.
+
+⏺ Bash(cd ~/projects/books/golang/golang-with-ai
+      echo "=== check_code_samples.py ==="; cat scripts/check_code_samples.py…)
+  ⎿  === check_code_samples.py ===
+     #!/usr/bin/env python3
+     """Validate checked code samples and source excerpts in mdBook Markdow
+     … +522 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ Let me read the lessons-learned, the preprocessor wrapper, an actual chapter's
+  include usage, and the docs structure.
+
+⏺ Bash(cd ~/projects/books/golang/golang-with-ai
+      echo "=== lessons-learned.md ==="; cat docs/lessons-learned.md…)
+  ⎿  === lessons-learned.md ===
+     # Lessons Learned
+     … +255 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ Bash(cd ~/projects/books/golang/golang-with-ai
+      echo "=== ch01.md include usage (grep) ==="; grep -n '{{#include'
+      src/ch01.md | head; echo "--- a code fence region in…)
+  ⎿  === ch01.md include usage (grep) ===
+     110:{{#include source-excerpts/ch01/roborev_agent_interface.go}}
+     137:{{#include source-excerpts/ch01/agentsview_readonly_sync.go}}
+     … +94 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ Bash(cd ~/projects/books/rust/async-rust
+      echo "=== includes in async-rust? ==="; grep -rn
+      '{{#include\|{{#rustdoc_include\|{{#playground\|ANCHOR' src/*.md
+      2>/dev/nul…)  ⎿  === includes in async-rust? ===
+     === book.toml ===
+     [book]
+     … +36 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ I have a thorough understanding now. The golang-with-ai book is the evolved
+  best-practice model (external sample files + {{#include}} + a compiling
+  checker + provenance manifest), while async-rust is the older inline-code
+  pattern the new skill should supersede. The math skill supplies the toolchain,
+  build hazards, and multi-agent review process.
+
+  Let me build the skill. I'll start with the flagship multi-language code
+  checker.
+
+⏺ Write(scripts/check_code_samples.py)
+  ⎿  Wrote 450 lines to scripts/check_code_samples.py
+       2 """Verify every code sample in a programming mdBook actually com
+         piles/runs.
+       4 The central rule of a house-style programming book: **displayed 
+         code is never
+       5 hand-typed into the prose.** It lives in a real source file unde
+       6 compilable project) or `src/<lang>/` (a standalone sample), and 
+         the chapter
+       8 pulls it in with an mdBook include directive:
+       9     ```rust
+      10     {{#rustdoc_include code/ch03/src/lib.rs:retry}}
+     … +554 lines (ctrl+o to expand)
+
+❯ The scripts directory may separate the different skills according to the programming language of the mdBook. Python scripts would be in `scripts/python`, Rust scripts in `scripts/rust`, etc. 
+
+⏺ Good point — most programming books are single-language, so per-language
+  scripts that a book can copy selectively is a cleaner fit. Let me restructure:
+  a shared common.py library plus scripts/{go,python,rust}/ validators, with a
+  thin top-level dispatcher.
+
+⏺ Write(scripts/common.py)
+  ⎿  Wrote 302 lines to scripts/common.py
+       2 """Shared library for the per-language code-sample checkers.
+       3 
+       4 The central rule of a house-style programming book: **displayed 
+       5 hand-typed into the prose.** It lives in a real source file (a c
+         ompilable
+       6 project under `code/`, or a standalone sample under `<lang>/`) a
+       7 pulls it in with an mdBook include directive:
+       8 
+       9     ```rust
+      10     {{#rustdoc_include code/ch03/src/lib.rs:retry}}
+     … +347 lines (ctrl+o to expand)
+
+⏺ Now the three per-language validators. First, replace the monolith with a thin
+  dispatcher, then write each language script.
+
+⏺ Write(scripts/check_code_samples.py)
+  ⎿  Added 37 lines, removed 423 lines
+        1  #!/usr/bin/env python3
+        2 -"""Verify every code sample in a programming mdBook actually c
+          -ompiles/runs.                                                 
+        2 +"""Dispatcher: run the per-language code-sample checkers a boo
+          +k actually uses.                                              
+        3  
+        4 -The central rule of a house-style programming book: **displaye
+          -d code is never                                               
+        5 -hand-typed into the prose.** It lives in a real source file un
+          -der `code/` (a                                                
+        6 -compilable project) or `src/<lang>/` (a standalone sample), an
+          -d the chapter                                                 
+        7 -pulls it in with an mdBook include directive:                 
+        4 +Most house-style programming books are single-language (a Go b
+          +ook, a Rust book,                                             
+        5 +a Python book), so each language's checker lives under `script
+          +s/<lang>/` and can                                            
+        6 +be copied and run on its own. This dispatcher is a convenience
+          + for the justfile:                                            
+        7 +it runs the checkers for whichever `scripts/<lang>/` directori
+          +es are present                                                
+        8 +(or the ones named with --langs) and fails if any fails.      
+        9  
+        9 -    ```rust                                                   
+       10 -    {{#rustdoc_include code/ch03/src/lib.rs:retry}}           
+       11 -    ```                                                       
+       12 -    ```go                                                     
+       13 -    {{#include go/ch07/worker_test.go}}                       
+       14 -    ```                                                       
+       15 -    ```python                                                 
+       16 -    {{#include python/ch04/pipeline.py}}                      
+       17 -    ```                                                       
+       18 -                                                              
+       19 -This script is the gate that makes that rule real. For every f
+          -enced code block                                              
+       20 -in `src/**/*.md` whose language is Go, Python, or Rust it:    
+       21 -                                                              
+       22 -  * resolves the include (`{{#include}}`, `{{#rustdoc_include}
+          -}`,                                                           
+       23 -    `{{#playground}}`, with optional `:anchor` / `:start:end`)
+          - to its file,                                                 
+       24 -  * confirms the file exists and the anchor (if any) is define
+          -d,                                                            
+       25 -  * compiles / runs the sample in an isolated workspace per it
+          -s language,                                                   
+       26 -  * for *real-repository excerpts* under `src/source-excerpts/
+          -`, confirms the                                               
+       27 -    excerpt still matches the cited upstream file (provenance 
+          -— see manifest).                                              
+       28 -                                                              
+       29 -It also enforces the externalization policy: a checked-languag
+          -e block that is                                               
+       30 -*not* an include and is longer than --max-inline-lines fails t
+          -he check. Short                                               
+       31 -illustrative fragments are fine; a 20-line inline function tha
+          -t nobody compiles                                             
+       32 -is exactly the defect this book style exists to prevent.      
+       33 -                                                              
+       34 -Skip a block deliberately with a fence token (`no-check`, `ign
+          -ore`) or a                                                    
+       35 -`book:skip` comment in its first lines. Rust honors rustdoc fe
+          -nce annotations                                               
+       36 -(`no_run`, `compile_fail`, `should_panic`, `edition2015/2018/2
+          -021`).                                                        
+       37 -                                                              
+       38 -Usage:                                                        
+       39 -    check_code_samples.py [--root .] [--src src] [--update] [-
+          --max-inline-lines 6]                                          
+       40 -    check_code_samples.py --langs go,rust          # only chec
+          -k some languages                                              
+       41 -    check_code_samples.py --update                 # gofmt/rus
+          -tfmt/format in place                                          
+       10 +    check_code_samples.py                 # auto-detect from s
+          +cripts/<lang>/ dirs                                           
+       11 +    check_code_samples.py --langs rust    # just one          
+       12 +    check_code_samples.py --update        # reformat samples i
+          +n place, then check                                           
+       13  """
+       14  
+       15  from __future__ import annotations
+       16  
+       17  import argparse
+       47 -import re                                                     
+       48 -import shutil                                                 
+       18  import subprocess
+       19  import sys
+       51 -import tempfile                                               
+       52 -from dataclasses import dataclass, replace                    
+       20  from pathlib import Path
+       21  
+       55 -# ------------------------------------------------------------
+          ----------------                                               
+       56 -# Fence languages -> normalized language key, and file suffix 
+          --> language key.                                              
+       57 -# ------------------------------------------------------------
+          ----------------                                               
+       58 -LANG_BY_FENCE = {                                             
+       59 -    "go": "go", "golang": "go",                               
+       60 -    "python": "python", "py": "python", "python3": "python",  
+       61 -    "rust": "rust", "rs": "rust",                             
+       22 +CHECKERS = {                                                  
+       23 +    "go": "go/check_go_samples.py",                           
+       24 +    "python": "python/check_python_samples.py",               
+       25 +    "rust": "rust/check_rust_samples.py",                     
+       26  }
+       63 -LANG_BY_SUFFIX = {".go": "go", ".py": "python", ".rs": "rust"}
+       27  
+       65 -SKIP_TOKENS = {"no-check", "nocheck", "ignore", "skip", "check
+          -=skip", "check=false"}                                        
+       66 -# Rust fence annotations that change how the sample is validat
+          -ed (rustdoc style).                                           
+       67 -RUST_NO_RUN = {"no_run", "norun"}                             
+       68 -RUST_COMPILE_FAIL = {"compile_fail", "compile-fail"}          
+       69 -RUST_EDITION = {"edition2015": "2015", "edition2018": "2018", 
+          -"edition2021": "2021"}                                        
+       28  
+       71 -INCLUDE_RE = re.compile(                                      
+       72 -    r"^\s*\{\{#(?:include|rustdoc_include|playground)\s+([^}:]
+          -+)(?::([^}]*))?\}\}\s*$"                                      
+       73 -)                                                             
+       74 -SOURCE_EXCERPT_DIR = "source-excerpts"                        
+       75 -SOURCE_EXCERPT_MANIFEST = "source-excerpts/manifest.tsv"      
+       76 -                                                              
+       77 -                                                              
+       78 -class CheckError(Exception):                                  
+       79 -    pass                                                      
+       80 -                                                              
+       81 -                                                              
+       82 -@dataclass(frozen=True)                                       
+       83 -class CodeBlock:                                              
+       84 -    path: Path                                                
+       85 -    start_line: int  # first body line (1-based)              
+       86 -    end_line: int    # last body line (inclusive)             
+       87 -    info: str        # fence info string, e.g. "rust no_run"  
+       88 -    code: str                                                 
+       89 -                                                              
+       90 -    @property                                                 
+       91 -    def language(self) -> str:                                
+       92 -        first = self.info.strip().split(maxsplit=1)[0].lower()
+          - if self.info.strip() else ""                                 
+       93 -        return LANG_BY_FENCE.get(first, "")                   
+       94 -                                                              
+       95 -    @property                                                 
+       96 -    def tokens(self) -> set[str]:                             
+       97 -        return {t.lower() for t in self.info.split()}         
+       98 -                                                              
+       99 -    @property                                                 
+      100 -    def label(self) -> str:                                   
+      101 -        return f"{self.path}:{self.start_line}"               
+      102 -                                                              
+      103 -                                                              
+      104 -@dataclass(frozen=True)                                       
+      105 -class SourceExcerpt:                                          
+      106 -    excerpt: Path                                             
+      107 -    source: Path                                              
+      108 -    mode: str  # "exact" | "normalized"                       
+      109 -                                                              
+      110 -    @property                                                 
+      111 -    def label(self) -> str:                                   
+      112 -        return str(self.excerpt)                              
+      113 -                                                              
+      114 -                                                              
+      115 -# ------------------------------------------------------------
+          ----------------                                               
+      116 -# Markdown fence extraction (CommonMark-ish: matched ``` / ~~~
+          - runs).                                                       
+      117 -# ------------------------------------------------------------
+          ----------------                                               
+      118 -def extract_code_blocks(path: Path) -> list[CodeBlock]:       
+      119 -    lines = path.read_text(encoding="utf-8").splitlines(keepen
+          -ds=True)                                                      
+      120 -    blocks: list[CodeBlock] = []                              
+      121 -    fence_re = re.compile(r"^[ \t]*(`{3,}|~{3,})([^\n\r]*)$") 
+      122 -    in_block = False                                          
+      123 -    fence_char, fence_len, info, start_line = "", 0, "", 0    
+      124 -    body: list[str] = []                                      
+      125 -                                                              
+      126 -    for idx, line in enumerate(lines, start=1):               
+      127 -        stripped = line.rstrip("\n\r")                        
+      128 -        if not in_block:                                      
+      129 -            m = fence_re.match(stripped)                      
+      130 -            if not m:                                         
+      131 -                continue                                      
+      132 -            in_block, fence_char, fence_len = True, m.group(1)
+          -[0], len(m.group(1))                                          
+      133 -            info, start_line, body = m.group(2).strip(), idx +
+          - 1, []                                                        
+      134 -            continue                                          
+      135 -        if re.match(rf"^[ \t]*{re.escape(fence_char)}{{{fence_
+          -len},}}[ \t]*$", stripped):                                   
+      136 -            blocks.append(CodeBlock(path, start_line, idx - 1,
+          - info, "".join(body)))                                        
+      137 -            in_block, fence_char, fence_len, info, body = Fals
+          -e, "", 0, "", []                                              
+      138 -            continue                                          
+      139 -        body.append(line)                                     
+      140 -                                                              
+      141 -    if in_block:                                              
+      142 -        raise CheckError(f"{path}:{start_line - 1}: unterminat
+          -ed fenced code block")                                        
+      143 -    return blocks                                             
+      144 -                                                              
+      145 -                                                              
+      146 -def should_skip(block: CodeBlock) -> bool:                    
+      147 -    if block.tokens & SKIP_TOKENS:                            
+      148 -        return True                                           
+      149 -    for line in block.code.splitlines()[:5]:                  
+      150 -        if "book:skip" in line or "book:no-check" in line:    
+      151 -            return True                                       
+      152 -    return False                                              
+      153 -                                                              
+      154 -                                                              
+      155 -@dataclass(frozen=True)                                       
+      156 -class Include:                                                
+      157 -    path: Path                                                
+      158 -    anchor: str | None                                        
+      159 -                                                              
+      160 -                                                              
+      161 -def parse_include(block: CodeBlock) -> Include | None:        
+      162 -    lines = [ln.strip() for ln in block.code.splitlines() if l
+          -n.strip()]                                                    
+      163 -    if len(lines) != 1:                                       
+      164 -        return None                                           
+      165 -    m = INCLUDE_RE.match(lines[0])                            
+      166 -    if not m:                                                 
+      167 -        return None                                           
+      168 -    target = (block.path.parent / m.group(1).strip()).resolve(
+          -)                                                             
+      169 -    spec = (m.group(2) or "").strip()                         
+      170 -    # `:anchor` is a named region; `:start:end` is a line rang
+          -e (no anchor name).                                           
+      171 -    anchor = spec if spec and not re.fullmatch(r"\d*(:\d*)?", 
+          -spec) else None                                               
+      172 -    return Include(target, anchor)                            
+      173 -                                                              
+      174 -                                                              
+      175 -def anchor_defined(file_path: Path, anchor: str) -> bool:     
+      176 -    text = file_path.read_text(encoding="utf-8")              
+      177 -    return f"ANCHOR: {anchor}" in text or f"ANCHOR:{anchor}" i
+          -n text                                                        
+      178 -                                                              
+      179 -                                                              
+      180 -# ------------------------------------------------------------
+          ----------------                                               
+      181 -# Provenance: real-repository excerpts must match their upstre
+          -am source file.                                               
+      182 -# ------------------------------------------------------------
+          ----------------                                               
+      183 -def normalize(text: str) -> str:                              
+      184 -    return re.sub(r"\s+", " ", text).strip()                  
+      185 -                                                              
+      186 -                                                              
+      187 -def load_manifest(src_dir: Path) -> dict[Path, SourceExcerpt]:
+      188 -    manifest = src_dir / SOURCE_EXCERPT_MANIFEST              
+      189 -    if not manifest.exists():                                 
+      190 -        return {}                                             
+      191 -    out: dict[Path, SourceExcerpt] = {}                       
+      192 -    for n, raw in enumerate(manifest.read_text(encoding="utf-8
+          -").splitlines(), 1):                                          
+      193 -        line = raw.strip()                                    
+      194 -        if not line or line.startswith("#"):                  
+      195 -            continue                                          
+      196 -        parts = [p.strip() for p in raw.split("\t")]          
+      197 -        if len(parts) != 3:                                   
+      198 -            raise CheckError(f"{manifest}:{n}: expected 3 tab-
+          -separated fields "                                            
+      199 -                             "(excerpt, source, mode)")       
+      200 -        excerpt_raw, source_raw, mode = parts                 
+      201 -        if mode not in {"exact", "normalized"}:               
+      202 -            raise CheckError(f"{manifest}:{n}: bad mode {mode!
+          -r} (exact|normalized)")                                       
+      203 -        excerpt = (src_dir / excerpt_raw).resolve()           
+      204 -        source = Path(source_raw).expanduser().resolve()      
+      205 -        if not excerpt.exists():                              
+      206 -            raise CheckError(f"{manifest}:{n}: excerpt not fou
+          -nd: {excerpt}")                                               
+      207 -        if not source.exists():                               
+      208 -            raise CheckError(f"{manifest}:{n}: source not foun
+          -d: {source}")                                                 
+      209 -        out[excerpt] = SourceExcerpt(excerpt, source, mode)   
+      210 -    return out                                                
+      211 -                                                              
+      212 -                                                              
+      213 -def check_excerpt(entry: SourceExcerpt) -> None:              
+      214 -    have = entry.excerpt.read_text(encoding="utf-8")          
+      215 -    want = entry.source.read_text(encoding="utf-8")           
+      216 -    if entry.mode == "exact" and have in want:                
+      217 -        return                                                
+      218 -    if entry.mode == "normalized" and normalize(have) in norma
+          -lize(want):                                                   
+      219 -        return                                                
+      220 -    raise CheckError(f"{entry.label}: excerpt no longer matche
+          -s source {entry.source} "                                     
+      221 -                     f"(mode={entry.mode}) — reconcile or upda
+          -te the excerpt")                                              
+      222 -                                                              
+      223 -                                                              
+      224 -def under(path: Path, parent: Path) -> bool:                  
+      225 -    try:                                                      
+      226 -        path.relative_to(parent)                              
+      227 -        return True                                           
+      228 -    except ValueError:                                        
+      229 -        return False                                          
+      230 -                                                              
+      231 -                                                              
+      232 -# ------------------------------------------------------------
+          ----------------                                               
+      233 -# Per-language validation. Each returns None on success, raise
+          -s CheckError.                                                 
+      234 -# `update` means: rewrite the file in place with the canonical
+          - formatter.                                                   
+      235 -# ------------------------------------------------------------
+          ----------------                                               
+      236 -def run(cmd: list[str], cwd: Path) -> subprocess.CompletedProc
+          -ess[str]:                                                     
+      237 -    return subprocess.run(cmd, cwd=str(cwd), text=True,       
+      238 -                          stdout=subprocess.PIPE, stderr=subpr
+          -ocess.PIPE, check=False)                                      
+      239 -                                                              
+      240 -                                                              
+      241 -def validate_go(file_path: Path, work: Path, *, update: bool) 
+          --> None:                                                      
+      242 -    code = file_path.read_text(encoding="utf-8")              
+      243 -    if not re.search(r"(?m)^\s*package\s+\w+\s*$", code):     
+      244 -        raise CheckError(f"{file_path}: Go sample needs a pack
+          -age declaration "                                             
+      245 -                         "(or mark the block `no-check`)")    
+      246 -    if update:                                                
+      247 -        if run(["gofmt", "-w", str(file_path)], file_path.pare
+          -nt).returncode != 0:                                          
+      248 -            raise CheckError(f"{file_path}: gofmt failed")    
+      249 -        code = file_path.read_text(encoding="utf-8")          
+      250 -    d = work / f"go_{abs(hash(str(file_path)))}"              
+      251 -    d.mkdir(parents=True)                                     
+      252 -    (d / "go.mod").write_text("module book_sample\n\ngo 1.22\n
+          -", encoding="utf-8")                                          
+      253 -    is_test = bool(re.search(r"(?m)^\s*func\s+(Test|Example|Be
+          -nchmark)\w*\s*\(", code))                                     
+      254 -    (d / ("sample_test.go" if is_test else "sample.go")).write
+          -_text(code, encoding="utf-8")                                 
+      255 -    fmt = run(["gofmt", "-l", str(d)], d)                     
+      256 -    if fmt.stdout.strip():                                    
+      257 -        raise CheckError(f"{file_path}: not gofmt-formatted (r
+          -un with --update)")                                           
+      258 -    proc = run(["go", "test", "."], d)                        
+      259 -    if proc.returncode != 0:                                  
+      260 -        raise CheckError(f"{file_path}: `go test .` failed\n{p
+          -roc.stdout}{proc.stderr}".rstrip())                           
+      261 -                                                              
+      262 -                                                              
+      263 -def validate_python(file_path: Path, work: Path, *, update: bo
+          -ol) -> None:                                                  
+      264 -    if update and shutil.which("ruff"):                       
+      265 -        run(["ruff", "format", str(file_path)], file_path.pare
+          -nt)                                                           
+      266 -    # Always: syntax must be valid.                           
+      267 -    proc = run([sys.executable, "-m", "py_compile", str(file_p
+          -ath)], file_path.parent)                                      
+      268 -    if proc.returncode != 0:                                  
+      269 -        raise CheckError(f"{file_path}: py_compile failed\n{pr
+          -oc.stdout}{proc.stderr}".rstrip())                            
+      270 -    # Format check, if a formatter is available (graceful when
+          - absent).                                                     
+      271 -    if shutil.which("ruff"):                                  
+      272 -        fmt = run(["ruff", "format", "--check", str(file_path)
+          -], file_path.parent)                                          
+      273 -        if fmt.returncode != 0:                               
+      274 -            raise CheckError(f"{file_path}: not ruff-formatted
+          - (run with --update)")                                        
+      275 -    # Run tests if this is a test module or contains test func
+          -tions.                                                        
+      276 -    name, text = file_path.name, file_path.read_text(encoding=
+          -"utf-8")                                                      
+      277 -    if (name.startswith("test_") or name.endswith("_test.py") 
+      278 -            or re.search(r"(?m)^\s*def\s+test_\w*\s*\(", text)
+          -) and shutil.which("pytest"):                                 
+      279 -        proc = run(["pytest", "-q", str(file_path)], file_path
+          -.parent)                                                      
+      280 -        if proc.returncode not in (0, 5):  # 5 == no tests col
+          -lected                                                        
+      281 -            raise CheckError(f"{file_path}: pytest failed\n{pr
+          -oc.stdout}{proc.stderr}".rstrip())                            
+      282 -                                                              
+      283 -                                                              
+      284 -def validate_rust(file_path: Path, work: Path, block: CodeBloc
+          -k, *, update: bool) -> None:                                  
+      285 -    if update and shutil.which("rustfmt"):                    
+      286 -        run(["rustfmt", "--edition", "2021", str(file_path)], 
+          -file_path.parent)                                             
+      287 -    # If the sample lives inside a real cargo project, compila
+          -tion/tests are the                                            
+      288 -    # workspace's job (run via `cargo test` in the justfile). 
+          -Only format-check.                                            
+      289 -    if any((p / "Cargo.toml").exists() for p in file_path.pare
+          -nts):                                                         
+      290 -        if shutil.which("rustfmt"):                           
+      291 -            chk = run(["rustfmt", "--edition", "2021", "--chec
+          -k", str(file_path)], file_path.parent)                        
+      292 -            if chk.returncode != 0:                           
+      293 -                raise CheckError(f"{file_path}: not rustfmt-fo
+          -rmatted (run with --update)")                                 
+      294 -        return                                                
+      295 -    if shutil.which("rustfmt"):                               
+      296 -        chk = run(["rustfmt", "--edition", "2021", "--check", 
+          -str(file_path)], file_path.parent)                            
+      297 -        if chk.returncode != 0:                               
+      298 -            raise CheckError(f"{file_path}: not rustfmt-format
+          -ted (run with --update)")                                     
+      299 -    if not shutil.which("rustc"):                             
+      300 -        raise CheckError("`rustc` not on PATH (needed for stan
+          -dalone Rust samples)")                                        
+      301 -    edition = next((v for k, v in RUST_EDITION.items() if k in
+          - block.tokens), "2021")                                       
+      302 -    compile_fail = bool(block.tokens & RUST_COMPILE_FAIL)     
+      303 -    no_run = bool(block.tokens & RUST_NO_RUN) or compile_fail 
+      304 -    d = work / f"rs_{abs(hash(str(file_path)))}"              
+      305 -    d.mkdir(parents=True)                                     
+      306 -    out = d / "sample"                                        
+      307 -    proc = run(["rustc", "--edition", edition, "--test", str(f
+          -ile_path), "-o", str(out)], d)                                
+      308 -    if compile_fail:                                          
+      309 -        if proc.returncode == 0:                              
+      310 -            raise CheckError(f"{file_path}: marked compile_fai
+          -l but it compiled")                                           
+      311 -        return                                                
+      312 -    if proc.returncode != 0:                                  
+      313 -        raise CheckError(f"{file_path}: rustc failed\n{proc.st
+          -derr}".rstrip())                                              
+      314 -    if not no_run and run([str(out), "--quiet"], d).returncode
+          - != 0:                                                        
+      315 -        raise CheckError(f"{file_path}: compiled test binary f
+          -ailed at runtime")                                            
+      316 -                                                              
+      317 -                                                              
+      318 -def validate_file(lang: str, file_path: Path, work: Path, bloc
+          -k: CodeBlock, *, update: bool) -> None:                       
+      319 -    if lang == "go":                                          
+      320 -        validate_go(file_path, work, update=update)           
+      321 -    elif lang == "python":                                    
+      322 -        validate_python(file_path, work, update=update)       
+      323 -    elif lang == "rust":                                      
+      324 -        validate_rust(file_path, work, block, update=update)  
+      325 -                                                              
+      326 -                                                              
+      327 -# ------------------------------------------------------------
+          ----------------                                               
+      328 -# Driver.                                                     
+      329 -# ------------------------------------------------------------
+          ----------------                                               
+      330 -def find_markdown(src: Path) -> list[Path]:                   
+      331 -    return sorted(p for p in src.rglob("*.md") if p.is_file())
+      332 -                                                              
+      333 -                                                              
+      334 -def check_all(root: Path, src: Path, *, langs: set[str], updat
+          -e: bool,                                                      
+      335 -              max_inline: int) -> int:                        
+      336 -    errors: list[str] = []                                    
+      337 -    counts = {"included": 0, "compiled": 0, "skipped": 0, "inl
+          -ine_ok": 0, "excerpts": 0}                                    
+      338 -    excerpt_refs: set[Path] = set()                           
+      339 -                                                              
+      340 -    try:                                                      
+      341 -        manifest = load_manifest(src)                         
+      342 -    except CheckError as e:                                   
+      343 -        manifest, _ = {}, errors.append(str(e))               
+      344 -    excerpt_root = (src / SOURCE_EXCERPT_DIR).resolve()       
+      345 -                                                              
+      346 -    with tempfile.TemporaryDirectory(prefix="book-code-") as t
+          -mp:                                                           
+      347 -        work = Path(tmp)                                      
+      348 -        for md in find_markdown(src):                         
+      349 -            try:                                              
+      350 -                blocks = extract_code_blocks(md)              
+      351 -            except CheckError as e:                           
+      352 -                errors.append(str(e))                         
+      353 -                continue                                      
+      354 -            for block in blocks:                              
+      355 -                lang = block.language                         
+      356 -                if not lang or lang not in langs:             
+      357 -                    continue                                  
+      358 -                inc = parse_include(block)                    
+      359 -                if inc is None:                               
+      360 -                    if should_skip(block):                    
+      361 -                        counts["skipped"] += 1                
+      362 -                    elif len(block.code.strip().splitlines()) 
+          -> max_inline:                                                 
+      363 -                        errors.append(                        
+      364 -                            f"{block.label}: inline {lang} blo
+          -ck is "                                                       
+      365 -                            f"{len(block.code.strip().splitlin
+          -es())} lines — externalize it "                               
+      366 -                            f"to a file and {{#include}} it (o
+          -r mark `no-check` if it is a "                                
+      367 -                            f"deliberate fragment)")          
+      368 -                    else:                                     
+      369 -                        counts["inline_ok"] += 1              
+      370 -                    continue                                  
+      371 -                counts["included"] += 1                       
+      372 -                if not inc.path.exists():                     
+      373 -                    errors.append(f"{block.label}: included fi
+          -le not found: {inc.path}")                                    
+      374 -                    continue                                  
+      375 -                if inc.anchor and not anchor_defined(inc.path,
+          - inc.anchor):                                                 
+      376 -                    errors.append(f"{block.label}: anchor '{in
+          -c.anchor}' not defined in {inc.path}")                        
+      377 -                if under(inc.path, excerpt_root):             
+      378 -                    excerpt_refs.add(inc.path)                
+      379 -                    if inc.path not in manifest:              
+      380 -                        errors.append(f"{block.label}: excerpt
+          - missing from "                                               
+      381 -                                      f"{SOURCE_EXCERPT_MANIFE
+          -ST}: {inc.path}")                                             
+      382 -                    continue  # provenance-checked below, not 
+          -compiled                                                      
+      383 -                if should_skip(block):                        
+      384 -                    counts["skipped"] += 1                    
+      385 -                    continue                                  
+      386 -                file_lang = LANG_BY_SUFFIX.get(inc.path.suffix
+          -, lang)                                                       
+      387 -                if file_lang not in langs:                    
+      388 -                    continue                                  
+      389 -                try:                                          
+      390 -                    validate_file(file_lang, inc.path, work, b
+          -lock, update=update)                                          
+      391 -                    counts["compiled"] += 1                   
+      392 -                except CheckError as e:                       
+      393 -                    errors.append(str(e))                     
+      394 -                                                              
+      395 -        # Provenance sweep: manifest <-> files on disk <-> act
+          -ually included.                                               
+      396 -        if manifest:                                          
+      397 -            on_disk = {p.resolve() for p in excerpt_root.rglob
+          -("*")                                                         
+      398 -                       if p.is_file() and p.suffix in LANG_BY_
+          -SUFFIX}                                                       
+      399 -            listed = set(manifest)                            
+      400 -            for p in sorted(on_disk - listed):                
+      401 -                errors.append(f"{p}: excerpt file not in {SOUR
+          -CE_EXCERPT_MANIFEST}")                                        
+      402 -            for p in sorted(listed - excerpt_refs):           
+      403 -                errors.append(f"{p}: manifest excerpt is never
+          - {{#include}}d from a chapter")                               
+      404 -            for entry in manifest.values():                   
+      405 -                try:                                          
+      406 -                    check_excerpt(entry)                      
+      407 -                    counts["excerpts"] += 1                   
+      408 -                except CheckError as e:                       
+      409 -                    errors.append(str(e))                     
+      410 -                                                              
+      411 -    if errors:                                                
+      412 -        print("code-sample check FAILED:", file=sys.stderr)   
+      413 -        for e in errors:                                      
+      414 -            print(f"  {e}", file=sys.stderr)                  
+      415 -        return 1                                              
+      416 -    print("code-sample check OK — compiled {compiled}, include
+          -d {included}, "                                               
+      417 -          "excerpts {excerpts}, short-inline {inline_ok}, skip
+          -ped {skipped}".format(**counts),                              
+      418 -          file=sys.stderr)                                    
+      419 -    return 0                                                  
+      420 -                                                              
+      421 -                                                              
+       29  def main(argv: list[str] | None = None) -> int:
+       30      ap = argparse.ArgumentParser(description=__doc__,
+       31                                   formatter_class=argparse.RawD
+           escriptionHelpFormatter)
+       32      ap.add_argument("--root", default=".")
+       33      ap.add_argument("--src", default="src")
+      427 -    ap.add_argument("--langs", default="go,python,rust",      
+      428 -                    help="comma list of languages to check (de
+          -fault: all three)")                                           
+      429 -    ap.add_argument("--max-inline-lines", type=int, default=6,
+      430 -                    help="checked-language inline blocks longe
+          -r than this must be externalized")                            
+      431 -    ap.add_argument("--update", action="store_true",          
+      432 -                    help="reformat included samples in place b
+          -efore validating")                                            
+       34 +    ap.add_argument("--langs", default="", help="comma list; d
+          +efault: auto-detect")                                         
+       35 +    ap.add_argument("--update", action="store_true")          
+       36 +    ap.add_argument("--max-inline-lines", type=int, default=6)
+       37      args = ap.parse_args(argv)
+       38  
+      435 -    root = Path(args.root).resolve()                          
+      436 -    src = (root / args.src).resolve()                         
+      437 -    if not src.exists():                                      
+      438 -        print(f"source directory not found: {src}", file=sys.s
+          -tderr)                                                        
+       39 +    here = Path(__file__).resolve().parent                    
+       40 +    if args.langs.strip():                                    
+       41 +        langs = [l.strip().lower() for l in args.langs.split("
+          +,") if l.strip()]                                             
+       42 +    else:                                                     
+       43 +        langs = [l for l, rel in CHECKERS.items() if (here / r
+          +el).exists()]                                                 
+       44 +    if not langs:                                             
+       45 +        print("no per-language checkers found under scripts/<l
+          +ang>/", file=sys.stderr)                                      
+       46          return 1
+      440 -    langs = {l.strip().lower() for l in args.langs.split(",") 
+          -if l.strip()}                                                 
+      441 -    try:                                                      
+      442 -        return check_all(root, src, langs=langs, update=args.u
+          -pdate,                                                        
+      443 -                         max_inline=args.max_inline_lines)    
+      444 -    except CheckError as e:                                   
+      445 -        print(str(e), file=sys.stderr)                        
+      446 -        return 1                                              
+       47  
+       48 +    rc = 0                                                    
+       49 +    for lang in langs:                                        
+       50 +        rel = CHECKERS.get(lang)                              
+       51 +        if not rel or not (here / rel).exists():              
+       52 +            print(f"no checker for language {lang!r}", file=sy
+          +s.stderr)                                                     
+       53 +            rc = 1                                            
+       54 +            continue                                          
+       55 +        cmd = [sys.executable, str(here / rel), "--root", args
+          +.root, "--src", args.src,                                     
+       56 +               "--max-inline-lines", str(args.max_inline_lines
+          +)]                                                            
+       57 +        if args.update:                                       
+       58 +            cmd.append("--update")                            
+       59 +        rc |= subprocess.run(cmd, check=False).returncode     
+       60 +    return 1 if rc else 0                                     
+       61  
+       62 +                                                              
+       63  if __name__ == "__main__":
+       64      raise SystemExit(main())
+
+⏺ Write(scripts/go/check_go_samples.py)
+  ⎿  Wrote 76 lines to scripts/go/check_go_samples.py
+      2 """Validate Go code samples included into a programming mdBook.
+      3 
+         include is`golang` fenced block in src/**/*.md that is an mdBook
+      5 compiled (and tested) in an isolated temp module: the file needs 
+      6 declaration, must be `gofmt`-clean, and must pass `go test .`. Lo
+        ng inline Go
+        rce-repositorye not includes fail the externalization policy. Sou
+      8 excerpts under src/source-excerpts/ are provenance-checked agains
+      9 upstream files instead of compiled (see ../common.py and the mani
+        fest).
+     … +82 lines (ctrl+o to expand)
+
+⏺ Write(scripts/python/check_python_samples.py)
+  ⎿  Wrote 72 lines to scripts/python/check_python_samples.py
+      2 """Validate Python code samples included into a programming mdBoo
+      3 k.
+      4 Every `python`/`py` fenced block in src/**/*.md that is an mdBook
+      5 syntax-checked with py_compile, format-checked with ruff (if inst
+        alled), and —
+        ains the file is a test module (`test_*.py`, `*_test.py`, or cont
+        n blocks that — run with pytest (if installed). Long inline Pytho
+      8 are not includes fail the externalization policy. Source-reposito
+      9 under src/source-excerpts/ are provenance-checked, not run (see .
+        ./common.py).
+     … +80 lines (ctrl+o to expand)
+
+⏺ Write(scripts/rust/check_rust_samples.py)
+  ⎿  Wrote 100 lines to scripts/rust/check_rust_samples.py
+       2 """Validate Rust code samples included into a programming mdBook
+       3 .
+       4 Every `rust`/`rs` fenced block in src/**/*.md that is an mdBook 
+       5 format-checked with rustfmt. Then:
+       6 
+         ncestor has acluded file lives inside a real cargo project (an a
+         pulled in withl`) — the recommended layout, `code/chNN/` crates 
+       9     `{{#rustdoc_include code/ch03/src/lib.rs:anchor}}` — compila
+      10     are the workspace's job. Run `cargo test --workspace` from t
+         he justfile;
+     … +119 lines (ctrl+o to expand)
+
+⏺ Now the mdBook preprocessor wrapper, the prose-audit, and the cross-reference
+  checker.
+
+⏺ Write(scripts/mdbook_code_preprocessor.py)
+  ⎿  Wrote 46 lines to scripts/mdbook_code_preprocessor.py
+       2 """mdBook preprocessor: fail `mdbook build` when a code sample d
+         oesn't verify.
+       3 
+         r the PDF:to book.toml so a broken sample can never reach HTML o
+       5 
+       6     [preprocessor.code-samples]
+       8     renderers = ["html", "pandoc"]ook_code_preprocessor.py"
+       9 
+      10 It runs the per-language checkers (auto-detected from scripts/<l
+         ang>/ dirs) over
+     … +44 lines (ctrl+o to expand)
+
+⏺ Write(scripts/chapter-audit.py)
+  ⎿  Wrote 164 lines to scripts/chapter-audit.py
+       2 """Audit a programming mdBook's Markdown SOURCE for failure mode
+       3 s that ship green.
+       4 A clean `mdbook build` does NOT catch any of these — they render
+       5 the PDF, or quietly disable a chapter:
+       6 
+          admonish/code blockmber of ``` / ~~~ in a file        -> broken
+         tes "code lives inng (> N line) fenced Go/Python/Rust   -> viola
+       9               block that is NOT an {{#include}}            files
+      10                                                             the 
+         book style's core rule)
+     … +195 lines (ctrl+o to expand)
+
+⏺ Let me clean up a dead branch I left in chapter-audit.py.
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Removed 4 lines
+      84              if "inline-code" in checks and fence_lang_cur in CO
+          DE_LANGS:
+      85                  joined = "\n".join(body)
+      86                  nonblank = [b for b in body if b.strip()]
+      87 -                if not INCLUDE_RE.search(joined) and len(nonbla
+         -nk) > max_inline \                                             
+      88 -                        and "no-check" not in fence_lang_cur:  
+      89 -                    # whole info string check: allow `no-check`
+         -/`ignore`                                                      
+      90 -                    pass                                       
+      87                  if not INCLUDE_RE.search(joined) and len(nonbla
+          nk) > max_inline:
+      88                      errs.append(
+      89                          f"{path}:{fence_start}: inline {fence_l
+          ang_cur} block "
+
+⏺ Now the cross-reference checker, adapted for programming books
+  (Chapter/Section/Listing/Figure/Appendix references):
+
+⏺ Write(scripts/check-refs.py)
+  ⎿  Wrote 111 lines to scripts/check-refs.py
+       2 """Verify every cross-reference in a programming mdBook resolves
+         . Drift gate.
+       4 Renumbering chapters, retitling, and parallel drafting silently 
+         break
+       5 cross-references; mdbook does not validate them. This checks, pe
+       6 pools built from all of src/:
+       7 
+       9   Appendix X   -> src/appendix-<x>.md existsARY.md
+      10   §N / §N.M    -> a `## §N` / `### §N.M` heading exists (same fi
+         le, then book-wide)
+     … +125 lines (ctrl+o to expand)
+
+⏺ Let me verify the scripts run correctly with a small throwaway book fixture
+  before writing the docs.
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== syntax compile all scripts ==="…)
+  ⎿  === syntax compile all scripts ===
+     all compile OK
+     … +12 lines (ctrl+o to expand)
+
+⏺ All checkers work. Let me test the failure paths (externalization policy, Rust
+  standalone, broken include) to be sure the gates actually bite.
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      FX=$(mktemp -d); mkdir -p "$FX/src/rust/ch01" "$FX/scripts/rust"
+      "$FX/scripts/python"…)
+  ⎿  --- rust (expect OK if rustc present) ---
+     rust code-sample check OK — compiled 1, included 1, excerpts 0, short-
+     inline 0, skipped 0
+     … +14 lines (ctrl+o to expand)
+⏺ Everything works, including graceful degradation when ruff/pytest are absent.
+  Now the scripts README, then the main skill docs and justfile.
+
+⏺ Write(scripts/README.md)
+  ⎿  Wrote 81 lines to scripts/README.md
+        k scripts/ — reusable tooling for a house-style programming mdBoo
+      2 
+        ust test`.your book needs into its `scripts/` and wire it into `j
+      4 Everything here is **stdlib-only Python 3.10+** — runs under plai
+        n `python3`, no
+        t`, `rustc`,no pip install. The compilers/formatters (`go`, `gofm
+      6 `rustfmt`, `ruff`, `pytest`) are what each checker shells out to;
+      7 optional ones (ruff, pytest) are skipped, not failed.
+      8 
+      9 ## What each piece does
+     … +114 lines (ctrl+o to expand)
+
+⏺ Now the justfile template (test/build/deploy) at the skill root:
+
+⏺ Write(justfile)
+  ⎿  Wrote 106 lines to justfile
+         oy)ustfile — house-style programming mdBook (test / build / depl
+       2 #
+         book.y into a new book's root. Adjust `pdf` and `langs` for the 
+       4 # Recipes: `just` lists them; `just test` is the gate `deploy` d
+         epends on.
+       6 pdf   := "book/pandoc/pdf/your-title.pdf"
+       7 langs := "rust"          # comma list the book uses: go | python
+       8  | rust | "go,rust"
+       9 # List recipes
+      10 default:
+     … +119 lines (ctrl+o to expand)
+
+⏺ Now the main SKILL.md:
+
+⏺ Write(SKILL.md)
+  ⎿  Wrote 185 lines to SKILL.md
+      2 name: mdbook-programming
+      3 description: Scaffold, author, edit, and review a developer-facin
+        g programming mdBook (Go, Python, or Rust) in Hugh Brown's house 
+        xternalized to a real file and verified by a compiling/testing ch
+        ecker (go test / pytest / rustc), justfile build+deploy, git, mul
+        ti-agent review. Use when creating a new programming book under ~
+        sync-rust, rust-cli, golang-with-ai, polars), wiring up code-samp
+        le verification or include-based listings, or reviewing/editing s
+        uch a book. For math/LaTeX-heavy books use mdbook-math-book inste
+        ad; this sk
+     … +276 lines (ctrl+o to expand)
+
+⏺ Now REFERENCE.md with the concrete templates:
+
+⏺ Write(REFERENCE.md)
+  ⎿  Wrote 245 lines to REFERENCE.md
+       2 # REFERENCE — house-style programming mdBook templates
+       3 Copy-paste starting points. The live, working copy is
+       4 `~/projects/books/golang/golang-with-ai`. For PDF/preamble machi
+         nery shared with
+       5 the math books, see `../mdbook-math-book/REFERENCE.md`.
+       6 
+       7 ## book.toml (programming book)
+       8 
+       9 ```toml
+      10 [book]
+     … +270 lines (ctrl+o to expand)
+
+❯ There currently is no SKILLS.md or REFERENCES.md for this skill. Draw on the examples cited. 
+
+⏺ I've now created SKILL.md and REFERENCE.md (the house-style singular naming,
+  per the math skill and write-a-skill convention) — addressing the
+  interjection. Let me do a final structural check and smoke-test the justfile.
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== tree ==="; find . -type f | sort…)
+  ⎿  === tree ===
+     ./justfile
+     ./REFERENCE.md
+     … +57 lines (ctrl+o to expand)
+
+⏺ The justfile works, but just treats the last comment line above each recipe as
+  its doc string, producing mid-sentence fragments. Let me give the affected
+  recipes clean one-line docs.
+
+⏺ Update(justfile)
+  ⎿  Added 2 lines
+      13  # ---- build --------------------------------------------------
+          -----------
+      14  # mdbook build also runs the code-sample preprocessor (book.tom
+          l), so a broken
+      15  # sample fails the HTML + PDF build.
+      16 +                                                               
+      17 +# Build HTML + PDF (also runs the code-sample checker via the p
+         +reprocessor)                                                   
+      18  build:
+      19      mdbook build
+      20  
+
+⏺ Update(justfile)
+  ⎿  Added 1 line, removed 2 lines
+      40  test: check-code chapter-audit check-refs cargo-test check-warn
+          ings
+      41      @echo "OK: all checks passed."
+      42  
+      43 -# Compile/run every included code sample (Go: go test, Python: 
+         -pytest, Rust:                                                  
+      44 -# rustc --test). The mdbook preprocessor runs this too; here it
+         - is standalone.                                                
+      43 +# Compile/run every included code sample (go test / pytest / ru
+         +stc --test)                                                    
+      44  check-code:
+      45      python3 scripts/check_code_samples.py --langs {{langs}}
+      46  
+
+⏺ Update(justfile)
+  ⎿  Added 1 line, removed 2 lines
+      57  check-refs:
+      58      python3 scripts/check-refs.py
+      59  
+      60 -# Rust books with a code/ Cargo workspace: compile and test eve
+         -ry crate. (No-op                                               
+      61 -# for go/python books — delete this recipe and drop it from `te
+         -st` then.)                                                     
+      60 +# Rust code/ workspace: compile + test every crate (no-op witho
+         +ut code/Cargo.toml)                                            
+      61  cargo-test:
+      62      @test -f code/Cargo.toml && cargo test --manifest-path code
+          /Cargo.toml --workspace || echo "no code/ workspace; skipping c
+          argo test"
+      63  
+
+⏺ Update(justfile)
+  ⎿  Added 1 line, removed 2 lines
+      61  cargo-test:
+      62      @test -f code/Cargo.toml && cargo test --manifest-path code
+          /Cargo.toml --workspace || echo "no code/ workspace; skipping c
+          argo test"
+      63  
+      64 -# Fail on ANY mdbook/pandoc warning (a "Missing character" = a 
+         -glyph the PDF                                                  
+      65 -# font lacks — fix the source).                                
+      64 +# Fail on ANY mdbook/pandoc warning ("Missing character" = a PD
+         +F-font glyph gap)                                              
+      65  check-warnings:
+      66      #!/usr/bin/env bash
+      67      set -euo pipefail
+
+⏺ Update(justfile)
+  ⎿  Added 1 line, removed 2 lines
+      48  fmt-code:
+      49      python3 scripts/check_code_samples.py --langs {{langs}} --u
+          pdate
+      50  
+      51 -# Markdown source health: fence parity, un-externalized inline 
+         -code, PDF-hostile                                              
+      52 -# Unicode, leaked tool tags, placeholders, SUMMARY coverage.   
+      51 +# Markdown source health: fences, un-externalized inline code, 
+         +Unicode, SUMMARY                                               
+      52  chapter-audit:
+      53      python3 scripts/chapter-audit.py
+      54  
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      find scripts -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null;
+      true…)
+  ⎿  === just --list ===
+     Available recipes:
+         build          # Build HTML + PDF (also runs the code-sample check
+     … +30 lines (ctrl+o to expand)
+
+⏺ The skill is complete and verified. Here's what I built in
+  mdbook-programming/:
+
+  What was created
+
+  mdbook-programming/
+  ├── SKILL.md                          # main instructions + triggers (185
+  lines)
+  ├── REFERENCE.md                      # book.toml, sample layouts, PDF-hazard
+  table (245 lines)
+  ├── justfile                          # test / build / deploy (gh-pages
+  worktree)
+  └── scripts/                          # stdlib-only Python, copy-into-a-book
+      ├── README.md
+      ├── common.py                     # shared: fence extraction, includes,
+  provenance, drive()
+      ├── check_code_samples.py         # dispatcher over languages present
+      ├── mdbook_code_preprocessor.py   # runs the checker inside `mdbook build`
+      ├── chapter-audit.py              # source health (fences, inline-code,
+  Unicode, SUMMARY)
+      ├── check-refs.py                 # Chapter/§/Listing/Figure/Appendix +
+  link resolution
+      ├── go/check_go_samples.py        # gofmt + go test
+      ├── python/check_python_samples.py# py_compile + ruff + pytest
+      └── rust/check_rust_samples.py    # rustfmt + rustc --test, honors
+  no_run/compile_fail/edition
+
+  Key design decisions
+
+  - The core rule, mechanically enforced. Every displayed sample must live in a
+  real file pulled in via {{#include}} / {{#rustdoc_include}} / {{#playground}}.
+  The checker compiles/tests the included file, and any inline checked-language
+  block over 6 lines fails the gate — so "code outside the text" isn't a
+  guideline, it's a build error.
+  - Per-language scripts under scripts/<lang>/ (your interjection), sharing
+  common.py, so a single-language book copies only scripts/rust/ (or go/python)
+  + common.py.
+  - Three sample homes: Rust code/ Cargo crates with anchors (cargo test 
+  --workspace), standalone src/<lang>/chNN/ files (compiled directly), and
+  src/source-excerpts/ real-repo excerpts checked for provenance against
+  upstream via manifest.tsv — the golang-with-ai pattern.
+  - Drew on the cited sources: toolchain pinning, PDF hazards, ASCII-in-prose
+  rule, light preamble, and the multi-agent review roster come from
+  mdbook-math-book; the externalization/provenance machinery and the
+  golang-with-ai book is named as the canonical on-disk example, with async-rust
+  flagged as the older inline pattern this skill supersedes.
+
+  Verified, not just claimed
+
+  - All 8 scripts py_compile clean.
+  - Go/Python/Rust checkers each compiled and ran a real sample on a fixture
+  book (go, gofmt, rustc all present).
+  - Failure paths bite: 7-line inline block rejected, missing Appendix flagged,
+  anchors resolved, graceful skip when ruff/pytest absent.
+  - just --list parses with clean one-line docs.
+
+  One note: ruff and pytest aren't installed on this machine, so the Python
+  checker's format/test steps degrade gracefully (py_compile still runs).
+  Install them (pip install ruff pytest) to get the full Python gate.
+
+⏺ Ran 3 stop hooks (ctrl+o to expand)
+  ⎿  Stop hook error: AUTO-SAVE checkpoint. Save key topics, decisions,
+  quotes, and code from this session to your memory system. Organize
+  into appropriate categories. Use verbatim quotes where possible.
+  Continue conversation after saving.
+
+⏺ I'll save the key durable facts from this session to memory.
+  Listed 1 directory, wrote 4 memories (ctrl+o to expand)
+
+⏺ Saved to memory. Three linked notes plus the index:
+
+  - claude-skills-repo (project) — the repo houses Hugh's mdBook-authoring
+  skills; mdbook-programming created 2026-06-04; house style uses singular
+  SKILL.md/REFERENCE.md.
+  - house-style-mdbook-locations (reference) — on-disk canonical books:
+  golang-with-ai is the model to copy, async-rust is the older inline pattern to
+  avoid; skill and example-book paths.
+  - mdbook-programming-skill (project) — the externalization rule verbatim, the
+  three sample homes, your per-language scripts/<lang>/ request quoted, and the
+  why/how-to-apply.
+
+  The mdbook-programming skill itself is complete and verified — SKILL.md,
+  REFERENCE.md, justfile, and the per-language scripts under
+  scripts/{go,python,rust}/ all tested working on a fixture book.
+
+  Ready for whatever's next — e.g. scaffolding an actual book with it, or adding
+  a Rust code/ workspace example.
+
+✻ Worked for 11m 53s
+
+※ recap: Built the mdbook-programming Claude skill (SKILL.md, REFERENCE.md, justfile, per-language code-verification scripts), all tested working on a fixture book. Next action: scaffold a real Go/Python/Rust book with it, or whatever you'd like to do next. (disable recaps in /config)
+
+❯ All of the `scripts/**/*.py` should be written:                               
+  - to use `uv` hash-bang headers                                               
+  - to import third party libraries with `uv` script headers                    
+
+⏺ Right — house style (matching the math skill) is uv PEP-723 scripts. Let me
+  convert all 8 scripts to uv shebangs with inline metadata blocks, fix the
+  inter-script invocations to use uv run --script, and update the
+  justfile/book.toml/docs accordingly.
+
+  First, the headers on all 8 scripts:
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Shared library for the per-language code-sample checkers.
+      7  
+      8  The central rule of a house-style programming book: **displayed 
+         code is never
+
+⏺ Update(scripts/check_code_samples.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Dispatcher: run the per-language code-sample checkers a book 
+         actually uses.
+      7  
+      8  Most house-style programming books are single-language (a Go boo
+         k, a Rust book,
+
+⏺ Update(scripts/mdbook_code_preprocessor.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """mdBook preprocessor: fail `mdbook build` when a code sample d
+         oesn't verify.
+      7  
+      8  Wire it into book.toml so a broken sample can never reach HTML o
+         r the PDF:
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Audit a programming mdBook's Markdown SOURCE for failure mode
+         s that ship green.
+      7  
+      8  A clean `mdbook build` does NOT catch any of these — they render
+          wrong, drop in
+
+⏺ Update(scripts/check-refs.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Verify every cross-reference in a programming mdBook resolves
+         . Drift gate.
+      7  
+      8  Renumbering chapters, retitling, and parallel drafting silently 
+         break
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Validate Go code samples included into a programming mdBook.
+      7  
+      8  Every `go`/`golang` fenced block in src/**/*.md that is an mdBoo
+         k include is
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Validate Python code samples included into a programming mdBo
+         ok.
+      7  
+      8  Every `python`/`py` fenced block in src/**/*.md that is an mdBoo
+         k include is
+
+⏺ Update(scripts/rust/check_rust_samples.py)
+  ⎿  Added 5 lines, removed 1 line
+      1 -#!/usr/bin/env python3                                          
+      1 +#!/usr/bin/env -S uv run --script                               
+      2 +# /// script                                                    
+      3 +# requires-python = ">=3.10"                                    
+      4 +# dependencies = []                                             
+      5 +# ///                                                           
+      6  """Validate Rust code samples included into a programming mdBook
+         .
+      7  
+      8  Every `rust`/`rs` fenced block in src/**/*.md that is an mdBook 
+         include is
+
+⏺ Now fix the inter-script invocations to use uv run --script:
+
+⏺ Update(scripts/check_code_samples.py)
+  ⎿  Added 2 lines, removed 2 lines
+      56              print(f"no checker for language {lang!r}", file=sys
+          .stderr)
+      57              rc = 1
+      58              continue
+      59 -        cmd = [sys.executable, str(here / rel), "--root", args.
+         -root, "--src", args.src,                                       
+      60 -               "--max-inline-lines", str(args.max_inline_lines)
+         -]                                                              
+      59 +        cmd = ["uv", "run", "--script", str(here / rel), "--roo
+         +t", args.root,                                                 
+      60 +               "--src", args.src, "--max-inline-lines", str(arg
+         +s.max_inline_lines)]                                           
+      61          if args.update:
+      62              cmd.append("--update")
+      63          rc |= subprocess.run(cmd, check=False).returncode
+
+⏺ Update(scripts/mdbook_code_preprocessor.py)
+  ⎿  Added 2 lines, removed 1 line
+      38      book = payload[1] if isinstance(payload, list) and len(payl
+          oad) == 2 else payload
+      39  
+      40      here = Path(__file__).resolve().parent
+      41 -    proc = subprocess.run([sys.executable, str(here / "check_co
+         -de_samples.py")], check=False)                                 
+      41 +    proc = subprocess.run(                                     
+      42 +        ["uv", "run", "--script", str(here / "check_code_sample
+         +s.py")], check=False)                                          
+      43      if proc.returncode != 0:
+      44          return proc.returncode
+      45  
+
+⏺ Now update the justfile, book.toml command, and docs to invoke via uv run 
+  --script. Let me find all references:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      grep -rn 'python3 scripts' justfile REFERENCE.md SKILL.md
+      scripts/README.md)
+  ⎿  REFERENCE.md:22:command    = "python3 scripts/mdbook_code_preprocessor
+     .py"
+     justfile:45:    python3 scripts/check_code_samples.py --langs {{langs}
+     … +13 lines (ctrl+o to expand)
+
+⏺ Update(justfile)
+  ⎿  Added 4 lines, removed 4 lines
+      42  
+      43  # Compile/run every included code sample (go test / pytest / ru
+          stc --test)
+      44  check-code:
+      45 -    python3 scripts/check_code_samples.py --langs {{langs}}    
+      45 +    uv run --script scripts/check_code_samples.py --langs {{lan
+         +gs}}                                                           
+      46  
+      47  # Reformat included samples in place (gofmt / rustfmt / ruff fo
+          rmat), then check.
+      48  fmt-code:
+      49 -    python3 scripts/check_code_samples.py --langs {{langs}} --u
+         -pdate                                                          
+      49 +    uv run --script scripts/check_code_samples.py --langs {{lan
+         +gs}} --update                                                  
+      50  
+      51  # Markdown source health: fences, un-externalized inline code, 
+          Unicode, SUMMARY
+      52  chapter-audit:
+      53 -    python3 scripts/chapter-audit.py                           
+      53 +    uv run --script scripts/chapter-audit.py                   
+      54  
+      55  # Every Chapter/§/Listing/Figure/Appendix reference and intra-b
+          ook link resolves.
+      56  check-refs:
+      57 -    python3 scripts/check-refs.py                              
+      57 +    uv run --script scripts/check-refs.py                      
+      58  
+      59  # Rust code/ workspace: compile + test every crate (no-op witho
+          ut code/Cargo.toml)
+      60  cargo-test:
+
+⏺ Update(REFERENCE.md)
+  ⎿  Added 1 line, removed 1 line
+      19  
+      20  # Fail `mdbook build` when any included code sample doesn't com
+          pile/test.
+      21  [preprocessor.code-samples]
+      22 -command    = "python3 scripts/mdbook_code_preprocessor.py"     
+      22 +command    = "uv run --script scripts/mdbook_code_preprocessor.
+         +py"                                                            
+      23  renderers  = ["html", "pandoc"]
+      24  
+      25  # Worked examples / pitfalls as callouts (optional but standard
+          ).
+
+⏺ Update(scripts/README.md)  ⎿  Added 5 lines, removed 5 lines
+      70  ## Running
+      71  
+      72  ```bash
+      73 -python3 scripts/check_code_samples.py            # all detected
+         - languages                                                     
+      74 -python3 scripts/rust/check_rust_samples.py       # one language
+      75 -python3 scripts/check_code_samples.py --update   # gofmt/rustfm
+         -t/ruff-format in place                                         
+      76 -python3 scripts/chapter-audit.py                               
+      77 -python3 scripts/check-refs.py                                  
+      73 +uv run --script scripts/check_code_samples.py          # all de
+         +tected languages                                               
+      74 +uv run --script scripts/rust/check_rust_samples.py     # one la
+         +nguage                                                         
+      75 +uv run --script scripts/check_code_samples.py --update # gofmt/
+         +rustfmt/ruff-format in place                                   
+      76 +uv run --script scripts/chapter-audit.py                       
+      77 +uv run --script scripts/check-refs.py                          
+      78  ```
+      79  
+      80  All of the above are wired into `just test` (see the book's jus
+          tfile), and
+
+⏺ Let me update the prose that described the scripts as "plain python3" to
+  reflect the uv PEP-723 convention:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      grep -rn 'stdlib-only\|plain `python3`\|plain python3\|no virtualenv\|runs
+      under' SKIL…)
+  ⎿  scripts/README.md:4:Everything here is **stdlib-only Python 3.10+** —
+     runs under plain `python3`, no
+     SKILL.md:80:[`scripts/`](scripts/README.md) is copy-into-a-new-book an
+     … +3 lines (ctrl+o to expand)
+
+⏺ Update(scripts/README.md)
+  ⎿  Added 8 lines, removed 4 lines
+       1  # scripts/ — reusable tooling for a house-style programming mdB
+          ook
+       2  
+       3  Copy what your book needs into its `scripts/` and wire it into 
+          `just test`.
+       4 -Everything here is **stdlib-only Python 3.10+** — runs under pl
+         -ain `python3`, no                                              
+       5 -virtualenv, no pip install. The compilers/formatters (`go`, `go
+         -fmt`, `rustc`,                                                 
+       6 -`rustfmt`, `ruff`, `pytest`) are what each checker shells out t
+         -o; missing                                                     
+       7 -optional ones (ruff, pytest) are skipped, not failed.          
+       4 +Every script is a [uv](https://docs.astral.sh/uv/) PEP-723 sing
+         +le file — the                                                  
+       5 +`#!/usr/bin/env -S uv run --script` shebang plus an inline `# /
+         +// script` metadata                                            
+       6 +block, so `uv run --script scripts/<x>.py` runs it with the dec
+         +lared deps and no                                              
+       7 +virtualenv setup. These checkers need **no third-party Python l
+         +ibraries**                                                     
+       8 +(`dependencies = []`): they shell out to the language toolchain
+         +s (`go`, `gofmt`,                                              
+       9 +`rustc`, `rustfmt`, `ruff`, `pytest`) instead. Missing optional
+         + toolchains (ruff,                                             
+      10 +pytest) are skipped, not failed. Add a real dependency by listi
+         +ng it in the                                                   
+      11 +script's `# /// script` block — never `pip install` into the am
+         +bient environment.                                             
+      12  
+      13  ## What each piece does
+      14  
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 2 lines, removed 1 line
+      26  imports this, supplies a `validate(file_path, work, block, upda
+          te)` callback that
+      27  compiles/runs the sample in that language, and calls `drive()`.
+      28  
+      29 -No third-party dependencies: stdlib only, runs under plain `pyt
+         -hon3`.                                                         
+      29 +Shipped as a uv PEP-723 script (no third-party deps); imported 
+         +by the per-language                                            
+      30 +checkers via a `sys.path` insert, so it needs no packaging.    
+      31  """
+      32  
+      33  from __future__ import annotations
+
+⏺ Update(SKILL.md)
+  ⎿  Added 4 lines, removed 3 lines
+      77  
+      78  ## Reusable scripts — the gate a clean `mdbook build` does NOT 
+          provide
+      79  
+      80 -[`scripts/`](scripts/README.md) is copy-into-a-new-book and std
+         -lib-only Python.                                               
+      81 -Per-language checkers live under `scripts/<lang>/`, so a single
+         --language book                                                 
+      82 -copies only what it needs.                                     
+      80 +[`scripts/`](scripts/README.md) is copy-into-a-new-book uv PEP-
+         +723 scripts                                                    
+      81 +(`uv run --script …`; no third-party deps — they shell out to t
+         +he language                                                    
+      82 +toolchains). Per-language checkers live under `scripts/<lang>/`
+         +, so a                                                         
+      83 +single-language book copies only what it needs.                
+      84  
+      85  - `scripts/<lang>/check_<lang>_samples.py` — compile + test eve
+          ry **included**
+      86    sample; enforce externalization; provenance-check source exce
+          rpts. Wired into
+
+❯ All of the `scripts/**/*.py` should be written:                                  
+  - to use `click` for command line parsing, not `argparse`                        
+  - to use `pathlib` for file discovery and processing, not analogous code in `os` 
+
+⏺ The uv conversion is done. Now addressing the new requirement: switch all CLI
+  parsing from argparse to click, and confirm pathlib (not os) for file work.
+  Let me first check current argparse/os usage:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== argparse usage ==="; grep -rln 'argparse' scripts/…)
+  ⎿  === argparse usage ===
+     scripts/check_code_samples.py
+     scripts/go/check_go_samples.py
+     … +8 lines (ctrl+o to expand)
+
+⏺ pathlib-only is already satisfied (zero os usage). Now converting argparse →
+  click across all six CLI scripts, adding click to each PEP-723 block. Starting
+  with the three language checkers:
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Validate Go code samples included into a programming mdBook.
+      7  
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 2 lines, removed 1 line
+      19  
+      20  from __future__ import annotations
+      21  
+      22 -import argparse                                                
+      22  import re
+      23  import shutil
+      24  import sys
+      25  from pathlib import Path
+      26  
+      27 +import click                                                   
+      28 +                                                               
+      29  sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+      30  import common  # noqa: E402
+      31  
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 15 lines, removed 19 lines
+      55              f"{file_path}: `go test .` failed\n{proc.stdout}{pr
+          oc.stderr}".rstrip())
+      56  
+      57  
+      58 -def main(argv: list[str] | None = None) -> int:                
+      59 -    ap = argparse.ArgumentParser(description=__doc__,          
+      60 -                                 formatter_class=argparse.RawDe
+         -scriptionHelpFormatter)                                        
+      61 -    ap.add_argument("--root", default=".")                     
+      62 -    ap.add_argument("--src", default="src")                    
+      63 -    ap.add_argument("--update", action="store_true")           
+      64 -    ap.add_argument("--max-inline-lines", type=int, default=6) 
+      65 -    args = ap.parse_args(argv)                                 
+      66 -                                                               
+      58 +@click.command(help=__doc__)                                   
+      59 +@click.option("--root", default=".", type=click.Path(), help="b
+         +ook root directory")                                           
+      60 +@click.option("--src", default="src", help="markdown source dir
+         + relative to root")                                            
+      61 +@click.option("--update", is_flag=True, help="reformat included
+         + samples in place")                                            
+      62 +@click.option("--max-inline-lines", default=6, type=int,       
+      63 +              help="inline blocks longer than this must be exte
+         +rnalized")                                                     
+      64 +def main(root: str, src: str, update: bool, max_inline_lines: i
+         +nt) -> None:                                                   
+      65      for tool in ("go", "gofmt"):
+      66          if not shutil.which(tool):
+      69 -            print(f"`{tool}` not found on PATH", file=sys.stder
+         -r)                                                             
+      70 -            return 1                                           
+      71 -    root = Path(args.root).resolve()                           
+      72 -    src = (root / args.src).resolve()                          
+      73 -    if not src.exists():                                       
+      74 -        print(f"source directory not found: {src}", file=sys.st
+         -derr)                                                          
+      75 -        return 1                                               
+      76 -    return common.drive(root, src, "go", validate_go,          
+      77 -                        update=args.update, max_inline=args.max
+         -_inline_lines)                                                 
+      67 +            raise SystemExit(f"`{tool}` not found on PATH")    
+      68 +    root_path = Path(root).resolve()                           
+      69 +    src_path = (root_path / src).resolve()                     
+      70 +    if not src_path.exists():                                  
+      71 +        raise SystemExit(f"source directory not found: {src_pat
+         +h}")                                                           
+      72 +    raise SystemExit(common.drive(root_path, src_path, "go", va
+         +lidate_go,                                                     
+      73 +                                  update=update, max_inline=max
+         +_inline_lines))                                                
+      74  
+      75  
+      76  if __name__ == "__main__":
+      81 -    raise SystemExit(main())                                   
+      77 +    main()                                                     
+
+⏺ Now the python checker:
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Validate Python code samples included into a programming mdBo
+         ok.
+      7  
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 2 lines, removed 1 line
+      19  
+      20  from __future__ import annotations
+      21  
+      22 -import argparse                                                
+      22  import re
+      23  import shutil
+      24  import sys
+      25  from pathlib import Path
+      26  
+      27 +import click                                                   
+      28 +                                                               
+      29  sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+      30  import common  # noqa: E402
+      31  
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 14 lines, removed 17 lines
+      55                  f"{file_path}: pytest failed\n{proc.stdout}{pro
+          c.stderr}".rstrip())
+      56  
+      57  
+      58 -def main(argv: list[str] | None = None) -> int:                
+      59 -    ap = argparse.ArgumentParser(description=__doc__,          
+      60 -                                 formatter_class=argparse.RawDe
+         -scriptionHelpFormatter)                                        
+      61 -    ap.add_argument("--root", default=".")                     
+      62 -    ap.add_argument("--src", default="src")                    
+      63 -    ap.add_argument("--update", action="store_true")           
+      64 -    ap.add_argument("--max-inline-lines", type=int, default=6) 
+      65 -    args = ap.parse_args(argv)                                 
+      58 +@click.command(help=__doc__)                                   
+      59 +@click.option("--root", default=".", type=click.Path(), help="b
+         +ook root directory")                                           
+      60 +@click.option("--src", default="src", help="markdown source dir
+         + relative to root")                                            
+      61 +@click.option("--update", is_flag=True, help="reformat included
+         + samples in place")                                            
+      62 +@click.option("--max-inline-lines", default=6, type=int,       
+      63 +              help="inline blocks longer than this must be exte
+         +rnalized")                                                     
+      64 +def main(root: str, src: str, update: bool, max_inline_lines: i
+         +nt) -> None:                                                   
+      65 +    root_path = Path(root).resolve()                           
+      66 +    src_path = (root_path / src).resolve()                     
+      67 +    if not src_path.exists():                                  
+      68 +        raise SystemExit(f"source directory not found: {src_pat
+         +h}")                                                           
+      69 +    raise SystemExit(common.drive(root_path, src_path, "python"
+         +, validate_python,                                             
+      70 +                                  update=update, max_inline=max
+         +_inline_lines))                                                
+      71  
+      67 -    root = Path(args.root).resolve()                           
+      68 -    src = (root / args.src).resolve()                          
+      69 -    if not src.exists():                                       
+      70 -        print(f"source directory not found: {src}", file=sys.st
+         -derr)                                                          
+      71 -        return 1                                               
+      72 -    return common.drive(root, src, "python", validate_python,  
+      73 -                        update=args.update, max_inline=args.max
+         -_inline_lines)                                                 
+      72  
+      75 -                                                               
+      73  if __name__ == "__main__":
+      77 -    raise SystemExit(main())                                   
+      74 +    main()                                                     
+
+⏺ Now the rust checker:
+
+⏺ Update(scripts/rust/check_rust_samples.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Validate Rust code samples included into a programming mdBook
+         .
+      7  
+
+⏺ Update(scripts/rust/check_rust_samples.py)
+  ⎿  Added 2 lines, removed 1 line
+      29  
+      30  from __future__ import annotations
+      31  
+      32 -import argparse                                                
+      32  import shutil
+      33  import sys
+      34  from pathlib import Path
+      35  
+      36 +import click                                                   
+      37 +                                                               
+      38  sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+      39  import common  # noqa: E402
+      40  
+
+⏺ Update(scripts/rust/check_rust_samples.py)
+  ⎿  Added 14 lines, removed 17 lines
+       83          raise common.CheckError(f"{file_path}: compiled test b
+           inary failed at runtime")
+       84  
+       85  
+       86 -def main(argv: list[str] | None = None) -> int:               
+       87 -    ap = argparse.ArgumentParser(description=__doc__,         
+       88 -                                 formatter_class=argparse.RawD
+          -escriptionHelpFormatter)                                      
+       89 -    ap.add_argument("--root", default=".")                    
+       90 -    ap.add_argument("--src", default="src")                   
+       91 -    ap.add_argument("--update", action="store_true")          
+       92 -    ap.add_argument("--max-inline-lines", type=int, default=6)
+       93 -    args = ap.parse_args(argv)                                
+       86 +@click.command(help=__doc__)                                  
+       87 +@click.option("--root", default=".", type=click.Path(), help="
+          +book root directory")                                         
+       88 +@click.option("--src", default="src", help="markdown source di
+          +r relative to root")                                          
+       89 +@click.option("--update", is_flag=True, help="reformat include
+          +d samples in place")                                          
+       90 +@click.option("--max-inline-lines", default=6, type=int,      
+       91 +              help="inline blocks longer than this must be ext
+          +ernalized")                                                   
+       92 +def main(root: str, src: str, update: bool, max_inline_lines: 
+          +int) -> None:                                                 
+       93 +    root_path = Path(root).resolve()                          
+       94 +    src_path = (root_path / src).resolve()                    
+       95 +    if not src_path.exists():                                 
+       96 +        raise SystemExit(f"source directory not found: {src_pa
+          +th}")                                                         
+       97 +    raise SystemExit(common.drive(root_path, src_path, "rust",
+          + validate_rust,                                               
+       98 +                                  update=update, max_inline=ma
+          +x_inline_lines))                                              
+       99  
+       95 -    root = Path(args.root).resolve()                          
+       96 -    src = (root / args.src).resolve()                         
+       97 -    if not src.exists():                                      
+       98 -        print(f"source directory not found: {src}", file=sys.s
+          -tderr)                                                        
+       99 -        return 1                                              
+      100 -    return common.drive(root, src, "rust", validate_rust,     
+      101 -                        update=args.update, max_inline=args.ma
+          -x_inline_lines)                                               
+      100  
+      103 -                                                              
+      101  if __name__ == "__main__":
+      105 -    raise SystemExit(main())                                  
+      102 +    main()                                                    
+
+⏺ Now the dispatcher:
+
+  Read 1 file (ctrl+o to expand)
+⏺ Update(scripts/check_code_samples.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Dispatcher: run the per-language code-sample checkers a book 
+         actually uses.
+      7  
+
+⏺ Update(scripts/check_code_samples.py)
+  ⎿  Added 22 lines, removed 24 lines
+      18  
+      19  from __future__ import annotations
+      20  
+      21 -import argparse                                                
+      21  import subprocess
+      22  import sys
+      23  from pathlib import Path
+      24  
+      25 +import click                                                   
+      26 +                                                               
+      27  CHECKERS = {
+      28      "go": "go/check_go_samples.py",
+      29      "python": "python/check_python_samples.py",
+     ...
+      31  }
+      32  
+      33  
+      33 -def main(argv: list[str] | None = None) -> int:                
+      34 -    ap = argparse.ArgumentParser(description=__doc__,          
+      35 -                                 formatter_class=argparse.RawDe
+         -scriptionHelpFormatter)                                        
+      36 -    ap.add_argument("--root", default=".")                     
+      37 -    ap.add_argument("--src", default="src")                    
+      38 -    ap.add_argument("--langs", default="", help="comma list; de
+         -fault: auto-detect")                                           
+      39 -    ap.add_argument("--update", action="store_true")           
+      40 -    ap.add_argument("--max-inline-lines", type=int, default=6) 
+      41 -    args = ap.parse_args(argv)                                 
+      42 -                                                               
+      34 +@click.command(help=__doc__)                                   
+      35 +@click.option("--root", default=".", type=click.Path(), help="b
+         +ook root directory")                                           
+      36 +@click.option("--src", default="src", help="markdown source dir
+         + relative to root")                                            
+      37 +@click.option("--langs", default="", help="comma list of langua
+         +ges; default: auto-detect")                                    
+      38 +@click.option("--update", is_flag=True, help="reformat included
+         + samples in place")                                            
+      39 +@click.option("--max-inline-lines", default=6, type=int,       
+      40 +              help="inline blocks longer than this must be exte
+         +rnalized")                                                     
+      41 +def main(root: str, src: str, langs: str, update: bool, max_inl
+         +ine_lines: int) -> None:                                       
+      42      here = Path(__file__).resolve().parent
+      44 -    if args.langs.strip():                                     
+      45 -        langs = [l.strip().lower() for l in args.langs.split(",
+         -") if l.strip()]                                               
+      43 +    if langs.strip():                                          
+      44 +        selected = [l.strip().lower() for l in langs.split(",")
+         + if l.strip()]                                                 
+      45      else:
+      47 -        langs = [l for l, rel in CHECKERS.items() if (here / re
+         -l).exists()]                                                   
+      48 -    if not langs:                                              
+      49 -        print("no per-language checkers found under scripts/<la
+         -ng>/", file=sys.stderr)                                        
+      50 -        return 1                                               
+      46 +        selected = [l for l, rel in CHECKERS.items() if (here /
+         + rel).exists()]                                                
+      47 +    if not selected:                                           
+      48 +        raise SystemExit("no per-language checkers found under 
+         +scripts/<lang>/")                                              
+      49  
+      50      rc = 0
+      53 -    for lang in langs:                                         
+      51 +    for lang in selected:                                      
+      52          rel = CHECKERS.get(lang)
+      53          if not rel or not (here / rel).exists():
+      56 -            print(f"no checker for language {lang!r}", file=sys
+         -.stderr)                                                       
+      54 +            click.echo(f"no checker for language {lang!r}", err
+         +=True)                                                         
+      55              rc = 1
+      56              continue
+      59 -        cmd = ["uv", "run", "--script", str(here / rel), "--roo
+         -t", args.root,                                                 
+      60 -               "--src", args.src, "--max-inline-lines", str(arg
+         -s.max_inline_lines)]                                           
+      61 -        if args.update:                                        
+      57 +        cmd = ["uv", "run", "--script", str(here / rel), "--roo
+         +t", root,                                                      
+      58 +               "--src", src, "--max-inline-lines", str(max_inli
+         +ne_lines)]                                                     
+      59 +        if update:                                             
+      60              cmd.append("--update")
+      61          rc |= subprocess.run(cmd, check=False).returncode
+      64 -    return 1 if rc else 0                                      
+      62 +    raise SystemExit(1 if rc else 0)                           
+      63  
+      64  
+      65  if __name__ == "__main__":
+      68 -    raise SystemExit(main())                                   
+      66 +    main()                                                     
+
+⏺ sys is now unused in the dispatcher. Let me remove it:
+
+⏺ Update(scripts/check_code_samples.py)
+  ⎿  Removed 1 line
+      19  from __future__ import annotations
+      20  
+      21  import subprocess
+      22 -import sys                                                     
+      22  from pathlib import Path
+      23  
+      24  import click
+
+⏺ Now chapter-audit.py (dynamic --no-<check> flags → explicit click options):
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 34 lines, removed 25 lines
+      126      return out
+      127  
+      128  
+      129 -def main() -> int:                                            
+      130 -    all_checks = {"fences", "inline-code", "unicode", "artifac
+          -ts", "placeholder", "summary"}                                
+      131 -    ap = argparse.ArgumentParser(description=__doc__,         
+      132 -                                 formatter_class=argparse.RawD
+          -escriptionHelpFormatter)                                      
+      133 -    ap.add_argument("files", nargs="*")                       
+      134 -    ap.add_argument("--max-inline-lines", type=int, default=6)
+      135 -    for c in sorted(all_checks):                              
+      136 -        ap.add_argument(f"--no-{c}", action="store_true", help
+          -=f"skip the {c} check")                                       
+      137 -    args = ap.parse_args()                                    
+      129 +ALL_CHECKS = ("fences", "inline-code", "unicode", "artifacts",
+          + "placeholder", "summary")                                    
+      130  
+      139 -    checks = {c for c in all_checks if not getattr(args, f"no_
+          -{c.replace('-', '_')}")}                                      
+      140 -    if args.files:                                            
+      141 -        files = [Path(f) for f in args.files]                 
+      131 +                                                              
+      132 +@click.command(help=__doc__)                                  
+      133 +@click.argument("files", nargs=-1, type=click.Path())         
+      134 +@click.option("--max-inline-lines", default=6, type=int,      
+      135 +              help="inline checked-language blocks longer than
+          + this must be externalized")                                  
+      136 +@click.option("--no-fences", is_flag=True, help="skip the fenc
+          +es check")                                                    
+      137 +@click.option("--no-inline-code", is_flag=True, help="skip the
+          + inline-code check")                                          
+      138 +@click.option("--no-unicode", is_flag=True, help="skip the uni
+          +code check")                                                  
+      139 +@click.option("--no-artifacts", is_flag=True, help="skip the a
+          +rtifacts check")                                              
+      140 +@click.option("--no-placeholder", is_flag=True, help="skip the
+          + placeholder check")                                          
+      141 +@click.option("--no-summary", is_flag=True, help="skip the sum
+          +mary check")                                                  
+      142 +def main(files: tuple[str, ...], max_inline_lines: int, no_fen
+          +ces: bool,                                                    
+      143 +         no_inline_code: bool, no_unicode: bool, no_artifacts:
+          + bool,                                                        
+      144 +         no_placeholder: bool, no_summary: bool) -> None:     
+      145 +    disabled = {                                              
+      146 +        "fences": no_fences, "inline-code": no_inline_code, "u
+          +nicode": no_unicode,                                          
+      147 +        "artifacts": no_artifacts, "placeholder": no_placehold
+          +er, "summary": no_summary,                                    
+      148 +    }                                                         
+      149 +    checks = {c for c in ALL_CHECKS if not disabled[c]}       
+      150 +                                                              
+      151 +    if files:                                                 
+      152 +        paths = [Path(f) for f in files]                      
+      153      else:
+      143 -        src = Path("src")                                     
+      154          # Top-level chapter prose only; excerpt/sample trees a
+           re code, not prose.
+      145 -        files = [p for p in sorted(src.glob("*.md"))]         
+      146 -    if not files:                                             
+      147 -        sys.exit("chapter-audit: no files found")             
+      155 +        paths = sorted(Path("src").glob("*.md"))              
+      156 +    if not paths:                                             
+      157 +        raise SystemExit("chapter-audit: no files found")     
+      158  
+      159      errs: list[str] = []
+      150 -    for f in files:                                           
+      151 -        errs += audit_file(f, checks, args.max_inline_lines)  
+      152 -    if "summary" in checks and not args.files:                
+      160 +    for f in paths:                                           
+      161 +        errs += audit_file(f, checks, max_inline_lines)       
+      162 +    if "summary" in checks and not files:                     
+      163          errs += audit_summary(Path("src"))
+      164  
+      165      if errs:
+      156 -        print("\n".join(errs))                                
+      157 -        print(f"chapter-audit: FAIL ({len(errs)} issue(s)).") 
+      158 -        return 1                                              
+      159 -    print("chapter-audit: OK")                                
+      160 -    return 0                                                  
+      166 +        click.echo("\n".join(errs))                           
+      167 +        click.echo(f"chapter-audit: FAIL ({len(errs)} issue(s)
+          +).")                                                          
+      168 +        raise SystemExit(1)                                   
+      169 +    click.echo("chapter-audit: OK")                           
+      170  
+      171  
+      172  if __name__ == "__main__":
+      164 -    raise SystemExit(main())                                  
+      173 +    main()                                                    
+
+⏺ Now update chapter-audit imports (remove argparse, add click; check if sys
+  still used):
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 2 lines, removed 2 lines
+      29  
+      30  from __future__ import annotations
+      31  
+      32 -import argparse                                                
+      32  import re
+      34 -import sys                                                     
+      33  from pathlib import Path
+      34  
+      35 +import click                                                   
+      36 +                                                               
+      37  PLACEHOLDERS = ("TODO", "TBD", "FIXME", "placeholder", "lorem i
+          psum", "???")
+      38  ARTIFACTS = ("</content>", "</invoke>", "<parameter", "antml:",
+           "<function")
+      39  # Glyphs the STIX/Palatino + Menlo xelatex stack drops or warns
+           on in prose.
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Audit a programming mdBook's Markdown SOURCE for failure mode
+         s that ship green.
+      7  
+
+⏺ Now check-refs.py:
+
+  Read 1 file (ctrl+o to expand)
+
+❯ All of the `scripts/**/*.py` should be written:                                                                                                                                        
+  - to avoid using regular expressions for identifying code to act on. Instead, they should use `subprocess` calls to `ast-grep` where the argument is an appropriate language specifier 
+
+⏺ Let me finish the in-progress check-refs.py click conversion first, then
+  address the new ast-grep requirement across all scripts.
+
+⏺ Update(scripts/check-refs.py)
+  ⎿  Added 9 lines, removed 9 lines
+      59      return set(SUMMARY_CHAPTER_RE.findall(summary.read_text()))
+           if summary.is_file() else set()
+      60  
+      61  
+      62 -def main(argv: list[str]) -> int:                              
+      63 -    ap = argparse.ArgumentParser(description=__doc__,          
+      64 -                                 formatter_class=argparse.RawDe
+         -scriptionHelpFormatter)                                        
+      65 -    ap.add_argument("--label-types", default=",".join(DEFAULT_L
+         -ABELS))                                                        
+      66 -    ap.add_argument("files", nargs="*")                        
+      67 -    args = ap.parse_args(argv)                                 
+      68 -    types = [t.strip() for t in args.label_types.split(",") if 
+         -t.strip()]                                                     
+      62 +@click.command(help=__doc__)                                   
+      63 +@click.option("--label-types", default=",".join(DEFAULT_LABELS)
+         +,                                                              
+      64 +              help="comma list of caption label vocabularies to
+         + resolve")                                                     
+      65 +@click.argument("files", nargs=-1, type=click.Path())          
+      66 +def main(label_types: str, files: tuple[str, ...]) -> None:    
+      67 +    types = [t.strip() for t in label_types.split(",") if t.str
+         +ip()]                                                          
+      68  
+      69      src = Path("src")
+      70      if not src.is_dir():
+      72 -        print("check-refs: no src/ directory"); return 0       
+      73 -    files = [Path(f) for f in args.files] or sorted(src.glob("*
+         -.md"))                                                         
+      71 +        click.echo("check-refs: no src/ directory")            
+      72 +        return                                                 
+      73 +    paths = [Path(f) for f in files] or sorted(src.glob("*.md")
+         +)                                                              
+      74  
+      75      # Book-wide pools.
+      76      glabels, gsections = set(), set()
+
+⏺ Update(scripts/check-refs.py)
+  ⎿  Added 10 lines, removed 9 lines
+      83                    if (m := re.match(r"appendix-(.)\.md", a.name
+          ))}
+      84  
+      85      errors = 0
+      86 -    for f in files:                                            
+      86 +    for f in paths:                                            
+      87          if not f.is_file():
+      88              continue
+      89          text = f.read_text(encoding="utf-8")
+     ...
+       92  
+       93          for ref in sorted(label_refs_in(b, types)):
+       94              if ref not in glabels:
+       95 -                print(f"{f}: unresolved reference: {ref}"); er
+          -rors += 1                                                     
+       95 +                click.echo(f"{f}: unresolved reference: {ref}"
+          +); errors += 1                                                
+       96          for sec in sorted(set(SECTION_REF_RE.findall(b))):
+       97              if sec not in sections and sec not in gsections:
+       98 -                print(f"{f}: unresolved section reference: §{s
+          -ec}"); errors += 1                                            
+       98 +                click.echo(f"{f}: unresolved section reference
+          +: §{sec}"); errors += 1                                       
+       99          for n in sorted(set(CHAPTER_REF_RE.findall(b))):
+      100              if chapters and n not in chapters:
+      101 -                print(f"{f}: unresolved chapter reference: Cha
+          -pter {n}"); errors += 1                                       
+      101 +                click.echo(f"{f}: unresolved chapter reference
+          +: Chapter {n}"); errors += 1                                  
+      102          for x in sorted(set(APPENDIX_REF_RE.findall(b))):
+      103              if x not in appendices:
+      104 -                print(f"{f}: unresolved appendix reference: Ap
+          -pendix {x}"); errors += 1                                     
+      104 +                click.echo(f"{f}: unresolved appendix referenc
+          +e: Appendix {x}"); errors += 1                                
+      105          for target in sorted(set(MD_LINK_RE.findall(text))):
+      106              if not (src / target).exists():
+      107 -                print(f"{f}: broken link to missing file: {tar
+          -get}"); errors += 1                                           
+      107 +                click.echo(f"{f}: broken link to missing file:
+          + {target}"); errors += 1                                      
+      108  
+      109      if errors:
+      110 -        print(f"check-refs: {errors} unresolved reference(s)")
+          -; return 1                                                    
+      111 -    print("check-refs: all references resolve"); return 0     
+      110 +        click.echo(f"check-refs: {errors} unresolved reference
+          +(s)")                                                         
+      111 +        raise SystemExit(1)                                   
+      112 +    click.echo("check-refs: all references resolve")          
+      113  
+      114  
+      115  if __name__ == "__main__":
+      115 -    sys.exit(main(sys.argv[1:]))                              
+      116 +    main()                                                    
+
+⏺ Update(scripts/check-refs.py)
+  ⎿  Added 1 line, removed 1 line
+      1  #!/usr/bin/env -S uv run --script
+      2  # /// script
+      3  # requires-python = ">=3.10"
+      4 -# dependencies = []                                             
+      4 +# dependencies = ["click>=8.1"]                                 
+      5  # ///
+      6  """Verify every cross-reference in a programming mdBook resolves
+         . Drift gate.
+      7  
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/check-refs.py)
+  ⎿  Added 2 lines, removed 2 lines
+      24  
+      25  from __future__ import annotations
+      26  
+      27 -import argparse                                                
+      27  import re
+      29 -import sys                                                     
+      28  from pathlib import Path
+      29  
+      30 +import click                                                   
+      31 +                                                               
+      32  DEFAULT_LABELS = ["Listing", "Figure", "Table"]
+      33  CHAPTER_REF_RE = re.compile(r"\bChapter (\d+)")
+      34  APPENDIX_REF_RE = re.compile(r"\bAppendix ([A-Z])\b")
+
+⏺ Now the preprocessor — convert its manual argv handling to click and add the
+  dep:
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/mdbook_code_preprocessor.py)
+  ⎿  Added 16 lines, removed 12 lines
+       1  #!/usr/bin/env -S uv run --script
+       2  # /// script
+       3  # requires-python = ">=3.10"
+       4 -# dependencies = []                                            
+       4 +# dependencies = ["click>=8.1"]                                
+       5  # ///
+       6  """mdBook preprocessor: fail `mdbook build` when a code sample 
+          doesn't verify.
+       7  
+       8  Wire it into book.toml so a broken sample can never reach HTML 
+          or the PDF:
+       9  
+      10      [preprocessor.code-samples]
+      11 -    command = "python3 scripts/mdbook_code_preprocessor.py"    
+      11 +    command = "uv run --script scripts/mdbook_code_preprocessor
+         +.py"                                                           
+      12      renderers = ["html", "pandoc"]
+      13  
+      14  It runs the per-language checkers (auto-detected from scripts/<
+          lang>/ dirs) over
+     ...
+      24  import sys
+      25  from pathlib import Path
+      26  
+      27 +import click                                                   
+      28  
+      28 -def main() -> int:                                             
+      29 -    if len(sys.argv) > 1 and sys.argv[1] == "supports":        
+      30 -        return 0  # renderer-agnostic                          
+      29  
+      32 -    raw = sys.stdin.read()                                     
+      30 +@click.command(                                                
+      31 +    context_settings={"ignore_unknown_options": True, "allow_ex
+         +tra_args": True},                                              
+      32 +    help=__doc__)                                              
+      33 +@click.argument("protocol_args", nargs=-1, type=click.UNPROCESS
+         +ED)                                                            
+      34 +def main(protocol_args: tuple[str, ...]) -> None:              
+      35 +    # mdBook capability probe: `<command> supports <renderer>` 
+         +-> exit 0 = yes.                                               
+      36 +    if protocol_args and protocol_args[0] == "supports":       
+      37 +        raise SystemExit(0)                                    
+      38 +                                                               
+      39      try:
+      34 -        payload = json.loads(raw)                              
+      40 +        payload = json.loads(sys.stdin.read())                 
+      41      except json.JSONDecodeError as err:
+      36 -        print(f"invalid mdBook preprocessor input: {err}", file
+         -=sys.stderr)                                                   
+      37 -        return 1                                               
+      42 +        raise SystemExit(f"invalid mdBook preprocessor input: {
+         +err}")                                                         
+      43      book = payload[1] if isinstance(payload, list) and len(payl
+          oad) == 2 else payload
+      44  
+      45      here = Path(__file__).resolve().parent
+      46      proc = subprocess.run(
+      47          ["uv", "run", "--script", str(here / "check_code_sample
+          s.py")], check=False)
+      48      if proc.returncode != 0:
+      44 -        return proc.returncode                                 
+      49 +        raise SystemExit(proc.returncode)                      
+      50  
+      51      json.dump(book, sys.stdout)
+      47 -    return 0                                                   
+      52  
+      53  
+      54  if __name__ == "__main__":
+      51 -    raise SystemExit(main())                                   
+      55 +    main()                                                     
+
+⏺ Click conversion done. Now the ast-grep requirement. First let me verify
+  ast-grep is available and learn its exact CLI for the constructs I need to
+  detect (Go package/test funcs, Python test funcs):
+⏺ Bash(which ast-grep sg 2>&1; echo "---version---"; ast-grep --version 2>&1 |
+      head -1
+      echo "=== test: Go package detection via stdin ==="…)
+  ⎿  /opt/homebrew/bin/ast-grep
+     /opt/homebrew/bin/sg
+     ---version---
+     … +32 lines (ctrl+o to expand)
+
+⏺ ast-grep works. Let me probe the edge cases — Go funcs with return types, and
+  Python test funcs with/without annotations:
+
+⏺ Bash(echo "=== Go func WITH return type — does 'func \$NAME(\$\$\$) { \$\$\$
+      }' match? ==="
+      printf 'package main\nfunc Add(a, b int) int { return a + b }\nfunc
+      TestA…)
+  ⎿  === Go func WITH return type — does 'func $NAME($$$) { $$$ }' match? =
+     ==
+     ['TestAdd']
+     … +9 lines (ctrl+o to expand)
+
+⏺ scan reads files (ignored stdin and scanned cwd); running against an explicit
+  file path is cleaner since samples are real files. Let me nail down the exact
+  invocations against file paths:
+
+⏺ Bash(T=$(mktemp -d)
+      cat > "$T/s.go" <<'EOF'…)
+  ⎿  === Go package decl on FILE ===
+     1 match(es)
+     === Go test funcs on FILE (func without return type) ===
+     … +6 lines (ctrl+o to expand)
+
+⏺ All invocations work against file paths. Let me confirm ast-grep exit codes so
+  my helper handles them correctly:
+
+⏺ Bash(T=$(mktemp -d); printf 'package main\nfunc helper() {}\n' > "$T/s.go"
+      ast-grep run -p 'package $NAME' -l go "$T/s.go" --json >/dev/null 2>&1;
+      echo "run match ex…)
+  ⎿  run match exit=0
+     run no-match exit=0
+     scan match exit=0
+     scan no-match exit=0
+
+⏺ ast-grep returns 0 for both match and no-match, JSON on stdout — so non-zero
+  means a real error. Now let me add ast-grep helpers to common.py and replace
+  the code-construct regexes in the Go and Python checkers (those are the only
+  scripts that regex-match language constructs; the others parse Markdown/prose,
+  which is out of scope).
+
+⏺ Update(scripts/common.py)
+  ⎿  Error editing file
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 2 lines
+      32  
+      33  from __future__ import annotations
+      34  
+      35 +import json                                                    
+      36  import re
+      37 +import shutil                                                  
+      38  import subprocess
+      39  import sys
+      40  import tempfile
+
+⏺ Now add the ast-grep helpers after the run() function in common.py:
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 37 lines
+      102                            stdout=subprocess.PIPE, stderr=subpr
+           ocess.PIPE, check=False)
+      103  
+      104  
+      105 +# --- Structural code queries via ast-grep (NOT regex) -------
+          +---------------                                               
+      106 +# The checkers identify language constructs (a Go `package` cl
+          +ause, a Go/Python                                             
+      107 +# test function) by querying the parsed syntax tree with ast-g
+          +rep, not by                                                   
+      108 +# regex-matching source text. ast-grep returns exit 0 with a J
+          +SON array on                                                  
+      109 +# stdout whether or not anything matched; a non-zero exit is a
+          + real error.                                                  
+      110 +def _ast_grep_bin() -> str:                                   
+      111 +    for name in ("ast-grep", "sg"):                           
+      112 +        if shutil.which(name):                                
+      113 +            return name                                       
+      114 +    raise CheckError("`ast-grep` not found on PATH "          
+      115 +                     "(install: `brew install ast-grep` / `car
+          +go install ast-grep`)")                                       
+      116 +                                                              
+      117 +                                                              
+      118 +def ast_grep_matches(pattern: str, lang: str, file_path: Path)
+          + -> list[dict]:                                               
+      119 +    """JSON matches of a concrete `pattern` against `file_path
+          +` in `lang`."""                                               
+      120 +    proc = run([_ast_grep_bin(), "run", "--pattern", pattern, 
+          +"--lang", lang,                                               
+      121 +                "--json", str(file_path)], file_path.parent)  
+      122 +    if proc.returncode != 0:                                  
+      123 +        raise CheckError(f"ast-grep failed on {file_path}:\n{p
+          +roc.stderr}".rstrip())                                        
+      124 +    return json.loads(proc.stdout or "[]")                    
+      125 +                                                              
+      126 +                                                              
+      127 +def ast_grep_node_names(kind: str, lang: str, file_path: Path)
+          + -> list[str]:                                                
+      128 +    """Names of every `kind` node (with a `name` field) in `fi
+          +le_path` — e.g.                                               
+      129 +    every `function_declaration` (Go) / `function_definition` 
+          +(Python),                                                     
+      130 +    regardless of signature. Used to detect test functions str
+          +ucturally."""                                                 
+      131 +    rule = (f"id: q\nlanguage: {lang}\n"                      
+      132 +            f"rule: {{kind: {kind}, has: {{field: name, patter
+          +n: $NAME}}}}")                                                
+      133 +    proc = run([_ast_grep_bin(), "scan", "--inline-rules", rul
+          +e, "--json",                                                  
+      134 +                str(file_path)], file_path.parent)            
+      135 +    if proc.returncode != 0:                                  
+      136 +        raise CheckError(f"ast-grep scan failed on {file_path}
+          +:\n{proc.stderr}".rstrip())                                   
+      137 +    return [m["metaVariables"]["single"]["NAME"]["text"]      
+      138 +            for m in json.loads(proc.stdout or "[]")          
+      139 +            if "NAME" in m.get("metaVariables", {}).get("singl
+          +e", {})]                                                      
+      140 +                                                              
+      141 +                                                              
+      142  # --- Markdown fence extraction (matched ``` / ~~~ runs) -----
+           ---------------
+      143  def extract_code_blocks(path: Path) -> list[CodeBlock]:
+      144      lines = path.read_text(encoding="utf-8").splitlines(keepen
+           ds=True)
+
+⏺ Now refactor the Go checker to use ast-grep instead of regex:
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 8 lines, removed 5 lines
+      19  
+      20  from __future__ import annotations
+      21  
+      22 -import re                                                      
+      22  import shutil
+      23  import sys
+      24  from pathlib import Path
+     ...
+      28  sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+      29  import common  # noqa: E402
+      30  
+      31 +TEST_PREFIXES = ("Test", "Example", "Benchmark")               
+      32  
+      33 +                                                               
+      34  def validate_go(file_path: Path, work: Path, block: common.Code
+          Block, update: bool) -> None:
+      34 -    code = file_path.read_text(encoding="utf-8")               
+      35 -    if not re.search(r"(?m)^\s*package\s+\w+\s*$", code):      
+      35 +    # Structural query (ast-grep), not a regex over source text
+         +.                                                              
+      36 +    if not common.ast_grep_matches("package $NAME", "go", file_
+         +path):                                                         
+      37          raise common.CheckError(
+      38              f"{file_path}: Go sample needs a package declaratio
+          n "
+      39              "(or mark the block `no-check`)")
+      40      if update:
+      41          if common.run(["gofmt", "-w", str(file_path)], file_pat
+          h.parent).returncode != 0:
+      42              raise common.CheckError(f"{file_path}: gofmt -w fai
+          led")
+      42 -        code = file_path.read_text(encoding="utf-8")           
+      43  
+      44 +    code = file_path.read_text(encoding="utf-8")               
+      45 +    funcs = common.ast_grep_node_names("function_declaration", 
+         +"go", file_path)                                               
+      46 +    is_test = any(name.startswith(TEST_PREFIXES) for name in fu
+         +ncs)                                                           
+      47 +                                                               
+      48      d = work / f"go_{abs(hash(str(file_path)))}"
+      49      d.mkdir(parents=True)
+      50      (d / "go.mod").write_text("module book_sample\n\ngo 1.22\n"
+          , encoding="utf-8")
+      47 -    is_test = bool(re.search(r"(?m)^\s*func\s+(Test|Example|Ben
+         -chmark)\w*\s*\(", code))                                       
+      51      (d / ("sample_test.go" if is_test else "sample.go")).write_
+          text(code, encoding="utf-8")
+      52  
+      53      if common.run(["gofmt", "-l", str(d)], d).stdout.strip():
+
+⏺ Now add the ast-grep PATH check to the Go checker's tool guard:
+
+⏺ Update(scripts/go/check_go_samples.py)
+  ⎿  Added 1 line, removed 1 line
+      65  @click.option("--max-inline-lines", default=6, type=int,
+      66                help="inline blocks longer than this must be exte
+          rnalized")
+      67  def main(root: str, src: str, update: bool, max_inline_lines: i
+          nt) -> None:
+      68 -    for tool in ("go", "gofmt"):                               
+      68 +    for tool in ("go", "gofmt", "ast-grep"):                   
+      69          if not shutil.which(tool):
+      70              raise SystemExit(f"`{tool}` not found on PATH")
+      71      root_path = Path(root).resolve()
+
+⏺ Now the Python checker — replace the regex test-detection with ast-grep and
+  add a tool guard:
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 4 lines, removed 3 lines
+      19  
+      20  from __future__ import annotations
+      21  
+      22 -import re                                                      
+      22  import shutil
+      23  import sys
+      24  from pathlib import Path
+     ...
+      43          if fmt.returncode != 0:
+      44              raise common.CheckError(f"{file_path}: not ruff-for
+          matted (run with --update)")
+      45  
+      46 +    # Test detection: filename convention, or a `test_*` functi
+         +on found by ast-grep                                           
+      47 +    # (structural query, not a regex over source text).        
+      48      name = file_path.name
+      48 -    text = file_path.read_text(encoding="utf-8")               
+      49 +    defs = common.ast_grep_node_names("function_definition", "p
+         +ython", file_path)                                             
+      50      is_test = (name.startswith("test_") or name.endswith("_test
+          .py")
+      50 -               or re.search(r"(?m)^\s*def\s+test_\w*\s*\(", tex
+         -t))                                                            
+      51 +               or any(d.startswith("test_") for d in defs))    
+      52      if is_test and shutil.which("pytest"):
+      53          proc = common.run(["pytest", "-q", str(file_path)], fil
+          e_path.parent)
+      54          if proc.returncode not in (0, 5):  # 5 == no tests coll
+          ected
+
+⏺ Update(scripts/python/check_python_samples.py)
+  ⎿  Added 2 lines
+      63  @click.option("--max-inline-lines", default=6, type=int,
+      64                help="inline blocks longer than this must be exte
+          rnalized")
+      65  def main(root: str, src: str, update: bool, max_inline_lines: i
+          nt) -> None:
+      66 +    if not shutil.which("ast-grep"):                           
+      67 +        raise SystemExit("`ast-grep` not found on PATH")       
+      68      root_path = Path(root).resolve()
+      69      src_path = (root_path / src).resolve()
+      70      if not src_path.exists():
+
+⏺ Now let me run a full end-to-end test with uv run + click + ast-grep on a
+  fixture book:
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== py_compile all ==="; python3 -m py_compile scripts/common.py
+      scripts/check_c…)
+  ⎿  === py_compile all ===
+     OK
+     === uv run python checker ===
+     … +22 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ All green end-to-end. Let me verify the failure paths and the preprocessor
+  protocol still work after the rewrites:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== preprocessor 'supports html' (expect exit 0, no output) ==="…)
+  ⎿  === preprocessor 'supports html' (expect exit 0, no output) ===
+     Installed 1 package in 1ms
+     exit=0
+     … +8 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ The inline-policy check fired correctly, but the no-package case produced an
+  "ast-grep failed" message instead of the friendly "needs a package
+  declaration". Let me debug ast-grep's behavior on a file with no package
+  clause:
+
+⏺ Bash(T=$(mktemp -d); printf 'func Add(a, b int) int { return a + b }\n' >
+      "$T/bad.go"
+      echo "=== run -p 'package \$NAME' on no-package file ==="…)
+  ⎿  === run -p 'package $NAME' on no-package file ===
+     []
+     exit=1
+     … +12 lines (ctrl+o to expand)
+
+⏺ Found it: ast-grep run uses grep convention — exit 1 = no matches / 
+  unparseable file, not a tool error. Real errors are exit ≥2. Let me confirm
+  and relax both helpers to accept 0/1:
+
+⏺ Bash(T=$(mktemp -d); printf 'package main\nfunc x(){}\n' > "$T/ok.go"
+      echo "=== bad language (genuine error) ==="…)
+  ⎿  === bad language (genuine error) ===
+     bad-lang exit=2
+     === scan on unparseable file ===
+     … +114 lines (ctrl+o to expand)
+
+⏺ Confirmed: run → 0=match, 1=no-match/unparseable, 2=error; scan → 0=ok,
+  ≥2=error. Let me relax ast_grep_matches to accept exit 1:
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 5 lines, removed 2 lines
+      116  
+      117  
+      118  def ast_grep_matches(pattern: str, lang: str, file_path: Path)
+            -> list[dict]:
+      119 -    """JSON matches of a concrete `pattern` against `file_path
+          -` in `lang`."""                                               
+      119 +    """JSON matches of a concrete `pattern` against `file_path
+          +` in `lang`.                                                  
+      120 +                                                              
+      121 +    `ast-grep run` follows grep exit conventions: 0 = matched,
+          + 1 = no match (or                                             
+      122 +    an unparseable target), >=2 = a real tool error (e.g. bad 
+          +language)."""                                                 
+      123      proc = run([_ast_grep_bin(), "run", "--pattern", pattern, 
+           "--lang", lang,
+      124                  "--json", str(file_path)], file_path.parent)
+      122 -    if proc.returncode != 0:                                  
+      125 +    if proc.returncode >= 2:                                  
+      126          raise CheckError(f"ast-grep failed on {file_path}:\n{p
+           roc.stderr}".rstrip())
+      127      return json.loads(proc.stdout or "[]")
+      128  
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 1 line, removed 1 line
+      135              f"rule: {{kind: {kind}, has: {{field: name, patter
+           n: $NAME}}}}")
+      136      proc = run([_ast_grep_bin(), "scan", "--inline-rules", rul
+           e, "--json",
+      137                  str(file_path)], file_path.parent)
+      138 -    if proc.returncode != 0:                                  
+      138 +    if proc.returncode >= 2:                                  
+      139          raise CheckError(f"ast-grep scan failed on {file_path}
+           :\n{proc.stderr}".rstrip())
+      140      return [m["metaVariables"]["single"]["NAME"]["text"]
+      141              for m in json.loads(proc.stdout or "[]")
+
+⏺ Now re-test the failure paths to confirm the friendly "needs a package
+  declaration" message appears:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      FX=$(mktemp -d); mkdir -p "$FX/scripts/go" "$FX/src/go/ch01"…)
+  ⎿  === expect friendly 'needs a package declaration' ===
+     go code-sample check FAILED:
+       /private/var/folders/qw/10nj3wwx2w34s_8rbg7n32w40000gn/T/tmp.BHFey0E
+     … +12 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ The friendly package error works now. The rust test had a cwd bug in my test
+  script — but it surfaced a real issue: Rust fence annotations use comma
+  separators (rust,compile_fail), and my language/tokens only split on
+  whitespace. Let me fix the fence-info parsing to handle both:
+
+⏺ Update(scripts/common.py)
+  ⎿  Added 8 lines, removed 3 lines
+      71      code: str
+      72  
+      73      @property
+      74 +    def _info_tokens(self) -> list[str]:                       
+      75 +        # Fence info is space- or comma-separated: `go no-check
+         +`, `rust,compile_fail`.                                        
+      76 +        return [t for t in re.split(r"[\s,]+", self.info.strip(
+         +)) if t]                                                       
+      77 +                                                               
+      78 +    @property                                                  
+      79      def language(self) -> str:
+      75 -        first = self.info.strip().split(maxsplit=1)[0].lower() 
+         -if self.info.strip() else ""                                   
+      76 -        return LANG_BY_FENCE.get(first, "")                    
+      80 +        toks = self._info_tokens                               
+      81 +        return LANG_BY_FENCE.get(toks[0].lower(), "") if toks e
+         +lse ""                                                         
+      82  
+      83      @property
+      84      def tokens(self) -> set[str]:
+      80 -        return {t.lower() for t in self.info.split()}          
+      85 +        return {t.lower() for t in self._info_tokens}          
+      86  
+      87      @property
+      88      def label(self) -> str:
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 3 lines, removed 1 line
+      47  
+      48  
+      49  def fence_lang(info: str) -> str:
+      50 -    return info.strip().split(maxsplit=1)[0].lower() if info.st
+         -rip() else ""                                                  
+      50 +    # Fence info is space- or comma-separated: `go no-check`, `
+         +rust,compile_fail`.                                            
+      51 +    toks = [t for t in re.split(r"[\s,]+", info.strip()) if t] 
+      52 +    return toks[0].lower() if toks else ""                     
+      53  
+      54  
+      55  def audit_file(path: Path, checks: set[str], max_inline: int) -
+          > list[str]:
+
+⏺ Now re-test Rust comma-annotations (compile_fail, no_run) with correct paths:
+
+⏺ Bash(SKILL=/Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programm
+      ing
+      FX=$(mktemp -d); mkdir -p "$FX/scripts/rust" "$FX/src/rust/ch01"…)
+  ⎿  === expect OK: compile_fail (broken) + no_run both pass ===
+     rust code-sample check OK — compiled 2, included 2, excerpts 0, short-
+     inline 0, skipped 0
+     … +8 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ All Rust annotation semantics work. Now let me update the docs to reflect the
+  click + ast-grep dependencies accurately:
+
+⏺ Update(scripts/README.md)
+  ⎿  Added 18 lines, removed 6 lines
+       3  Copy what your book needs into its `scripts/` and wire it into 
+          `just test`.
+       4  Every script is a [uv](https://docs.astral.sh/uv/) PEP-723 sing
+          le file — the
+       5  `#!/usr/bin/env -S uv run --script` shebang plus an inline `# /
+          // script` metadata
+       6 -block, so `uv run --script scripts/<x>.py` runs it with the dec
+         -lared deps and no                                              
+       7 -virtualenv setup. These checkers need **no third-party Python l
+         -ibraries**                                                     
+       8 -(`dependencies = []`): they shell out to the language toolchain
+         -s (`go`, `gofmt`,                                              
+       9 -`rustc`, `rustfmt`, `ruff`, `pytest`) instead. Missing optional
+         - toolchains (ruff,                                             
+      10 -pytest) are skipped, not failed. Add a real dependency by listi
+         -ng it in the                                                   
+      11 -script's `# /// script` block — never `pip install` into the am
+         -bient environment.                                             
+       6 +block, so `uv run --script scripts/<x>.py` runs it with its dec
+         +lared deps and no                                              
+       7 +manual virtualenv. The CLIs use [`click`](https://click.pallets
+         +projects.com/)                                                 
+       8 +(the one Python dependency, declared in each `# /// script` blo
+         +ck; uv installs it                                             
+       9 +on first run). Add any further dependency by listing it there —
+         + never `pip install`                                           
+      10 +into the ambient environment.                                  
+      11  
+      12 +**Code is never identified with regular expressions.** To find 
+         +language                                                       
+      13 +constructs (a Go `package` clause, a Go/Python test function) t
+         +he checkers query                                              
+      14 +the parsed syntax tree with [`ast-grep`](https://ast-grep.githu
+         +b.io/) via                                                     
+      15 +`subprocess` (`ast-grep run --lang go` / `ast-grep scan --inlin
+         +e-rules`), not                                                 
+      16 +regex over source text — see `common.ast_grep_matches` / `ast_g
+         +rep_node_names`.                                               
+      17 +(Markdown structure — fences, `{{#include}}` directives, prose 
+         +cross-references —                                             
+      18 +is still parsed textually; ast-grep is for *code*.)            
+      19 +                                                               
+      20 +**External tools** the checkers shell out to: `ast-grep` (requi
+         +red for Go/Python                                              
+      21 +construct queries), the language toolchains `go`+`gofmt`, `rust
+         +c`+`rustfmt`, and                                              
+      22 +the optional Python `ruff`/`pytest` (skipped, not failed, when 
+         +absent). Install                                               
+      23 +ast-grep with `brew install ast-grep` or `cargo install ast-gre
+         +p`.                                                            
+      24 +                                                               
+      25  ## What each piece does
+      26  
+      27  | Path | Gate it provides | Why a clean `mdbook build` misses i
+          t |
+
+⏺ Update(SKILL.md)
+  ⎿  Added 4 lines, removed 3 lines
+      78  ## Reusable scripts — the gate a clean `mdbook build` does NOT 
+          provide
+      79  
+      80  [`scripts/`](scripts/README.md) is copy-into-a-new-book uv PEP-
+          723 scripts
+      81 -(`uv run --script …`; no third-party deps — they shell out to t
+         -he language                                                    
+      82 -toolchains). Per-language checkers live under `scripts/<lang>/`
+         -, so a                                                         
+      83 -single-language book copies only what it needs.                
+      81 +(`uv run --script …`; CLIs use `click`, declared inline and aut
+         +o-installed by uv).                                            
+      82 +Code constructs are identified with **`ast-grep`** (via `subpro
+         +cess`), never                                                  
+      83 +regex. Per-language checkers live under `scripts/<lang>/`, so a
+         + single-language                                               
+      84 +book copies only what it needs.                                
+      85  
+      86  - `scripts/<lang>/check_<lang>_samples.py` — compile + test eve
+          ry **included**
+      87    sample; enforce externalization; provenance-check source exce
+          rpts. Wired into
+⏺ Update(SKILL.md)
+  ⎿  Added 2 lines, removed 1 line
+      67  cargo install mdbook          --version '0.4.52' --force
+      68  cargo install mdbook-pandoc   --version '0.10.6' --force
+      69  cargo install mdbook-admonish --force            # 1.20.x
+      70 -# pandoc >= 3.x with xelatex (system package); plus `just`     
+      70 +# pandoc >= 3.x with xelatex (system package); plus `just` and 
+         +`uv`                                                           
+      71 +# ast-grep (code-construct queries):  brew install ast-grep   (
+         +or cargo install ast-grep)                                     
+      72  # plus the language toolchain(s): go+gofmt | python3(+ruff,pyte
+          st) | rustc+rustfmt+cargo
+      73  ```
+      74  
+
+⏺ Update(justfile)
+  ⎿  Added 2 lines, removed 1 line
+      101      cargo install mdbook        --version '0.4.52' --force
+      102      cargo install mdbook-pandoc --version '0.10.6' --force
+      103      cargo install mdbook-admonish --force
+      104 -    @echo "Also need: pandoc >= 3.x with xelatex, and the lang
+          - toolchains (go/rustc/python)."                               
+      104 +    cargo install ast-grep --force                            
+      105 +    @echo "Also need: uv, pandoc >= 3.x with xelatex, and the 
+          +lang toolchains (go/rustc/python)."                           
+
+⏺ Final full verification — compile all scripts and run the complete clean
+  fixture through every checker via uv run:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      echo "=== py_compile all 8 scripts ==="…)
+  ⎿  === py_compile all 8 scripts ===
+     OK
+     === confirm NO regex-on-code remains (only markdown/prose regex) ===
+     … +19 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ All three requirements are now satisfied and verified end-to-end. Let me
+  record these script conventions in memory since they're explicit, durable
+  preferences:
+
+  Wrote 1 memory (ctrl+o to expand)
+
+⏺ All three new requirements are implemented and verified end-to-end. Summary of
+  what changed across scripts/**/*.py:
+
+  1. uv PEP-723 (done earlier this turn)
+
+  Every script now starts with #!/usr/bin/env -S uv run --script plus an inline
+  # /// script metadata block. Inter-script calls, the justfile recipes, and the
+  book.toml preprocessor command all invoke via uv run --script.
+
+  2. click instead of argparse
+
+  All six CLI scripts (check_code_samples, the three check_<lang>_samples,
+  chapter-audit, check-refs) plus the mdbook_code_preprocessor now use click
+  commands/options. click>=8.1 is declared in each script's # /// script block
+  and auto-installed by uv on first run. Verified --help renders and parsing
+  works.
+
+  3. pathlib, not os
+
+  Already the case — confirmed zero os usage; pathlib is used throughout.
+
+  4. ast-grep instead of regex for code (new)
+
+  The only scripts that regex-matched language constructs were the Go and Python
+  checkers. They now query the parsed syntax tree via subprocess → ast-grep,
+  through two helpers in common.py:
+  - ast_grep_matches("package $NAME", "go", file) — Go package-clause detection
+  - ast_grep_node_names("function_declaration", "go", file) /
+  ("function_definition", "python", file) — structural test-function detection
+  (regardless of signature/annotations)
+
+  Confirmed grep -c re scripts/go/... and scripts/python/... both return 0.
+  Markdown/prose parsing (fences, {{#include}}, cross-references) still uses
+  regex — ast-grep is reserved for code, per your wording.
+
+  Verified working
+
+  - All 8 scripts py_compile clean; no argparse, no os.
+  - Full dispatcher run compiles/tests Go + Python + Rust samples green via uv 
+  run.
+  - Failure paths bite: missing Go package → friendly message; over-long inline
+  block rejected; Rust compile_fail/no_run comma-annotations honored correctly
+  (pass when broken, fail when it compiles).
+  - Hard-won detail captured: ast-grep run uses grep exit conventions (1 =
+  no-match/unparseable, ≥2 = real error), and fence info is split on [\s,]+ so
+  rust,compile_fail parses.
+
+  One operational note: the Go and Python checkers now require ast-grep on PATH
+  (guarded with a clear error); install via brew install ast-grep or cargo 
+  install ast-grep (added to just install-tools).
+
+⏺ Ran 3 stop hooks (ctrl+o to expand)
+  ⎿  Stop hook error: AUTO-SAVE checkpoint. Save key topics, decisions,
+  quotes, and code from this session to your memory system. Organize
+  into appropriate categories. Use verbatim quotes where possible.
+  Continue conversation after saving.
+
+⏺ Memory is already current from this session — I updated
+  mdbook-programming-skill.md with all four script conventions
+  (uv/click/pathlib/ast-grep) and the ast-grep exit-code lessons during the
+  work. Let me verify the index is consistent.
+
+⏺ Bash(cd /Users/hughbrown/.claude/projects/-Users-hughbrown-workspace-hughdbrow
+      n-claude-skills/memory/ && echo "=== files ===" && ls && echo && echo "===
+      MEMORY.md ==…)
+  ⎿  === files ===
+     claude-skills-repo.md
+     house-style-mdbook-locations.md
+     … +12 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ The memory system is current and consistent. Let me refresh the index hook for
+  the programming-skill entry to reflect the script conventions added this
+  turn:
+
+  Wrote 1 memory (ctrl+o to expand)
+
+⏺ Checkpoint saved. Memory state:
+
+  - claude-skills-repo (project) — the repo of Hugh's mdBook-authoring skills;
+  mdbook-programming created this session.
+  - house-style-mdbook-locations (reference) — canonical example books
+  (golang-with-ai = model, async-rust = older pattern) and skill paths.
+  - mdbook-programming-skill (project) — the externalization rule (verbatim),
+  three sample homes, and the four mandatory script conventions captured with
+  your verbatim quotes and the order you requested them: (1) uv PEP-723, (2)
+  deps in the script header, (3) click not argparse, (4) pathlib not os, (5)
+  ast-grep not regex for code — plus the hard-won ast-grep exit-code and
+  comma-fence details.
+
+  The mdbook-programming skill itself is complete and fully verified: SKILL.md,
+  REFERENCE.md, justfile, and the per-language scripts/{go,python,rust}/
+  checkers (uv + click + ast-grep) all pass end-to-end on a fixture book, with
+  failure paths confirmed to bite.
+
+✻ Sautéed for 13m 55s
+
+❯ Add a note or direction that all mdBooks made with this skill should use      
+  American spelling and vocabulary.                                             
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(SKILL.md)
+  ⎿  Added 7 lines
+      120  
+      121  ## Writing conventions (match the gold-standard chapter exactl
+           y)
+      122  
+      123 +- **American English throughout.** Every book made with this s
+          +kill uses American                                            
+      124 +  spelling and vocabulary — *color*, *behavior*, *initialize*,
+          + *canceled*,                                                  
+      125 +  *gray*, *math*, *fall* — not the British forms (*colour*, *b
+          +ehaviour*,                                                    
+      126 +  *initialise*, *cancelled*, *grey*, *maths*, *autumn*). This 
+          +applies to prose,                                             
+      127 +  headings, captions, and comments in authored code samples (r
+          +eal source                                                    
+      128 +  excerpts keep their upstream spelling verbatim). Set the edi
+          +tor/locale and any                                            
+      129 +  spell-check dictionary to `en-US`.                          
+      130  - **Code is externalized and verified** (the rule above). Refe
+           rence the source
+      131    project and file in prose for excerpts; say so when an excer
+           pt is abridged.
+      132  - **Fence code plainly** (no admonish wrapper) so it survives 
+           xelatex. Use the
+
+⏺ Added to SKILL.md under Writing conventions as the first rule:
+
+  ▎ American English throughout. Every book made with this skill uses American 
+  ▎ spelling and vocabulary — color, behavior, initialize, canceled, gray, math,
+  ▎ fall — not the British forms (colour, behaviour, initialise, cancelled, 
+  ▎ grey, maths, autumn). This applies to prose, headings, captions, and 
+  ▎ comments in authored code samples (real source excerpts keep their upstream 
+  ▎ spelling verbatim). Set the editor/locale and any spell-check dictionary to 
+  ▎ en-US.
+
+  Two deliberate scoping choices in the wording:
+  - Source excerpts are exempted — the provenance checker requires
+  src/source-excerpts/ files to match upstream byte-for-byte (exact) or modulo
+  whitespace (normalized), so "fixing" a British spelling in real repo code
+  would break the gate. The note says to keep those verbatim.
+  - It covers comments in authored samples too, since those live in the
+  externalized code/ and src/<lang>/ files, not just the Markdown prose.
+
+  Want me to also add a lightweight chapter-audit check that flags common
+  British spellings in prose (with a small allowlist), so it's enforced by just 
+  test rather than only documented?
+
+✻ Cogitated for 18s
+
+❯ Yes, add the British-spelling check to chapter-audit                          
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Now I'll add the British-spelling check. First the dictionary and docstring
+  entry:
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 2 lines
+      16                glyphs the xelatex font lacks                 xel
+          atex PDF
+      17    artifacts   leaked subagent tool tags                  -> par
+          allel-authoring debris
+      18    placeholder TODO / TBD / FIXME / lorem ipsum / ???     -> unf
+          inished prose
+      19 +  british     British spelling in prose (colour, behaviour, -is
+         +e, ...)                                                        
+      20 +                                                         -> hou
+         +se style is American English                                   
+      21    summary     every src/**/*.md is listed in SUMMARY.md  -> mdb
+          ook silently skips it
+      22                (source-excerpts/ and samples/ excepted)
+      23  
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 61 lines
+       46  CODE_LANGS = {"go", "golang", "python", "py", "python3", "rust
+           ", "rs"}
+       47  INCLUDE_RE = re.compile(r"\{\{#(?:include|rustdoc_include|play
+           ground)\s")
+       48  FENCE_RE = re.compile(r"^[ \t]*(`{3,}|~{3,})([^\n\r]*)$")
+       49 +WORD_RE = re.compile(r"[A-Za-z][A-Za-z'-]*")                  
+       50  
+       51  
+       52 +def _british_dict() -> dict[str, str]:                        
+       53 +    """British -> American spellings to flag in prose. Explici
+          +t forms only — a                                              
+       54 +    blanket -ise/-our rule would mis-flag American words (exer
+          +cise, four). These                                            
+       55 +    are stems known to be genuinely British so the generated i
+          +nflections (incl.                                             
+       56 +    ones that never occur, e.g. a rare -iser) cannot create fa
+          +lse positives."""                                             
+       57 +    out: dict[str, str] = {}                                  
+       58 +    # -ise/-isation verbs that are -ize/-ization in American E
+          +nglish.                                                       
+       59 +    ize_stems = [                                             
+       60 +        "initial", "serial", "deserial", "normal", "optim", "s
+          +ynchron", "organ",                                            
+       61 +        "priorit", "custom", "capital", "summar", "recogn", "m
+          +inim", "maxim",                                               
+       62 +        "util", "visual", "author", "categor", "emphas", "spec
+          +ial", "general",                                              
+       63 +        "central", "standard", "modular", "tokin", "parameter"
+          +, "containeris",                                              
+       64 +    ]                                                         
+       65 +    for stem in ize_stems:                                    
+       66 +        for sb, sa in (("ise", "ize"), ("ised", "ized"), ("ise
+          +s", "izes"),                                                  
+       67 +                       ("ising", "izing"), ("isation", "izatio
+          +n"),                                                          
+       68 +                       ("iser", "izer"), ("isers", "izers")): 
+       69 +            out[stem + sb] = stem + sa                        
+       70 +    # -yse verbs -> -yze.                                     
+       71 +    for stem in ["anal", "paral", "catal", "paraly"]:         
+       72 +        for sb, sa in (("yse", "yze"), ("ysed", "yzed"), ("yse
+          +s", "yzes"),                                                  
+       73 +                       ("ysing", "yzing")):                   
+       74 +            out[stem + sb] = stem + sa                        
+       75 +    # Explicit irregulars / -our / -re / -ence / misc.        
+       76 +    out.update({                                              
+       77 +        "colour": "color", "colours": "colors", "coloured": "c
+          +olored",                                                      
+       78 +        "colouring": "coloring", "colourful": "colorful",     
+       79 +        "behaviour": "behavior", "behaviours": "behaviors",   
+       80 +        "behavioural": "behavioral",                          
+       81 +        "favour": "favor", "favours": "favors", "favoured": "f
+          +avored",                                                      
+       82 +        "favourite": "favorite", "favourites": "favorites",   
+       83 +        "labour": "labor", "neighbour": "neighbor", "neighbour
+          +s": "neighbors",                                              
+       84 +        "honour": "honor", "flavour": "flavor", "flavours": "f
+          +lavors",                                                      
+       85 +        "rumour": "rumor", "harbour": "harbor", "endeavour": "
+          +endeavor",                                                    
+       86 +        "centre": "center", "centres": "centers", "centred": "
+          +centered",                                                    
+       87 +        "metre": "meter", "metres": "meters", "litre": "liter"
+          +, "litres": "liters",                                         
+       88 +        "fibre": "fiber", "fibres": "fibers", "calibre": "cali
+          +ber",                                                         
+       89 +        "licence": "license", "licences": "licenses",         
+       90 +        "defence": "defense", "offence": "offense",           
+       91 +        "catalogue": "catalog", "catalogues": "catalogs",     
+       92 +        "cancelled": "canceled", "cancelling": "canceling",   
+       93 +        "labelled": "labeled", "labelling": "labeling",       
+       94 +        "modelled": "modeled", "modelling": "modeling",       
+       95 +        "travelled": "traveled", "travelling": "traveling",   
+       96 +        "traveller": "traveler", "signalled": "signaled", "sig
+          +nalling": "signaling",                                        
+       97 +        "marshalled": "marshaled", "marshalling": "marshaling"
+          +,                                                             
+       98 +        "grey": "gray", "greyscale": "grayscale", "maths": "ma
+          +th",                                                          
+       99 +        "whilst": "while", "amongst": "among", "learnt": "lear
+          +ned",                                                         
+      100 +        "spelt": "spelled", "programme": "program", "programme
+          +s": "programs",                                               
+      101 +        "artefact": "artifact", "artefacts": "artifacts",     
+      102 +        "enquire": "inquire", "enquiry": "inquiry", "enquiries
+          +": "inquiries",                                               
+      103 +        "judgement": "judgment", "acknowledgement": "acknowled
+          +gment",                                                       
+      104 +        "dependant": "dependent", "grey-scale": "gray-scale", 
+      105 +    })                                                        
+      106 +    return out                                                
+      107 +                                                              
+      108 +                                                              
+      109 +BRITISH = _british_dict()                                     
+      110 +                                                              
+      111 +                                                              
+      112  def fence_lang(info: str) -> str:
+      113      # Fence info is space- or comma-separated: `go no-check`, 
+           `rust,compile_fail`.
+      114      toks = [t for t in re.split(r"[\s,]+", info.strip()) if t]
+⏺ Two stems in my generators are malformed. Let me fix them:
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 1 line, removed 1 line
+      60          "initial", "serial", "deserial", "normal", "optim", "sy
+          nchron", "organ",
+      61          "priorit", "custom", "capital", "summar", "recogn", "mi
+          nim", "maxim",
+      62          "util", "visual", "author", "categor", "emphas", "speci
+          al", "general",
+      63 -        "central", "standard", "modular", "tokin", "parameter",
+         - "containeris",                                                
+      63 +        "central", "standard", "modular", "token", "parameter",
+         + "container",                                                  
+      64      ]
+      65      for stem in ize_stems:
+      66          for sb, sa in (("ise", "ize"), ("ised", "ized"), ("ises
+          ", "izes"),
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 1 line, removed 1 line
+      68                         ("iser", "izer"), ("isers", "izers")):
+      69              out[stem + sb] = stem + sa
+      70      # -yse verbs -> -yze.
+      71 -    for stem in ["anal", "paral", "catal", "paraly"]:          
+      71 +    for stem in ["anal", "paral", "catal"]:                    
+      72          for sb, sa in (("yse", "yze"), ("ysed", "yzed"), ("yses
+          ", "yzes"),
+      73                         ("ysing", "yzing")):
+      74              out[stem + sb] = stem + sa
+
+⏺ Now wire the check into the prose-line loop and the CLI. First the prose
+  check:
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 10 lines, removed 2 lines
+      163          if in_fence:
+      164              body.append(ln)
+      165              continue
+      166 -        # prose line                                          
+      166 +        # prose line — strip inline code spans so code identif
+          +iers aren't judged.                                           
+      167 +        prose = re.sub(r"`[^`]*`", "", ln) if ("unicode" in ch
+          +ecks or "british" in checks) else ln                          
+      168          if "unicode" in checks:
+      168 -            prose = re.sub(r"`[^`]*`", "", ln)  # ignore inlin
+          -e code spans                                                  
+      169              for ch in prose:
+      170                  if ch in BAD_UNICODE_PROSE:
+      171                      errs.append(f"{path}:{n}: literal Unicode 
+           '{ch}' in prose "
+      172                                  "(drops in the xelatex PDF)")
+      173                      break
+      174 +        if "british" in checks:                               
+      175 +            seen: set[str] = set()                            
+      176 +            for word in WORD_RE.findall(prose):               
+      177 +                am = BRITISH.get(word.lower())                
+      178 +                if am and word.lower() not in seen:           
+      179 +                    seen.add(word.lower())                    
+      180 +                    errs.append(f"{path}:{n}: British spelling
+          + '{word}' in prose "                                          
+      181 +                                f"— use American '{am}' (house
+          + style is American English)")                                 
+      182  
+      183      if "fences" in checks and fence_count % 2:
+      184          errs.append(f"{path}: odd number of code fences (unter
+           minated block)")
+
+⏺ Update(scripts/chapter-audit.py)
+  ⎿  Added 6 lines, removed 3 lines
+      199      return out
+      200  
+      201  
+      202 -ALL_CHECKS = ("fences", "inline-code", "unicode", "artifacts",
+          - "placeholder", "summary")                                    
+      202 +ALL_CHECKS = ("fences", "inline-code", "unicode", "artifacts",
+          + "placeholder",                                               
+      203 +              "british", "summary")                           
+      204  
+      205  
+      206  @click.command(help=__doc__)
+     ...
+      212  @click.option("--no-unicode", is_flag=True, help="skip the uni
+           code check")
+      213  @click.option("--no-artifacts", is_flag=True, help="skip the a
+           rtifacts check")
+      214  @click.option("--no-placeholder", is_flag=True, help="skip the
+            placeholder check")
+      215 +@click.option("--no-british", is_flag=True, help="skip the Bri
+          +tish-spelling check")                                         
+      216  @click.option("--no-summary", is_flag=True, help="skip the sum
+           mary check")
+      217  def main(files: tuple[str, ...], max_inline_lines: int, no_fen
+           ces: bool,
+      218           no_inline_code: bool, no_unicode: bool, no_artifacts:
+            bool,
+      217 -         no_placeholder: bool, no_summary: bool) -> None:     
+      219 +         no_placeholder: bool, no_british: bool, no_summary: b
+          +ool) -> None:                                                 
+      220      disabled = {
+      221          "fences": no_fences, "inline-code": no_inline_code, "u
+           nicode": no_unicode,
+      220 -        "artifacts": no_artifacts, "placeholder": no_placehold
+          -er, "summary": no_summary,                                    
+      222 +        "artifacts": no_artifacts, "placeholder": no_placehold
+          +er,                                                           
+      223 +        "british": no_british, "summary": no_summary,         
+      224      }
+      225      checks = {c for c in ALL_CHECKS if not disabled[c]}
+      226  
+
+⏺ Now let me test the British check — confirm it catches British spellings,
+  ignores American and inline-code, and the generators produce no malformed
+  false positives:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      python3 -m py_compile scripts/chapter-audit.py && echo "compile OK"…)
+  ⎿  compile OK
+     === sanity: a few generated keys (no malformed) ===
+     Traceback (most recent call last):
+     … +25 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ The check works perfectly — caught all 10 British forms (including in the
+  heading, case-insensitively), and correctly ignored the code fence, the
+  inline-code span, and the American line. My standalone sanity snippet only
+  failed because system python3 lacks click; let me re-run it with click
+  available to confirm the generators produce no malformed keys:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      uv run --with click python3 -c "…)
+  ⎿    initialise       -> initialize
+       initialisation   -> initialization
+       analyse          -> analyze
+     … +8 lines (ctrl+o to expand)
+
+⏺ All clean: 270 entries, no malformed keys, American words correctly not
+  flagged. Let me update the docs to mention the new check:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+      grep -n 'inline code that should\|leaked tool tags, SUMMARY\|fences,
+      inline-code, Unic…)
+  ⎿  scripts/README.md:35:| `chapter-audit.py` | Markdown **source** health
+     : fence parity, **long inline code that should be an `{{#include}}`**,
+      PDF-hostile Unicode in prose, leaked tool tags, placeholders, SUMMARY
+     … +6 lines (ctrl+o to expand)
+
+⏺ Update(scripts/README.md)
+  ⎿  Added 1 line, removed 1 line
+      32  | `rust/check_rust_samples.py` | Every included `.rs` sample is
+           `rustfmt`-clean and compiles/runs (`rustc --test`), honoring `
+          no_run`/`compile_fail`/`editionNNNN`; crate-resident files defe
+          r to `cargo test` | same |
+      33  | `check_code_samples.py` | Dispatcher — runs whichever `script
+          s/<lang>/` checkers are present (or `--langs`) | convenience fo
+          r the justfile / preprocessor |
+      34  | `mdbook_code_preprocessor.py` | Same checks, run **inside `md
+          book build`** so a bad sample blocks HTML+PDF | makes the gate 
+          impossible to forget |
+      35 -| `chapter-audit.py` | Markdown **source** health: fence parity
+         -, **long inline code that should be an `{{#include}}`**, PDF-ho
+         -stile Unicode in prose, leaked tool tags, placeholders, SUMMARY
+         - coverage | these render wrong or drop in the PDF; build still 
+         -exits 0 |                                                      
+      35 +| `chapter-audit.py` | Markdown **source** health: fence parity
+         +, **long inline code that should be an `{{#include}}`**, PDF-ho
+         +stile Unicode in prose, leaked tool tags, placeholders, **Briti
+         +sh spelling in prose** (house style is American English), SUMMA
+         +RY coverage | these render wrong, read off-house-style, or drop
+         + in the PDF; build still exits 0 |                             
+      36  | `check-refs.py` | Every `Chapter N` / `§N.M` / `Listing N.M` 
+          / `Figure N.M` / `Appendix X` and intra-book `[..](chNN.md)` li
+          nk resolves | renumbering/parallel drafting break refs silently
+           |
+      37  
+      38  ## The one rule these enforce
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ Update(SKILL.md)
+  ⎿  Added 2 lines, removed 1 line
+      90    can't reach HTML or PDF. `check_code_samples.py` dispatches o
+          ver all languages
+      91    present.
+      92  - `chapter-audit.py` — Markdown source health (fence parity, un
+          -externalized
+      93 -  inline code, PDF-hostile Unicode in prose, leaked tool tags, 
+         -SUMMARY coverage).                                             
+      93 +  inline code, PDF-hostile Unicode in prose, leaked tool tags, 
+         +**British spelling                                             
+      94 +  in prose**, SUMMARY coverage).                               
+      95  - `check-refs.py` — every `Chapter N` / `§N.M` / `Listing N.M` 
+          / `Figure N.M` /
+      96    `Appendix X` and intra-book link resolves. Run after any renu
+          mbering.
+      97  
+
+⏺ Update(SKILL.md)
+  ⎿  Added 2 lines, removed 1 line
+      189  - [ ] **Code checker clean** — every included sample compiles/
+           tests; no
+      190        un-externalized long inline block; every source excerpt 
+           matches upstream.
+      191        This is the primary correctness gate for a programming b
+           ook.
+      192 -- [ ] `chapter-audit.py` clean (fences, inline-code, Unicode, 
+          -tags, SUMMARY).                                               
+      192 +- [ ] `chapter-audit.py` clean (fences, inline-code, Unicode, 
+          +tags, British                                                 
+      193 +      spelling, SUMMARY).                                     
+      194  - [ ] `check-refs.py` clean (cross-references and links resolv
+           e).
+      195  - [ ] Rust: `cargo test --workspace` over `code/` is green.
+      196  - [ ] `src/SUMMARY.md`: `# Part` / `# Appendices` headings sit
+            **before** the
+
+⏺ The British-spelling check is implemented, tested, and documented. Summary:
+
+  What was added to chapter-audit.py
+
+  A new british check (in the default set, disable with --no-british) that flags
+  British spellings in prose and points to the American form:
+
+  src/ch01.md:3: British spelling 'initialise' in prose — use American
+  'initialize' (house style is American English)
+
+  Design choices for low false-positive rate:
+  - Explicit word list, not a blanket suffix rule — a naive -ise→-ize or
+  -our→-or rule would mis-flag American words like exercise, advise, surprise,
+  comprise, four. Instead, 270 entries are built from generators over
+  known-British stems (initial→initialise/initialisation/..., anal→analyse) plus
+  an explicit irregular table (colour, centre, cancelled, grey, whilst,
+  licence, maths, programme, artefact, …). Verified that
+  exercise/advise/surprise/license/center/organize are not flagged.
+  - Prose-only — runs on the same prose lines as the Unicode check: fenced code
+  blocks are skipped entirely, and inline-code spans (backticks) are stripped
+  first, so code identifiers like colour_map aren't judged. This dovetails with
+  the SKILL.md note that real source excerpts keep upstream spelling verbatim —
+  excerpt files live under src/source-excerpts/ (not the top-level chapter prose
+  the audit scans) and are inside code fences when displayed.
+  - Case-insensitive, de-duplicated per line.
+
+  Verified: caught all 10 British forms in a fixture (including a capitalized
+  heading), ignored the code fence + inline span + American line; generators
+  produce zero malformed keys.
+
+  Docs updated
+
+  - scripts/README.md checker table, SKILL.md scripts list, and the
+  final-verification checklist all now mention the British-spelling gate.
+
+  It's wired into just test already via the existing chapter-audit recipe, so it
+  runs on every gate.
+
+⏺ Ran 3 stop hooks (ctrl+o to expand)
+  ⎿  Stop hook error: AUTO-SAVE checkpoint. Save key topics, decisions,
+  quotes, and code from this session to your memory system. Organize
+  into appropriate categories. Use verbatim quotes where possible.
+  Continue conversation after saving.
+
+  Wrote 1 memory (ctrl+o to expand)
+
+⏺ Checkpoint saved. Updated mdbook-programming-skill.md with the
+  American-English house-style decision — captured your verbatim directive ("all
+  mdBooks made with this skill should use American spelling and vocabulary"),
+  that it's both documented (first Writing Convention in SKILL.md) and enforced
+  (the british check in chapter-audit.py), and the key design rationale:
+  explicit 270-entry dict over known-British stems rather than a blanket suffix
+  rule, prose-only with code/excerpts exempted.
+
+  The three memory files remain current:
+  - claude-skills-repo — the repo of mdBook-authoring skills
+  - house-style-mdbook-locations — canonical example books and skill paths
+  - mdbook-programming-skill — all design decisions: externalized verified code,
+  per-language scripts, the four script conventions
+  (uv/click/pathlib/ast-grep), ast-grep exit-code lessons, and now
+  American-English enforcement
+
+  The mdbook-programming skill is complete and verified end-to-end. Ready for
+  the next change whenever you are.
+
+✻ Crunched for 3m 47s
+
+❯ Commit this                                                                   
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills && git status &&
+      echo "=== branch ===" && git branch --show-current)
+  ⎿  On branch main
+     Your branch is up to date with 'origin/main'.
+     … +6 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+⏺ We're on main (the repo's convention — every prior skill was committed
+  directly to main). Let me verify there are no stray artifacts, then stage and
+  commit.
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills
+      echo "=== files to be added ==="…)
+  ⎿  === files to be added ===
+     A  mdbook-programming/REFERENCE.md
+     A  mdbook-programming/SKILL.md
+     … +12 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ All 12 files, no artifacts. Committing:
+
+⏺ Bash(cd /Users/hughbrown/workspace/hughdbrown/claude-skills
+      git commit -m "$(cat <<'EOF'…)
+  ⎿  [main 6c183ca] Add skill for creating, writing, and reviewing programm
+     ing mdBooks
+      12 files changed, 1742 insertions(+)
+     … +14 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to 
+     /Users/hughbrown/workspace/hughdbrown/claude-skills/mdbook-programming
+
+⏺ Committed to main as 6c183ca — 12 files, 1742 insertions, matching the repo's
+  convention of committing each skill directly to main (like the sibling
+  mdbook-math-book and the other skills).
+
+  The commit message summarizes the skill's core rule (externalized, verified
+  code), the three sample homes, the per-language tooling stack
+  (uv/click/pathlib/ast-grep), the checkers, the justfile, and the
+  American-English house style. Not pushed — let me know if you'd like me to git
+  push.
+
+✻ Worked for 43s
+
+※ recap: Built the mdbook-programming skill for Go/Python/Rust books with verified externalized code samples, per-language checkers, and American-English enforcement; committed to main as 6c183ca. Next action: git push if you want it on the remote. (disable recaps in /config)
