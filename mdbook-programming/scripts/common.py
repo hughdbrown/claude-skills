@@ -199,7 +199,9 @@ def parse_include(block: CodeBlock) -> Include | None:
 
 def anchor_defined(file_path: Path, anchor: str) -> bool:
     text = file_path.read_text(encoding="utf-8")
-    return f"ANCHOR: {anchor}" in text or f"ANCHOR:{anchor}" in text
+    # Match the WHOLE anchor name, not a prefix: anchor "ret" must not be
+    # satisfied by `// ANCHOR: retry`. The name ends at a non-(word/hyphen) char.
+    return re.search(rf"ANCHOR:[ \t]*{re.escape(anchor)}(?![\w-])", text) is not None
 
 
 def under(path: Path, parent: Path) -> bool:
