@@ -89,3 +89,7 @@ Develop Rust code using a batch-first workflow that minimizes compile-wait time.
 ### `/hdb:go-dev` — Go development
 
 Develop Go code that compiles and passes tests on the first attempt. Front-loads type correctness and interface satisfaction to achieve green on first `go test`. Includes project infrastructure templates (directory layout, Makefile, pre-commit hooks), 8 documented Go problem areas with wrong/right examples, testing patterns (table-driven, httptest, test helpers), preferred dependency table, and conventions extracted from production Go projects.
+
+### `/hdb:linkedin-profile-fixer` — LinkedIn profile rewrite
+
+Revamp a LinkedIn profile to attract inbound recruiters using a sequenced, one-section-at-a-time rewrite. Requires two inputs — the profile as a PDF export and 3–5 real target job descriptions — and anchors every rewrite to the JDs' keywords and rewarded outcomes. Enforces the rules that make AI rewrites work: sequence beats stacking (one section per step), never invent metrics (ask the user for real numbers), and kill generic filler ("passionate", "delight users", verbs-and-vibes bullets). Walks through diagnosis → headline → About → experience bullets → skills/featured in order.
