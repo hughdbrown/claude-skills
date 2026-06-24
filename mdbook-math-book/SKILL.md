@@ -16,6 +16,15 @@ plus appendices — e.g. an async-Rust or systems topic). For the latter, read
 *Technical / code books* next, then apply the scaffold, build, and review sections
 with the substitutions it notes.
 
+> **For a code-centric programming book (Go / Python / Rust), prefer the dedicated
+> [`mdbook-programming`](../mdbook-programming/SKILL.md) skill.** It shares this
+> toolchain but adds the machinery a code book needs: every displayed sample is
+> externalized to a real file and compiled/tested by a checker wired into the
+> build. Where it and the *Technical / code books* notes below disagree —
+> especially on code samples — **mdbook-programming wins** (externalize and verify;
+> do **not** hand-type code into a Markdown fence). Use the notes below only for a
+> lightly-code book that doesn't warrant that machinery.
+
 ## Technical / code books (prose + code, not just math)
 
 The same toolchain (mdbook + mdbook-pandoc PDF, mdbook-admonish, justfile, git,
@@ -98,7 +107,8 @@ See [scripts/README.md](scripts/README.md) for flags and the answer-audit schema
 6. `src/SUMMARY.md` — table of contents (every chapter file must be listed here or
    mdbook warns and skips it).
 7. `justfile` — `build` / `serve` / `pdf` / `clean`. (Template in REFERENCE.)
-8. `.gitignore` — `/book/`, `.DS_Store`.
+8. `.gitignore` — `/book/`, `.DS_Store`, `.uv-cache/`, `__pycache__/` (the last
+   two are created by the `scripts/` tools and must not be committed).
 
 Verify the skeleton builds (`mdbook build`) with ONE real chapter before writing
 the rest.
