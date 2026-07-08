@@ -51,8 +51,9 @@ Differences from a math book:
 - **Code samples carry the argument.** Every sample must *firmly support the claim
   the surrounding text makes* — if the prose says X is faster / safe / blocking,
   the code must actually demonstrate X. A sample that merely looks plausible is a
-  defect. Fence code plainly (no admonish) so it survives the xelatex PDF; keep
-  diagrams ASCII per the rules below.
+  defect. Fence code plainly (no admonish) so it survives the xelatex PDF. For
+  diagrams, prefer the Typst/CeTZ figure pipeline (see *Diagrams — use real vector
+  figures*); a plain ASCII fence is acceptable only for a trivial flowchart.
 - **Preamble:** use the *light* preamble (no theorem environments) — these books
   rarely need `amsthm`.
 - **Write one gold-standard chapter first**, verify it builds to HTML + PDF, then
@@ -99,7 +100,12 @@ See [scripts/README.md](scripts/README.md) for flags and the answer-audit schema
    that form does NOT survive mdBook's Markdown step — author inline math as
    `$...$` (see the delimiter warning below).
 3. `theme/figures.css` + `theme/figures.js` — figure numbering/captions (optional
-   but standard).
+   but standard). For real diagrams, also copy the Typst/CeTZ figure pipeline —
+   `theme/figures/preamble.typ`, `scripts/typst-build`, and the two pandoc filters
+   `theme/pandoc/{image-blocks-to-figures,rewrite-figure-ext}.lua` — from
+   `~/projects/books/math/geometry`, and wire them into `book.toml`, the `justfile`
+   (`figures` recipe + `export BOOK_ROOT`), and `.gitignore` (`/src/figures/built/`).
+   See *Diagrams — use real vector figures*. Do **not** ship ASCII diagrams.
 4. `theme/pandoc/preamble.tex` — amsmath/microtype/fancyhdr/hyperref. Use the
    *light* preamble (no theorem environments) for informal books.
 5. Run `mdbook-admonish install .` once — writes `mdbook-admonish.css` (referenced
@@ -140,6 +146,74 @@ not raw TeX — or just run `scripts/pdf-math-check.py`.
 Full PDF-hazard table (hyperref, appendix labels, `{=latex}` blocks, page
 numbering, enumitem spacing) is in [REFERENCE.md](REFERENCE.md).
 
+## Diagrams — use real vector figures (Typst/CeTZ), not ASCII
+
+**Math diagrams are load-bearing pedagogy — build them as real vector figures,
+never ASCII art.** For a math book, hand-drawn ASCII diagrams look amateurish and
+have been explicitly rejected by the author ("The diagrams in this volume are
+horrific. They are really bad."). Use the **Typst + CeTZ** pipeline, copied
+wholesale from `~/projects/books/math/geometry` — it produces clean, labeled,
+STIX-font vector figures in both HTML and the PDF.
+
+**Pipeline.** Each figure is a Typst source `figures/<chapter>/<name>.typ` that
+draws with the CeTZ package. `scripts/typst-build` walks `figures/**/*.typ` and
+compiles each (mtime-cached) to **both** `src/figures/built/<chapter>/<name>.svg`
+(for HTML) **and** `.pdf` (for xelatex). Markdown references the SVG as a
+standalone paragraph — the caption may contain inline `$…$` math:
+
+```
+![One period of $y = \sin x$, key points marked.](figures/built/day05/sine-wave.svg)
+```
+
+**Wiring — copy these four things from the geometry book:**
+
+- `theme/figures/preamble.typ` — every `.typ` begins with
+  `#import "@preview/cetz:0.4.0"`, `#import "../../theme/figures/preamble.typ": *`,
+  `#show: figure-setup`. `figure-setup` sets an auto-size transparent page and the
+  `STIX Two Text` font (so figure text matches the book); the file also defines the
+  grayscale stroke palette `gfx-stroke` / `gfx-thin` / `gfx-arc`.
+- Two pandoc Lua filters, added to `[output.pandoc.profile.pdf] filters` in
+  `book.toml`: `image-blocks-to-figures.lua` (wraps a standalone image paragraph in
+  a numbered, captioned `Figure`) and `rewrite-figure-ext.lua` (rewrites
+  `figures/built/…​.svg` → `.pdf` on the xelatex path — xelatex cannot
+  `\includegraphics` an SVG; it resolves to an absolute path via `$BOOK_ROOT`).
+  HTML is untouched (mdbook's HTML pipeline never runs pandoc).
+- `justfile` — a `figures` recipe (`./scripts/typst-build`) that `build` and `test`
+  depend on, plus `export BOOK_ROOT := justfile_directory()` at the top so the
+  filter finds the built PDFs regardless of cwd.
+- `.gitignore` — add `/src/figures/built/` (built artifacts stay out of git, like
+  `/book/`). The `.typ` sources **are** committed.
+
+Requires `typst` and `rsvg-convert` installed (`brew install typst librsvg`).
+
+**Hard rules (each one cost a debug cycle):**
+
+- **A figure reference must be TOP-LEVEL markdown — never inside a `admonish`
+  block.** Inside a tcolorbox the image becomes a LaTeX float and the PDF dies with
+  `! LaTeX Error: Not in outer par mode.` If the diagram belongs to a worked
+  example, place the image immediately before/after the admonish box and refer to
+  it as "the figure below/above."
+- **Typst variable shadowing eats math glyphs.** A local `let theta = 40deg`
+  shadows the `theta` symbol inside `[$theta$]`, so the label prints the number
+  `40deg` instead of θ. Name angle variables `ang` / `angle-rad`, never
+  `theta`/`phi`/`pi`. In QA, confirm θ/π render as glyphs, not numbers.
+- **Restrict source greps to `*.md`.** `check-math-delims` (and any recursive
+  `grep … src/`) will match the built binary `.pdf` files under `src/figures/built/`
+  and false-fail; add `--include='*.md'` (or `-I`).
+
+**Authoring workflow.** Author 1–2 gold-standard `.typ` templates yourself first —
+a labeled triangle, and a plotted curve with axes (sample the function into a point
+array and draw with `line(..pts)`; axes are `gfx-thin` lines with
+`mark: (end: ">")`) — and confirm one builds to HTML + PDF. Then fan out one agent
+per chapter (see *Parallel authoring*); each agent must (a) read the two
+gold-standard `.typ` files + `theme/figures/preamble.typ` + a geometry example for
+circles/arcs, (b) restate the top-level-image and shadowing rules, and (c) **render
+every figure to PNG (`rsvg-convert -z 3 <svg> -o /tmp/x.png`) and visually inspect
+it**, iterating until labels don't overlap and the math is right. QA the whole set
+by rendering all built SVGs to PNG and tiling them into contact sheets (a
+uv/PEP-723 pillow script), then eyeball the sheets — this catches shadowing bugs
+and overlaps a build cannot.
+
 ## Writing conventions (match the exemplar exactly)
 
 - **Math delimiters:** inline **`$ ... $`**, display `$$ ... $$`. Do **NOT** use
@@ -170,12 +244,13 @@ numbering, enumitem spacing) is in [REFERENCE.md](REFERENCE.md).
   (common mistakes), `note` (asides/next-up), `abstract`/`info` (boxed rules).
   Don't nest them. Keep one blank line discipline; mismatched ```` ``` ```` fences
   break the build.
-- **ASCII diagrams** (branching/expression-tree figures, flowcharts) go in a
-  **plain fenced code block** — *not* admonish, *not* math. They render monospace
-  in HTML *and* in the xelatex PDF: Menlo (the monofont) has the box-drawing
-  glyphs `│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─` and `·`. Use **ASCII inside** the diagram
-  (`x^2`, `e^(3x)`, `-`), never Unicode superscripts/minus, or the PDF warns.
-  No image pipeline needed — this is the cheapest way to add figures.
+- **Diagrams: build real vector figures, not ASCII art.** For a math book,
+  diagram quality matters — use the Typst/CeTZ pipeline (see *Diagrams — use real
+  vector figures*); do **not** hand-draw ASCII diagrams. A plain fenced ASCII block
+  (monospace Menlo, which has the box-drawing glyphs `│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─` and `·`;
+  ASCII inside only — `x^2`, `-`, never Unicode superscripts/minus) is tolerable
+  *only* for a trivial flowchart in a lightly-illustrated code book, and never
+  inside admonish or math.
 - Write one **gold-standard chapter first**, then have every other chapter match
   its header block, section order, and callout usage.
 
