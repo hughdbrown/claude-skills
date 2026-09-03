@@ -1,0 +1,64 @@
+# Forbidden and suspect phrasing for the 15-day series.
+# Lines are case-insensitive regexes (Python `re`). Blank lines and # comments ignored.
+# [blocking]  — one hit is a blocking finding (the style-guide list).
+# [soft]      — a structural tic; blocking only when clustered (>= --cluster hits
+#               in one file). Reported as a signal otherwise.
+# [note]      — a teaching move the series uses on purpose ("notice that"); counted
+#               and listed so a reviewer can judge overuse, never blocking.
+# Grow this list whenever a reviewer flags a phrase; the cheapest place to kill a
+# recurring trope is the scanner.
+
+[blocking]
+\bit(?:'s| is) worth noting\b
+\bit(?:'s| is) important to (?:note|remember|understand)\b
+\bin essence\b
+\bthe key takeaway\b
+\bdelve(?:s|d)? into\b
+\bdive(?:s|d)? (?:in|into)\b
+\bunpack(?:s|ed|ing)?\b
+\btapestry\b
+\brealm\b
+\bnavigat(?:e|es|ing) the\b
+\blandscape of\b
+\ba (?:journey|voyage) (?:into|through|of)\b
+\bleverag(?:e|es|ing|ed)\b
+\brobust\b
+\bseamless(?:ly)?\b
+\bgame[- ]changer\b
+\bunlock(?:s|ing)? the (?:power|potential|secrets?)\b
+\bunleash(?:es|ing)?\b
+\bat the end of the day\b
+\bin today's (?:fast-paced |modern |digital )?world\b
+\bbuckle up\b
+\blet(?:'s| us) dive in\b
+\bfun fact\b
+\bspoiler(?: alert)?\b
+\bit(?:'s| is) not just (?:about )?\w[^.!?]{0,60}?,? it(?:'s| is)\b
+\bnot (?:just|only|merely) [^.!?]{2,60}?,? but (?:also )?\b
+\bcrucial\b
+\bin conclusion\b
+\bwithout further ado\b
+\bthe beauty of\b
+
+[soft]
+^(?:here(?:'s| is) the thing)\b
+^(?:think about it)\b
+\bit is not [^.!?]{2,60}?\. it is\b
+\bthis is not [^.!?]{2,60}?\. this is\b
+^(?:in other words|simply put|put simply|in short|the bottom line)[,:]
+\b(?:sound|sounds) familiar\?
+\b(?:simple|neat|easy|cool), right\?
+\bpretty (?:neat|cool|remarkable)\b
+\b(?:and )?that(?:'s| is) exactly (?:why|what|the point)\b
+\bresist (?:that|the) (?:instinct|urge|temptation)\b
+
+[note]
+\bnotice (?:that|what|how)\b
+\bremember:\s
+\bthe (?:key|trick|secret) (?:is|here is|to this is)\b
+\bthat(?:'s| is) it\.
+\bthat(?:'s| is) (?:the whole|all there is to)\b
+\bstop and (?:think|notice)\b
+\bwhy\? because\b
+\belegant(?:ly)?\b
+\bpowerful (?:tool|idea|technique|way)\b

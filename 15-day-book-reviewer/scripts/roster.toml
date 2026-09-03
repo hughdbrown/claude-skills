@@ -1,0 +1,89 @@
+# Review roster for the 15-day series. run-review.py reads this to build a round's
+# manifest: one dispatch per (lens, chunk). Edit here, not in the script.
+#
+# chunk    = "pair" (two days per agent), "triple", "day", or "book" (one agent,
+#            every file). Front/back matter is appended to the last chunk of a
+#            per-day lens, or reviewed by the book-level lenses.
+# model    = the Agent model to dispatch on. Correctness and plagiarism run on the
+#            strongest tier; the rest on the cheaper one.
+# blocking = whether a CHANGES_REQUIRED verdict from this lens blocks approval.
+# when     = "always", or "if-math" / "if-figures" / "if-quotes" / "if-lan" to
+#            dispatch only when the book has that feature (run-review.py detects).
+# prompt   = the section of LENSES.md that is this agent's brief.
+
+[lens.correctness]
+chunk = "pair"
+model = "opus"
+blocking = true
+when = "always"
+prompt = "correctness-reviewer"
+
+[lens.level]
+chunk = "triple"
+model = "sonnet"
+blocking = true
+when = "always"
+prompt = "level-reviewer"
+
+[lens.voice]
+chunk = "triple"
+model = "sonnet"
+blocking = true
+when = "always"
+prompt = "voice-reviewer"
+
+[lens.coverage]
+chunk = "book"
+model = "sonnet"
+blocking = true
+when = "always"
+prompt = "coverage-reviewer"
+
+[lens.consistency]
+chunk = "book"
+model = "sonnet"
+blocking = true
+when = "always"
+prompt = "consistency-reviewer"
+
+[lens.promises]
+chunk = "book"
+model = "sonnet"
+blocking = true
+when = "always"
+prompt = "promises-reviewer"
+
+[lens.originality]
+chunk = "book"
+model = "opus"
+blocking = true
+when = "always"
+prompt = "originality-reviewer"
+
+[lens.figures]
+chunk = "book"
+model = "sonnet"
+blocking = true
+when = "if-figures"
+prompt = "figure-reviewer"
+
+[lens.series]
+chunk = "book"
+model = "sonnet"
+blocking = false
+when = "always"
+prompt = "series-reviewer"
+
+[lens.topic]
+chunk = "triple"
+model = "opus"
+blocking = true
+when = "if-topic-prompt"
+prompt = "topic-reviewer"
+
+[lens.qwen-resolve]
+chunk = "day"
+model = "local"
+blocking = false
+when = "if-lan"
+prompt = "qwen-resolve"
