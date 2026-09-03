@@ -27,7 +27,13 @@ Entry kinds (all expressions are sympy strings; `x, h, n, t, k` are symbols):
   {"id": "ex8",  "kind": "simplify", "lhs": "(x**3-1)/(x-1)", "rhs": "x**2+x+1"}
   {"id": "ex1",  "kind": "series",  "expr": "1/2**n", "var": "n", "lo": "1", "hi": "oo", "claimed": "1"}
   {"id": "ex4",  "kind": "skip",   "why": "prose: explain why the limit fails"}
+  {"id": "ex9",  "kind": "limit",  "expr": "1/x**2", "var": "x", "to": "0", "claimed": "oo"}
+  {"id": "ex10", "kind": "limit",  "expr": "1/x", "var": "x", "to": "0", "dir": "-", "claimed": "-oo"}
   {"id": "ex2",  "kind": "matrix", "expr": "Matrix([[1,2],[3,4]])*Matrix([[1],[1]])", "claimed": "Matrix([[3],[7]])"}
+
+When a fix changes a number or expression, the FIXER adds or updates the entry for
+every case the finding names and re-runs this file; a check that covers one of
+two cases is how a slip in the second case ships.
 """
 from __future__ import annotations
 
@@ -52,6 +58,8 @@ def S(s: str):
 
 
 def close(a, b, tol: float | None) -> bool:
+    if a in (oo, -oo, sp.zoo) or b in (oo, -oo, sp.zoo):
+        return a == b            # oo - oo is nan, so compare infinities directly
     if tol is None:
         return sp.simplify(a - b) == 0
     return abs(float(sp.N(a)) - float(sp.N(b))) <= tol
@@ -65,7 +73,7 @@ def run(c: dict) -> tuple[bool | None, str]:
         v = LOCALS[c["var"]]
         dirs = ["+", "-"] if c.get("dir", "+-") == "+-" else [c["dir"]]
         got = [sp.limit(S(c["expr"]), v, S(c["to"]), dir=d) for d in dirs]
-        if len(got) == 2 and sp.simplify(got[0] - got[1]) != 0:
+        if len(got) == 2 and not close(got[0], got[1], None):
             return False, f"one-sided limits differ: {got[0]} vs {got[1]}"
         return close(got[0], S(c["claimed"]), c.get("tol")), f"computed {got[0]}"
     if kind == "value":

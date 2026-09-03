@@ -17,7 +17,9 @@ nothing else about the process.
    the changed argument — not only the complaint.
 4. **Never claim to have run a command you did not run.** Paste the command and
    its last line. A report that says "verified" with no reproducible evidence
-   is treated as unverified.
+   is treated as unverified. Run the skill's scripts with `uv run --script`
+   (plain `python3` lacks their dependencies); never substitute a hand-written
+   grep or regex for a scanner — the round's `scans/` already holds its output.
 5. **The contract decides, not your taste.** If the style guide forbids a phrase,
    it is a finding even where you think it works. If you believe the contract is
    wrong, say so under a separate `## Contract disputes` heading; do not soften
@@ -67,7 +69,8 @@ valid. A wrong answer trains a wrong habit; this is the highest-stakes lens.
 2. **Check mechanically.** Copy `scripts/answer-check-template.py` to
    `<OUTPUT_DIR>/checks/<chunk>.py`, write one entry per example and exercise
    whose answer is a value, expression, root set, limit, sum, matrix, or
-   inequality, run it, and paste the summary line into `## Evidence`. Entries
+   inequality (infinite limits use `claimed: "oo"` / `"-oo"`), run it with
+   `uv run --script`, and paste the summary line into `## Evidence`. Entries
    derive from the *problem's* constants, never the key's. Prose, proof, and
    "argue it" exercises are `skip` entries with a reason. If the book ships its
    own `scripts/answer-audit.py` and `answers.yaml`, run that too and report

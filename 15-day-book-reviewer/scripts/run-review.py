@@ -66,14 +66,17 @@ def chunk_days(days: list[str], how: str) -> list[list[str]]:
 @click.option("--roster", type=click.Path(exists=True, path_type=Path), default=HERE / "roster.toml", show_default=True)
 @click.option("--days", default=None, help="comma-separated subset, e.g. day03,day04 (re-review after fixes)")
 @click.option("--skip-scans", is_flag=True)
+@click.option("--frontback/--no-frontback", default=None,
+              help="review front/back matter as its own chunk (default: yes on a full round, no with --days)")
 @click.option("--lan-host", default="http://10.0.0.222:11434", show_default=True)
-def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, lan_host: str) -> None:
+def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, frontback: bool | None, lan_host: str) -> None:
     src = Path("src")
     all_days = sorted(p.stem for p in src.glob("day[0-9][0-9].md"))
     if not all_days:
         raise click.ClickException("no src/dayNN.md found; run from the book root")
     day_list = days.split(",") if days else all_days
     extras = [n for n in FRONT_BACK if (src / f"{n}.md").exists()]
+    do_frontback = (days is None) if frontback is None else frontback
 
     lenses = tomllib.loads(roster.read_text())["lens"]
     out = Path(f"docs/reviews/round-{rnd}")
@@ -113,16 +116,18 @@ def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, lan_host: s
                                "output": f"{out}/{name}--dayNN.md",
                                "command": f"scripts/{name}.py {' '.join(day_list)} --round {rnd}"})
             continue
-        chunks = chunk_days(day_list, cfg["chunk"])
-        for i, ch in enumerate(chunks):
-            if cfg["chunk"] == "book":
-                files, label = [f"src/{d}.md" for d in all_days] + [f"src/{e}.md" for e in extras], "book"
-            else:
+        chunks: list[tuple[str, list[str]]] = []
+        if cfg["chunk"] == "book":
+            chunks.append(("book", [f"src/{d}.md" for d in all_days] + [f"src/{e}.md" for e in extras]))
+        else:
+            for ch in chunk_days(day_list, cfg["chunk"]):
                 files = [f"src/{d}.md" for d in ch]
                 files += [f"staging/{d}-answers.md" for d in ch if Path(f"staging/{d}-answers.md").exists()]
-                if i == len(chunks) - 1 and cfg["chunk"] != "day":
-                    files += [f"src/{e}.md" for e in extras if e != "answers"]
-                label = "+".join(ch)
+                chunks.append(("+".join(ch), files))
+            if do_frontback and cfg["chunk"] != "day" and extras:
+                # its own dispatch, so a re-review of touched days can approve on its own
+                chunks.append(("frontback", [f"src/{e}.md" for e in extras if e != "answers"]))
+        for label, files in chunks:
             dispatches.append({"n": len(dispatches) + 1, "lens": name, "kind": "agent", "model": cfg["model"],
                                "blocking": bool(cfg["blocking"]), "files": files,
                                "output": f"{out}/{name}--{label}.md", "brief": f"LENSES.md#{cfg['prompt']}"})
@@ -137,6 +142,7 @@ def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, lan_host: s
     for s in skipped:
         rows.append(f"| – | {s} | – | – | SKIPPED | – | – |")
 
+    background = Path("docs/reviews/assumed-background.md")   # the controller's addition survives re-runs
     (out / "contract.md").write_text("\n".join([
         f"# Review contract: round {rnd}", "",
         f"- BOOK_ROOT: {Path.cwd()}", f"- GIT_REV: {git_rev()}", f"- ROUND: {rnd}",
@@ -150,6 +156,7 @@ def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, lan_host: s
         "- REPORT FORMAT: LENSES.md 'Report format' — a `## Verdict:` heading is mandatory", "",
         "## Features detected", "", *[f"- {k}: {v}" for k, v in features.items()], "",
         "## Scanner runs", "", *(scans_note or ["- skipped"]), "",
+        *(["## Assumed background", "", background.read_text().strip(), ""] if background.is_file() else []),
     ]))
     (out / "manifest.md").write_text("\n".join([
         f"# Review manifest: round {rnd}", "",

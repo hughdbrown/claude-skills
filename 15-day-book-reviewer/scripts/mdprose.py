@@ -36,6 +36,7 @@ class Block:
     had_math: bool = False
     level: int = 0         # heading level
     list_index: int | None = None   # ordered-list item number
+    list_depth: int = 0             # 1 for a top-level list item, 2 for a nested one
     in_blockquote: bool = False
     admonish: str | None = None     # admonish kind when inside one
     heading_path: tuple[str, ...] = ()   # enclosing headings' text, outermost first
@@ -115,6 +116,7 @@ def _walk(tokens: list[Token], doc: Doc, offset: int, admonish: str | None, head
     """offset: 0-based source line the token stream starts at (for nested parses)."""
     kind_stack: list[tuple[str, int | None]] = []   # (block kind, ordered index)
     ordered: list[int] = []                          # running counters per ordered list
+    list_depth = 0                                   # open lists (bullet or ordered)
     blockquote = 0
     pending_heading_level = 0
     for i, t in enumerate(tokens):
@@ -126,9 +128,13 @@ def _walk(tokens: list[Token], doc: Doc, offset: int, admonish: str | None, head
         elif t.type == "paragraph_open":
             kind_stack.append(("paragraph", None))
         elif t.type == "ordered_list_open":
-            ordered.append(int(t.attrGet("start") or 1) - 1)
+            ordered.append(int(t.attrGet("start") or 1) - 1); list_depth += 1
         elif t.type == "ordered_list_close":
-            ordered.pop()
+            ordered.pop(); list_depth -= 1
+        elif t.type == "bullet_list_open":
+            list_depth += 1
+        elif t.type == "bullet_list_close":
+            list_depth -= 1
         elif t.type == "list_item_open":
             idx = None
             if ordered and t.markup.endswith((".", ")")):
@@ -181,7 +187,8 @@ def _walk(tokens: list[Token], doc: Doc, offset: int, admonish: str | None, head
                 heading_path.append(text.strip())
             else:
                 doc.blocks.append(Block(kind, pline, pend, text.strip(), plain.strip(), src, had_math,
-                                        list_index=idx, in_blockquote=blockquote > 0, admonish=admonish,
+                                        list_index=idx, list_depth=list_depth if kind == "list_item" else 0,
+                                        in_blockquote=blockquote > 0, admonish=admonish,
                                         heading_path=tuple(heading_path)))
 
 

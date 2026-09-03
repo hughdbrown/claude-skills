@@ -2,7 +2,8 @@
 
 All uv/PEP-723 single files: `./name.py` (or `uv run --script name.py`) fetches
 its declared deps (`click`, `markdown-it-py`, `mdit-py-plugins`; `sympy` for the
-answer-check template). Run from the book root. None of them edits the book;
+answer-check template). Plain `python3 name.py` fails with ModuleNotFoundError
+unless those are installed; use uv. Run from the book root. None of them edits the book;
 run-review.py and qwen-resolve.py write under `docs/reviews/`.
 
 **Markup is parsed, never regex-scanned.** `mdprose.py` turns each file into

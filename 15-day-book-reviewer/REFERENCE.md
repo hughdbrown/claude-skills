@@ -26,10 +26,10 @@
 Read, in this order: `PLAN.md`; `docs/design/prompt.md`; `docs/style-guide.md`
 or the conventions section of `PLAN.md`; `src/SUMMARY.md`; `src/day01.md`.
 Then `git log --oneline | head` and `ls docs/reviews` to learn what rounds
-already ran. Write nothing yet. If `PLAN.md` has no *assumed background*
-section, derive one from Day 1's "You'll need" and the audience paragraph and
-put it in `contract.md` under `## Assumed background` so the level reviewer has
-a source.
+already ran. If `PLAN.md` has no *assumed background* section, derive one
+from Day 1's "You'll need" and the audience paragraph and write it to
+`docs/reviews/assumed-background.md`; `run-review.py` folds that file into every
+round's `contract.md`, so it survives re-runs. Do not hand-edit `contract.md`.
 
 ## 2. Gate (controller)
 
@@ -46,9 +46,10 @@ S=~/.claude/skills/15-day-book-reviewer/scripts
 $S/slop-scan.py; $S/self-echo.py; $S/pacing-audit.py
 ```
 
-Render check: `ls book/html/*.html | head` and, if the book builds a PDF,
-`pdftotext book/pandoc/pdf/*.pdf - | grep -c '\\frac'` should print 0. If the
-book has `scripts/pdf-math-check.py`, run it.
+Render check: `ls book/html/*.html | head`, and for the PDF run the book's own
+gate (`just check-pdf-math` or `scripts/pdf-math-check.py`) if it has one; a
+raw `pdftotext | grep` is not a gate, because `PLAN.md` may document known
+toolchain leaks. If the book has no PDF gate, say so in `fixes.md` and move on.
 
 ## 3. Set up the round
 
@@ -65,8 +66,10 @@ checklist, and produces `manifest.json` (what `aggregate-review.py` reads),
 ## 4. Dispatch (one parallel batch)
 
 For every agent row in the manifest, one `Agent` call, all in the same
-message. Start the `script` row (qwen-resolve) in the background first. The
-prompt for each agent is assembled from four parts, in this order:
+message (omit the `name` parameter if the harness rejects it). Start the
+`script` row (qwen-resolve) in the background first. Do not edit the skill's
+scripts while a round is in flight. The prompt for each agent is assembled
+from four parts, in this order:
 
 ```
 <LENSES.md "Rules for every reviewer">
@@ -96,8 +99,9 @@ APPROVED iff every blocking lens reported APPROVED with no real blocking
 bullet. Missing reports count as CHANGES_REQUIRED. Before trusting a
 correctness report:
 
-- run its `checks/<chunk>.py` yourself; if it does not exist or does not run,
-  the report is unverified and the dispatch is re-run with the rule quoted;
+- run its `checks/<chunk>.py` yourself (`uv run --script`); if it does not
+  exist or does not run, the report is unverified and the dispatch is re-run
+  with the rule quoted;
 - re-solve one item it approved, chosen at random;
 - for every finding that names a number, recompute the number.
 
@@ -114,6 +118,9 @@ context, and this brief, always:
 > else. After editing, re-read the whole file and flag anything you may have
 > introduced (a broken fence, a new delimiter, a changed answer, a new phrase
 > from the forbidden list). If a finding is wrong, do not apply it; say why.
+> If your edit changes a number or an expression, add or update an entry in the
+> round's `checks/<chunk>.py` for EVERY case the finding names, run it with
+> `uv run --script`, and paste the summary line.
 
 Fixers never touch `src/answers.md` directly; edit `staging/` and regenerate
 with `just answers`. After all fixers return: `just test`, the three scanners,
@@ -121,9 +128,11 @@ and `git diff --stat`. Record what changed in `fixes.md`. Non-blocking
 findings are listed there under *Deferred* with the file and line, for the
 user.
 
-Then re-review only the touched days (`run-review.py --round 2 --days ...`)
-with every lens that raised a blocking finding on them, plus consistency and
-promises whole-book (fixes ripple). Commit when the round is approved:
+Then re-review only the touched days (`run-review.py --round 2 --days ...`;
+add `--frontback` when a front/back-matter file was touched) with every lens
+that raised a blocking finding on them, plus consistency and promises
+whole-book (fixes ripple). Front and back matter are their own chunk, so a
+day re-review is not held hostage by an open finding in `beyond.md`. Commit when the round is approved:
 
 ```
 Apply review fixes, round N: <one line per lens with a count>

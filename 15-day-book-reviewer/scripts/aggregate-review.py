@@ -43,9 +43,10 @@ def parse_report(path: Path) -> tuple[str, list[str], list[str]]:
             v = h.text.split(":", 1)[1].strip().upper()
             verdict = "APPROVED" if v.startswith("APPROVED") else "CHANGES_REQUIRED" if v else "MISSING"
             break
-    def items(section: str) -> list[str]:   # plain keeps `paths` and $math$ verbatim
+    def items(section: str) -> list[str]:   # top-level bullets only; plain keeps `paths` and $math$
         return [b.plain for b in doc.under_heading(lambda h: h.lower().startswith(section))
-                if b.kind == "list_item" and b.text.strip().lower().rstrip(".") not in PLACEHOLDER]
+                if b.kind == "list_item" and b.list_depth == 1
+                and b.text.strip().lower().rstrip(".") not in PLACEHOLDER]
     blocking, nonblocking = items("blocking findings"), items("non-blocking findings")
     return verdict, blocking, nonblocking
 
