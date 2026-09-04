@@ -63,13 +63,26 @@ checklist, and produces `manifest.json` (what `aggregate-review.py` reads),
 `manifest.md` (the same table for you), and `contract.md`. The scripts need
 `uv` on PATH; each fetches its own deps.
 
-## 4. Dispatch (one parallel batch)
+## 4. Dispatch (in waves of at most five)
 
-For every agent row in the manifest, one `Agent` call, all in the same
-message (omit the `name` parameter if the harness rejects it). Start the
-`script` row (qwen-resolve) in the background first. Do not edit the skill's
-scripts while a round is in flight. The prompt for each agent is assembled
-from four parts, in this order:
+**Never more than five agents in flight at once.** The harness caps
+concurrency (twenty by default), and the account's session limit is shared by
+every subagent: a 48-agent batch on a 19-day book burned the limit in minutes
+and every agent died mid-review with nothing written. Dispatch in waves of at
+most **five** `Agent` calls per message, launching the next wave as
+completions arrive, in this order of stakes:
+
+1. correctness (all chunks), 2. topic, 3. originality, 4. voice and level,
+5. coverage, consistency, promises, 6. figures, 7. series.
+
+A round is resumable: completed reports stay on disk, `aggregate-review.py`
+lists the MISSING ones, and only those are re-dispatched. If an agent dies
+with a rate-limit error, stop launching, note the reset time in `fixes.md`,
+and resume after it. Omit the `name` parameter if the harness rejects it.
+Start the `script` row (qwen-resolve) in the background first. Do not edit
+the skill's scripts while a round is in flight. The prompt for each agent is
+assembled from four parts, in this order (or point the agent at the file
+paths and section names; that is equivalent and far cheaper):
 
 ```
 <LENSES.md "Rules for every reviewer">
@@ -161,6 +174,7 @@ round 4.
 | "The reviewer said it verified the numbers" | Re-run its checks file. No file, no verification. |
 | "I'll apply the non-blocking findings too while I'm in there" | Non-blocking is the user's call. Defer and list. |
 | "Round 3 nearly landed; one more round" | Three is the cap. Escalate with a root cause. |
+| "Launch them all at once, it's one parallel batch" | Five at a time. A wall of agents shares one session limit and dies together. |
 
 ## 9. Adapting to a book
 

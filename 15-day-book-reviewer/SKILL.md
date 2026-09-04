@@ -20,7 +20,7 @@ escalation, rationalization table: [REFERENCE.md](REFERENCE.md).
 cd ~/projects/books/math/15-day-limits
 just test                                   # gate: the book must build
 $S/run-review.py --round 1                  # snapshot, scans, manifest, contract
-# dispatch every agent row of docs/reviews/round-1/manifest.md in ONE parallel batch
+# dispatch the agent rows of docs/reviews/round-1/manifest.md in waves of at most five
 $S/aggregate-review.py --round 1            # APPROVED iff every blocking lens approves
 # fix blocking findings per file, re-review touched days as round 2, commit
 ```
@@ -36,9 +36,11 @@ Create a todo per line and work them in order.
    PDF spot-checked. A book that does not build is not reviewed.
 3. **Round setup.** `run-review.py --round N`. Read `contract.md`; add an
    `## Assumed background` section if PLAN.md lacks one.
-4. **Dispatch** every agent row in one message, model and files per the
-   manifest, prompt = rules + report format + lens brief + contract. Start
-   `qwen-resolve` in the background if the manifest lists it.
+4. **Dispatch** the manifest's agent rows in waves of **at most five**,
+   correctness first (REFERENCE §4 order), model and files per the manifest,
+   prompt = rules + report format + lens brief + contract. Launch the next
+   wave as completions arrive. Start `qwen-resolve` in the background if the
+   manifest lists it.
 5. **While they run:** three random plagiarism searches yourself; two
    exercises per day-pair solved yourself.
 6. **Aggregate.** `aggregate-review.py --round N`. Re-run every correctness
@@ -81,6 +83,7 @@ Create a todo per line and work them in order.
 
 - Reviewing before `just test` passes, then chasing findings the build would have caught.
 - One whole-book correctness agent "to keep context": it samples. Use the roster.
+- Launching every agent at once: they share one session limit and die together. Five at a time.
 - Trusting "verified" in a report. Run the checks file. Recompute the number.
 - Letting a voice reviewer excuse a forbidden phrase as "the book's chatty voice."
 - Fixing a finding in `src/answers.md` instead of `staging/` (it is regenerated).

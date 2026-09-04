@@ -60,14 +60,16 @@ def shingles(words: list[str], n: int = 5) -> set[str]:
 
 @click.command(help=__doc__)
 @click.option("--src", multiple=True, default=("src", "staging"), show_default=True)
+@click.option("--recursive", "-r", is_flag=True, help="also scan subdirectories (books with src/problems/**)")
 @click.option("--min-words", type=int, default=9, show_default=True)
 @click.option("--jaccard", type=float, default=0.6, show_default=True)
 @click.option("--ignore", multiple=True, help="extra regex (lowercase prose) to skip")
 @click.option("--exclude", multiple=True, default=("answers.md",), show_default=True,
               help="file names to skip (answers.md is assembled from staging/)")
-def main(src, min_words, jaccard, ignore, exclude) -> None:
+def main(src, recursive, min_words, jaccard, ignore, exclude) -> None:
     ignore_re = [re.compile(p) for p in DEFAULT_IGNORE + list(ignore)]
-    files = sorted(p for d in src for p in Path(d).glob("*.md") if p.is_file() and p.name not in exclude)
+    files = sorted(p for d in src for p in Path(d).glob("**/*.md" if recursive else "*.md")
+                   if p.is_file() and p.name not in exclude)
     if not files:
         raise click.ClickException("no markdown files found")
 

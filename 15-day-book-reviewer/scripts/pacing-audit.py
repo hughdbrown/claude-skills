@@ -33,6 +33,8 @@ def measure(path: Path, exercise_heading: str) -> dict:
     doc = mdprose.parse(path)
     under = doc.under_heading(lambda h: h.lower().startswith(exercise_heading.lower()))
     exercises = [b for b in under if b.kind == "list_item" and b.list_index is not None]
+    if not exercises:   # item books pull each drill in with an mdBook include directive
+        exercises = [b for b in under if b.text.startswith("{{#include") and "problem" in b.text]
     return {
         "day": path.stem,
         "words": doc.prose_words(),

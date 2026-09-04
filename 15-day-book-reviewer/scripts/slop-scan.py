@@ -68,14 +68,15 @@ def scan_file(path: Path, groups: dict[str, list[re.Pattern]], cluster: int) -> 
 @click.command(help=__doc__)
 @click.option("--src", multiple=True, default=("src", "staging"), show_default=True,
               help="directories whose *.md files are scanned")
+@click.option("--recursive", "-r", is_flag=True, help="also scan subdirectories (books with src/problems/**)")
 @click.option("--phrases", type=click.Path(exists=True, path_type=Path),
               default=Path(__file__).with_name("slop-phrases.txt"), show_default=True)
 @click.option("--cluster", type=int, default=3, show_default=True, help="soft hits per file that block")
 @click.option("--dash-rate", type=float, default=1.5, show_default=True, help="em-dashes per 100 words to flag")
 @click.option("--json", "as_json", is_flag=True, help="emit JSON results before the text report")
-def main(src: tuple[str, ...], phrases: Path, cluster: int, dash_rate: float, as_json: bool) -> None:
+def main(src: tuple[str, ...], recursive: bool, phrases: Path, cluster: int, dash_rate: float, as_json: bool) -> None:
     groups = load_phrases(phrases)
-    files = sorted(p for d in src for p in Path(d).glob("*.md") if p.is_file())
+    files = sorted(p for d in src for p in Path(d).glob("**/*.md" if recursive else "*.md") if p.is_file())
     if not files:
         raise click.ClickException("no markdown files found under " + ", ".join(src))
     results = [scan_file(p, groups, cluster) for p in files]

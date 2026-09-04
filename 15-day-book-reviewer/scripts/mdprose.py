@@ -72,8 +72,8 @@ class Doc:
         return [b for b in self.blocks if b.kind == "heading"]
 
     def under_heading(self, predicate) -> list[Block]:
-        """Blocks whose nearest enclosing heading satisfies predicate(text)."""
-        return [b for b in self.blocks if b.heading_path and predicate(b.heading_path[-1]) and b.kind != "heading"]
+        """Blocks with any enclosing heading (nearest or an ancestor) satisfying predicate(text)."""
+        return [b for b in self.blocks if b.kind != "heading" and any(predicate(h) for h in b.heading_path)]
 
     def prose_words(self) -> int:
         return sum(len(b.text.split()) for b in self.blocks)

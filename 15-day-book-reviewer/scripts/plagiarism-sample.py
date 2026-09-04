@@ -39,11 +39,12 @@ very just also only one two all any some such each other same own too now""".spl
 
 @click.command(help=__doc__)
 @click.option("--src", default="src", show_default=True)
+@click.option("--recursive", "-r", is_flag=True, help="also scan subdirectories (books with src/problems/**)")
 @click.option("--per-file", type=int, default=3, show_default=True)
 @click.option("--quote-words", type=int, default=8, show_default=True)
 @click.option("--out", type=click.Path(path_type=Path), default=None, help="write the checklist here")
-def main(src, per_file, quote_words, out) -> None:
-    files = sorted(p for p in Path(src).glob("*.md") if p.name not in ("SUMMARY.md", "answers.md"))
+def main(src, recursive, per_file, quote_words, out) -> None:
+    files = sorted(p for p in Path(src).glob("**/*.md" if recursive else "*.md") if p.name not in ("SUMMARY.md", "answers.md"))
     lines = ["# Plagiarism samples", "",
              "For each sentence: WebSearch the exact phrase in quotes. Record the top hit and",
              "whether it is a match, a paraphrase, or clean. A hit on the author's own",

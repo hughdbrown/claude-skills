@@ -35,8 +35,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import mdprose  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-FRONT_BACK = ["welcome", "how-to-use", "cheatsheet", "formulas", "glossary", "timeline",
-              "beyond", "afterword", "answers", "argument", "limits-table", "reference-sheet"]
 QUOTE_RE = re.compile(r"[\"“][^\"”]{40,}[\"”]")   # natural-language quotation, on prose text
 
 
@@ -69,13 +67,18 @@ def chunk_days(days: list[str], how: str) -> list[list[str]]:
 @click.option("--frontback/--no-frontback", default=None,
               help="review front/back matter as its own chunk (default: yes on a full round, no with --days)")
 @click.option("--lan-host", default="http://10.0.0.222:11434", show_default=True)
-def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, frontback: bool | None, lan_host: str) -> None:
+@click.option("--exercise-heading", default=None, help="forwarded to pacing-audit (e.g. Drill for an item book)")
+@click.option("--echo-exclude", multiple=True,
+              help="file names self-echo should skip (compilation pages that repeat day text by design)")
+def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, frontback: bool | None, lan_host: str,
+         exercise_heading: str | None, echo_exclude: tuple[str, ...]) -> None:
     src = Path("src")
     all_days = sorted(p.stem for p in src.glob("day[0-9][0-9].md"))
     if not all_days:
         raise click.ClickException("no src/dayNN.md found; run from the book root")
     day_list = days.split(",") if days else all_days
-    extras = [n for n in FRONT_BACK if (src / f"{n}.md").exists()]
+    # front/back matter = every src page that is not a day and not the table of contents
+    extras = sorted(p.stem for p in src.glob("*.md") if p.stem not in all_days and p.name != "SUMMARY.md")
     do_frontback = (days is None) if frontback is None else frontback
 
     lenses = tomllib.loads(roster.read_text())["lens"]
@@ -96,10 +99,14 @@ def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, frontback: 
         "always": True,
     }
 
+    items_dir = Path("src/problems")          # item books keep each question in its own directory
+    rec = ["--recursive"] if items_dir.is_dir() else []
     scans_note = []
     if not skip_scans:
-        for script, extra in (("slop-scan.py", []), ("self-echo.py", []), ("pacing-audit.py", []),
-                              ("plagiarism-sample.py", ["--out", str(out / "plagiarism-samples.md")])):
+        pacing = ["--exercise-heading", exercise_heading] if exercise_heading else []
+        echo = rec + [a for f in echo_exclude for a in ("--exclude", f)]
+        for script, extra in (("slop-scan.py", rec), ("self-echo.py", echo), ("pacing-audit.py", pacing),
+                              ("plagiarism-sample.py", rec + ["--out", str(out / "plagiarism-samples.md")])):
             res = subprocess.run([sys.executable, str(HERE / script), *extra], capture_output=True, text=True)
             (out / "scans" / script.replace(".py", ".txt")).write_text(res.stdout + res.stderr)
             scans_note.append(f"- {script}: exit {res.returncode} -> scans/{script.replace('.py', '.txt')}")
@@ -123,6 +130,7 @@ def main(rnd: int, roster: Path, days: str | None, skip_scans: bool, frontback: 
             for ch in chunk_days(day_list, cfg["chunk"]):
                 files = [f"src/{d}.md" for d in ch]
                 files += [f"staging/{d}-answers.md" for d in ch if Path(f"staging/{d}-answers.md").exists()]
+                files += [f"src/problems/{d}/" for d in ch if (items_dir / d).is_dir()]
                 chunks.append(("+".join(ch), files))
             if do_frontback and cfg["chunk"] != "day" and extras:
                 # its own dispatch, so a re-review of touched days can approve on its own

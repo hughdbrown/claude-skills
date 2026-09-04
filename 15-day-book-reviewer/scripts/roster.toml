@@ -61,7 +61,7 @@ when = "always"
 prompt = "originality-reviewer"
 
 [lens.figures]
-chunk = "book"
+chunk = "triple"   # figures/dayNN/ for the days in the chunk; a book with 60+ figures needs more than one pair of eyes
 model = "sonnet"
 blocking = true
 when = "if-figures"
