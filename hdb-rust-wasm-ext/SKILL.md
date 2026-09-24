@@ -202,7 +202,7 @@ init();
 
 ### Phase 3: Implement the Rust code
 
-8. **Follow `/hdb:rust-dev` batch-first workflow.** Write all Rust files before compiling. Key exports for each crate:
+8. **Follow `/hdb-rust-developer` batch-first workflow.** Write all Rust files before compiling. Key exports for each crate:
 
 **Background service worker** (`lib.rs`):
 

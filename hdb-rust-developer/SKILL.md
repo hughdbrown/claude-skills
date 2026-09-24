@@ -1,9 +1,9 @@
 ---
-name: hdb:rust-dev
+name: hdb-rust-developer
 description: Develop idiomatic, fast, panic-free Rust with strong types and the simplest ownership model, while minimizing compile cycles by batching work
 ---
 
-# hdb:rust-dev
+# hdb-rust-developer
 
 Develop Rust code that is idiomatic, simple, fast and hard to misuse — strong types, contextual errors, no casual panics, the simplest ownership model that works — using a workflow that minimizes compile-wait time in AI-assisted development.
 
@@ -12,7 +12,7 @@ The **workflow** (Phases 1–4) saves time. The **standard** the code is held to
 ## Usage
 
 ```
-/hdb:rust-dev <task description>
+/hdb-rust-developer <task description>
 ```
 
 ## Description
@@ -21,7 +21,7 @@ Implements Rust code using a batch-first workflow optimized for AI-assisted deve
 
 ## Instructions
 
-When the user invokes `/hdb:rust-dev <task description>`:
+When the user invokes `/hdb-rust-developer <task description>`:
 
 ### Phase 1: Understand the task
 

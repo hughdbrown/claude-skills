@@ -82,7 +82,7 @@ Skills are available as slash commands in your next Claude Code session.
 
 Design a new software feature with a PRD and detailed implementation task list. Explores the existing codebase to ground all technical decisions in the project's actual architecture. Produces two deliverables: a Product Requirements Document and a test-first task list organized by implementation stage.
 
-### `/hdb:rust-dev` — Rust development
+### `/hdb-rust-developer` — Rust development
 
 Develop Rust code using a batch-first workflow that minimizes compile-wait time. Writes all code before compiling, then fixes errors in a single pass. Includes build optimization reference (fast linker, sccache, workspace splitting), release profile configuration, preferred crates by domain (CLI, web, async, system, WASM, serialization, TUI, git), and Rust-specific patterns for error handling, ownership, and module organization.
 
