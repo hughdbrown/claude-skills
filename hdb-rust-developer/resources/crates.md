@@ -120,3 +120,13 @@ criterion = "0.8"                                       # Statistics-driven micr
 
 - Put benchmarks in `benches/`, with `[[bench]] name = "..." harness = false` in `Cargo.toml`. Requires the `lib.rs` split — benches, like integration tests, cannot import from a binary crate.
 - For whole-program timing, `hyperfine 'target/release/app args'` needs no code at all.
+
+## Static analysis and security tools
+
+```bash
+cargo install cargo-machete cargo-audit cargo-deny --locked
+```
+
+- `cargo machete` removes declared but unused dependencies before they slow builds.
+- `cargo audit` flags known security advisories in your `Cargo.lock`.
+- `cargo deny check` enforces license, advisory and crate-source policy. Configure it only when the project or organization has a policy to enforce; otherwise `cargo audit` is enough.

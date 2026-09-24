@@ -75,6 +75,10 @@ When the user invokes `/hdb-rust-developer <task description>`:
    - Any `.clone()` added to quiet the borrow checker, or `collect()` followed by another loop? Revisit ownership first.
    - Any trait, generic or builder with a single user? Make it concrete.
    - Any `pub` that could be `pub(crate)` or private?
+   - Any public item without a doc comment (`///`)? Add one, with a runnable example for non-trivial APIs.
+   - Any I/O or subprocess call hidden in core logic instead of at the edge? Pull it behind a thin wrapper or trait.
+   - Any match on your own enum with a `_ =>` catch-all? Remove it so new variants fail to compile everywhere they must be handled.
+   - Any public function that takes `&String`, `&Vec<T>` or `&PathBuf`? Widen to `&str`, `&[T]`, `&Path` or `impl AsRef<Path>`.
 
    **Domain-specific:**
    - Do formulas match the reference specification? (sign conventions, operand order, edge cases)
@@ -114,6 +118,17 @@ When the user invokes `/hdb-rust-developer <task description>`:
     `--all-targets` includes tests, benches and examples, which plain `cargo clippy` skips. `-D warnings` makes a warning block completion instead of scrolling past. Fix the cause; add `#[allow(clippy::...)]` only with a comment saying why the lint is wrong *here*.
 
 14. **Run `cargo fmt --check`** to verify formatting. Apply `cargo fmt` if needed.
+
+15. **Run final dependency and security checks.**
+
+    ```bash
+    cargo tree -d            # duplicate dependency versions
+    cargo machete            # unused declared dependencies
+    cargo audit              # known security advisories
+    cargo deny check         # license/audit/source bans (if configured)
+    ```
+
+    Fix duplicates by aligning version requirements, remove unused deps from `Cargo.toml`, and treat `cargo audit` findings as blocking for anything that ships. Add `cargo-deny` config only when the project has policy requirements.
 
 ## Build Optimization Reference
 
@@ -236,6 +251,8 @@ allow-indexing-slicing-in-tests = true
 
 With `-D warnings` in Phase 4 these become hard failures. `pedantic` is noisy by design: silence an individual lint crate-wide (`module_name_repetitions = "allow"`) when it fights the codebase, with a comment. For an **existing** project, propose the block rather than adding it — turning it on can surface hundreds of warnings the user did not ask to fix.
 
+When an `unsafe` block is unavoidable, add a `// SAFETY:` comment that states exactly what the surrounding code guarantees (e.g., the file is not truncated while mapped, the pointer is non-null and aligned, the index is in bounds). Lints alone cannot make unsafe code safe; documentation does.
+
 ### Error handling
 
 - `anyhow::Result` in application code and CLIs; `thiserror` enums in library crates that callers match on.
@@ -246,9 +263,10 @@ With `-D warnings` in Phase 4 these become hard failures. `pedantic` is noisy by
       .with_context(|| format!("reading config {}", path.display()))?;
   ```
   Use `.context("...")` for a fixed string, `.with_context(|| ...)` when it formats (the closure runs only on failure).
-- Keep the error chain. `.map_err(|e| anyhow!(e.to_string()))` throws away the source; use `.context(...)` or `#[from]`/`#[source]` in `thiserror`.
-- `thiserror` variants carry the data needed to act on them (`NotFound { path: PathBuf }`), not a pre-formatted `String`. Use `#[from]` only when a source type maps to exactly one variant.
-- User-facing output uses `Display` (`{err:#}` prints an anyhow chain on one line); `{:?}` is for logs and developers.
+- **Keep the error chain.** `.map_err(|e| anyhow!(e.to_string()))` throws away the source; use `.context(...)` or `#[from]`/`#[source]` in `thiserror`.
+- **`thiserror` variants carry the data needed to act on them** (`NotFound { path: PathBuf }`), not a pre-formatted `String`. Use `#[from]` only when a source type maps to exactly one variant.
+- **User-facing output uses `Display`.** (`{err:#}` prints an anyhow chain on one line); `{:?}` is for logs and developers. Prefer `eprintln!("{err:#}")` to dumping `Debug` on the user.
+- **Avoid stringly-typed error messages in libraries.** A caller should be able to match on a `thiserror` enum; an anyhow string is opaque once created.
 - In tests, `unwrap()` is fine — it panics with a line number. A test can also return `anyhow::Result<()>` and use `?`.
 
 ```toml
@@ -267,13 +285,23 @@ tempfile = "3"
 |---|---|
 | `opt.unwrap()` in a fn returning `Result` | `opt.context("no config file found")?` |
 | `opt.unwrap()` then early exit | `let Some(x) = opt else { return Ok(()) };` |
-| `res.unwrap()` for a fallback | `res.unwrap_or_default()` / `.unwrap_or(v)` / `.unwrap_or_else(\|_\| ...)` |
+| `res.unwrap()` for a fallback | `res.unwrap_or_default()` / `.unwrap_or(v)` / `.unwrap_or_else(|_| ...)` |
 | `v[i]` | `v.get(i)` — or iterate, and there is no index to get wrong |
 | `&s[..n]` | `s.get(..n)` — byte slicing panics mid-UTF-8 character |
 | `a + b` on untrusted sizes | `a.checked_add(b)` — release builds wrap silently |
 | `x as u32` | `u32::try_from(x)?` — `as` truncates silently |
 
 `expect` is right for a **true invariant** the program cannot recover from, and its message states the invariant, not the symptom: `.expect("regex literal is valid")` on a constant pattern in a `LazyLock`, or `.lock().expect("state mutex poisoned: a worker panicked")`. `expect("failed")` adds nothing to `unwrap()`.
+
+### Idiomatic combinators
+
+Prefer `Option`/`Result` combinators and language features that make intent explicit and avoid manual control-flow plumbing:
+
+- **`let … else` for early returns.** Instead of `if let Some(x) = opt { … } else { return; }`, write `let Some(x) = opt else { return; }`.
+- **`ok_or`/`ok_or_else` to turn `Option` into `Result`.** `opt.ok_or_else(|| Error::Missing(id))?`.
+- **`map`, `and_then`, `filter`, `inspect` over `match`.** Chain small transformations on `Option`/`Result` before unwrapping the final value.
+- **Boolean → `Option` with `then`/`then_some`.** `some_condition.then(|| value)`.
+- **`#[must_use]` on types and functions whose value must not be silently dropped.** Add it to types that represent an uncommitted action, a builder, or a future that must be awaited, and to functions that return a value the caller is almost certainly meant to act on.
 
 ### Types: make wrong code fail to compile
 
@@ -341,6 +369,13 @@ Signatures at API boundaries:
 - Unit tests go in the same file as the code they test (`#[cfg(test)] mod tests`).
 - **Integration tests go in `tests/`.** These test the public API through `use your_crate::...`. Use test fixtures (files in `tests/fixtures/`) for data-driven tests. This is only possible with the `lib.rs` split.
 - **Testing code that touches the file system:** create what the test needs in a `tempfile::TempDir` (deleted on drop), not in the repo or `/tmp` by hand; for subprocesses and the network, substitute a fake through the I/O-boundary trait above.
+- **For untestable side effects, hide them behind a trait.** Network clients, subprocess runners, clocks, randomness — define a small trait at the call site, default it to the real implementation, and inject a fake or a recorder in tests. This is the same exception that justifies a trait with one production implementation at an I/O boundary.
+
+### Documentation
+
+- **Document public items with doc comments.** A `///` line on every `pub` type, function and module tells users what it is for, not just what it does. Include at least one example for non-trivial constructors and public helpers.
+- **Doctests are real tests.** Code in ```` ```rust ```` blocks inside doc comments is compiled and run by `cargo test`. Use them for examples that exercise the public API; use `should_panic` or `no_run` when the example needs special setup.
+- **Keep docs close to the code.** Module-level `//!` docs describe the purpose of the module and how its pieces fit together. Do not rely on a repo-level README to explain what every module does.
 
 ### Dependency management
 
@@ -348,6 +383,7 @@ Signatures at API boundaries:
 - Use `features` sparingly — only enable what you need (e.g., `tokio = { version = "1", features = ["rt-multi-thread", "macros"] }` not `features = ["full"]`)
 - Prefer `bundled` feature for C library bindings (e.g., `rusqlite = { features = ["bundled"] }`) to avoid system dependency issues
 - Run `cargo update` periodically to pick up patch releases
+- **Audit the dependency tree before adding a crate.** Check for duplicate versions (`cargo tree -d`), unused dependencies (`cargo machete`), known vulnerabilities (`cargo audit`), and unwanted licenses (`cargo deny`). Each new dependency is compile time and upgrade risk; the standard library or an already-depended-on crate often covers the need.
 
 ## Preferred Crates by Domain
 
