@@ -1,0 +1,391 @@
+ ▐▛███▛█   Claude Code v2.1.280
+▝▜██████▀  Opus 5.5 · Claude Max
+  ▝▝ ▝▝    ~/workspace/hughdbrown/rust/channel-atlas
+
+  Get to finished work sooner with Opus 5.5. Switch anytime with /model.
+
+❯ Read the skill ~/workspace/hughdbrown/claude-skills/hdb-rust-developer.       
+  Evaluate it for its ability to create:                                        
+  - idiomatic rust                                                              
+  - fast rust binaries                                                          
+  - simplicity, minimal code that produces the desired result                   
+  - cohesive, coherent components that are intuitive to work with               
+  - makes excellent use of memory, is parsimonious with copying data            
+  - has good error handling                                                     
+  - has minimized use of wrap() to reduce opportunity for fatal exceptions      
+  - makes excellent use of the type system                                      
+  - exhibits best practices within the language                                 
+  - produces code with the simplest ownership model for the situation           
+  -                                                                             
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ This repo copy is identical to the installed skill I loaded earlier this
+  session (diff -rq finds no differences), so I have the full text. Next I'll
+  get line numbers for the parts I'll cite.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The skill is a single file (SKILL.md, 385 lines). Before evaluating it, I'll
+  check whether the crate versions it recommends are current, since the text
+  reads as if it was written a while ago.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+❯ Identify opportunities for improvement, as available                          
+
+⏺ The skill is mainly about build speed and workflow: it batches work to cut
+  down compile cycles and covers linker and cache setup. It says little about
+  code quality. Of your ten criteria, only three get real guidance: error
+  handling, the ownership rules at function boundaries, and the lib.rs/main.rs
+  split. Some of its advice is outdated or contradicts itself, and one
+  recommendation works against "fast binaries".
+
+  (I read "wrap()" as unwrap(). Your list ended with an empty tenth-plus bullet,
+  so I evaluated the ten criteria.)
+
+  Scorecard
+
+  Criterion: Idiomatic Rust
+  Rating: Weak
+  What the skill has: clippy + fmt (L96–104); edition 2024 (L385)
+  What's missing: No idiom guidance at all: iterators vs index loops,
+  Option/Result combinators, impl Trait, Default, From/TryFrom, Display. clippy
+   isn't run as -D warnings, so warnings never block.
+  ────────────────────────────────────────
+  Criterion: Fast binaries
+  Rating: Works against it
+  What the skill has: Release profile (L162–183)
+  What's missing: Sets opt-level = "z", which optimizes for size and makes code
+  slower, then says to use it for "CLI tools, web servers". Nothing on
+  benchmarking or profiling (criterion, flamegraph). L211 says "only when
+  profiling shows" but never says how to profile.
+  ────────────────────────────────────────
+  Criterion: Simplicity, minimal code
+  Rating: Weak
+  What the skill has: "Keep the dependency tree shallow" (L377)
+  What's missing: Nothing against speculative generics, traits or layers. Phase
+  2
+  ("write all code before compiling") rewards writing lots of code at once. The
+   preferred-crates list adds dependencies by default.
+  ────────────────────────────────────────
+  Criterion: Cohesive components
+  Rating: Fair
+  What the skill has: lib.rs/main.rs split (L215, L381); re-exports; enums
+  instead of bool flags (L201)
+  What's missing: Keeping things private (pub(crate) is only a checklist item at
+
+  L69); private fields plus constructors; organizing modules by domain rather
+  than by layer.
+  ────────────────────────────────────────
+  Criterion: Memory / copying
+  Rating: Fair
+  What the skill has: Ownership-at-boundaries section (L204–211); "lots of
+  .clone() → rethink" (L378)
+  What's missing: &[T]/&Path instead of &Vec<T>/&PathBuf; iterating without
+  collect(); with_capacity; Arc<str> for shared strings; not cloning inside
+  loops.
+  ────────────────────────────────────────
+  Criterion: Error handling
+  Rating: Fair
+  What the skill has: anyhow for apps, thiserror for libraries, ? (L187–196)
+  What's missing: No .context()/.with_context(), the biggest gap: that's your
+  item 13 ("Missing Error Context") from the global CLAUDE.md. No main() -> 
+  anyhow::Result<()>, #[from] or exit-code guidance.
+  ────────────────────────────────────────
+  Criterion: Minimal unwrap()
+  Rating: Weak
+  What the skill has: One bullet (L191)
+  What's missing: No enforcement: [lints.clippy] unwrap_used = "warn" would make
+
+  it mechanical. Nothing on let … else, ? on Option, or expect("invariant: …")
+  for real invariants. Other panic sources go unmentioned: indexing v[i] and
+  string slicing &s[..n], which panics mid-UTF-8 character.
+  ────────────────────────────────────────
+  Criterion: Type system
+  Rating: Weak
+  What the skill has: Enums instead of bools (L201)
+  What's missing: Newtypes for IDs (VideoId vs String), making invalid states
+  impossible to construct, parsing instead of validating, #[must_use],
+  exhaustive match without _.
+  ────────────────────────────────────────
+  Criterion: Best practices
+  Rating: Fair
+  What the skill has: fmt, clippy, version pinning, edition
+  What's missing: No [lints] table in Cargo.toml, no cargo audit/deny, doc
+  comments or doctests. Crate versions are stale (below).
+  ────────────────────────────────────────
+  Criterion: Simplest ownership
+  Rating: Fair
+  What the skill has: Config not connections; Arc only for read-only data
+  (L364–370); tokio Mutex only across .await (L272)
+  What's missing: The order to try: borrow → own → Arc → Arc<Mutex>.
+  std::thread::scope to avoid Arc entirely. Avoiding lifetimes in structs
+  unless they're needed. Channels instead of shared state.
+
+  Contradictions and errors to fix
+
+  1. opt-level = "z" vs "fast" (L171, L183). Use opt-level = 3 as the default
+     for binaries, and keep "z" for WASM or size-limited targets.
+  2. features = ["full"]: L225 says don't use it, then L251 and L267 recommend
+     it.
+  3. Fast-linker section (L110–119): it just broke 10 of your projects. It needs
+     a warning to upgrade lld whenever Xcode updates, plus the no-edit
+     workaround RUSTFLAGS="".
+  4. memmap2 "zero-copy" (L284): Mmap::map is unsafe, which the skill never
+     mentions. Your CLAUDE.md shows you've had to accept unsafe memory access in
+     the past.
+  5. "Do not mix rayon with tokio" (L283) is too strong. The standard pattern is
+     running rayon inside spawn_blocking, or handing results back through a
+     oneshot channel.
+  6. Stale crate versions. Checked against crates.io today:
+
+  | Crate               | Skill       | Current     |
+  |---------------------|-------------|-------------|
+  | dirs                | 5.0         | 7.0         |
+  | reqwest             | 0.12        | 0.13        |
+  | askama              | 0.12        | 0.16        |
+  | ratatui / crossterm | 0.29 / 0.28 | 0.30 / 0.29 |
+  | git2                | 0.19        | 0.21        |
+  | yew                 | 0.21        | 0.23        |
+  | toml                | 0.8         | 1.1         |
+     The askama compatibility warning (L32, L253) refers to 0.12, so it's out of
+     date too.
+
+  Highest-value additions
+
+  These are in order of how much they'd change the code the skill produces:
+
+  1. A [lints] block to put in every new project, so the rules are enforced
+     instead of hoped for:
+  [lints.clippy]
+  unwrap_used = "warn"
+  expect_used = "warn"
+  indexing_slicing = "warn"
+  pedantic = { level = "warn", priority = -1 }
+     and add cargo clippy --all-targets -- -D warnings to Phase 4.
+  2. Error context rule: every ? that crosses an I/O, parse or subprocess
+     boundary gets .with_context(|| format!("reading {}", path.display())).
+  3. A "Types" section: newtypes for IDs, enums for states, TryFrom at input
+     boundaries, no _ in a match over your own enums.
+  4. An ownership ladder: borrow → own → Arc<T> → Arc<Mutex<T>>, with
+     std::thread::scope as the way to avoid the upper rungs.
+  5. Performance done properly: release profile with opt-level = 3; measure with
+     criterion or hyperfine before and after; cargo flamegraph for hot paths.
+  6. A simplicity rule: no trait with one implementation and no generic with one
+     caller. Write the concrete version first.
+  7. Split the file. About 45% is a crate catalog (L229–332) that goes stale.
+     Move it to a references/crates.md loaded on demand, so SKILL.md stays
+     focused on code quality.
+
+  Should I make these edits to
+  ~/workspace/hughdbrown/claude-skills/hdb-rust-developer/SKILL.md and commit
+  them? That repo copy is currently identical to the installed one, so I'd
+  update both.
+
+✻ Cogitated for 1m 4s · done 11:01 PM
+
+❯ yes, make the edits and commit                                                
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The installed skill is symlinked to this repo, so edits here update both. I
+  also spotted examples, resources, scripts, and templates folders I missed
+  earlier—checking those now.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The subfolders are empty and git only tracks SKILL.md, so I'll place the crate
+  catalog in resources/. Next I'll check the frontmatter, which wasn't included
+  in the loaded skill text.
+
+  Read 1 file (ctrl+o to expand)
+
+⏺ I'll check the details the new catalog will depend on: serde_yaml's
+  deprecation status, and the features reqwest 0.13 and ratatui 0.30 actually
+  provide.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I've confirmed reqwest 0.13 dropped the rustls-tls feature (rustls is default
+  now) and serde_yaml is deprecated—both would need updates in the skill. Next
+  I'll check if ratatui::init() installs a panic hook automatically, which would
+  supersede the skill's manual set_hook guidance.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Confirmed that ratatui::init() installs the panic hook and re-exports
+  crossterm. I'll now make three commits—moving the crate catalog into
+  resources/ with corrected versions, fixing build/release advice, and adding
+  code-quality guidance—starting with the catalog.
+
+⏺ Write(~/workspace/hughdbrown/claude-skills/hdb-rust-developer/resources/crates
+       .md)
+  ⎿  Wrote 122 lines to
+     ../../claude-skills/hdb-rust-developer/resources/crates.md
+       1 # Preferred Crates by Domain
+       3 Load this only when a project needs a dependency it has no prece
+         dent for. An
+       4 existing project's `Cargo.toml` always wins over this list.
+       6 Versions were checked against crates.io on 2026-09-23. Before ad
+         ding one, run
+         inor-version
+       8 bump on a 0.x crate is a breaking change.
+       9 
+         grade. Check
+     … +193 lines (ctrl+o to expand)
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ Commit 1 is 188b8e6. Next, the build and release fixes; I'll re-read that part
+  of the file first.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+⏺ I have no evidence here that cargo-watch is unmaintained, and you have it
+  installed, so I'll leave that section alone.
+
+  Ran 2 shell commands (ctrl+o to expand)
+  ⎿  1 skill available
+
+⏺ Commit 2 is cbf96fd. Now the main change, the code-quality guidance. I'll
+  re-read the current patterns section first.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Before writing the lints section, I'll check that the clippy.toml
+  test-exemption keys I plan to recommend really exist. Clippy rejects unknown
+  keys, so a quick test will tell.
+
+  Ran 1 shell command (ctrl+o to expand)
+  ⎿  1 skill available
+
+⏺ Confirmed all three keys work as expected—clippy flags v[0] and .unwrap() in
+  main but exempts them in #[cfg(test)], with the remaining warnings tied to
+  separate lints on the test's literal Some(1).unwrap(). Now I'll write the
+  code-quality sections.
+
+  Ran 6 shell commands (ctrl+o to expand)
+  ⎿  1 skill available
+  ⎿  1 skill available
+
+⏺ I made the edits in three commits in ~/workspace/hughdbrown/claude-skills. The
+  installed skill is a symlink to this folder, so it's already live; the
+  updated description shows in the skills list. I haven't pushed.
+
+  ┌─────────┬────────────────────────────────────────────────────────────────┐
+  │ Commit  │                          What it does                          │
+  ├─────────┼────────────────────────────────────────────────────────────────┤
+  │ 188b8e6 │ Moves the crate catalog out of SKILL.md into                   │
+  │         │ resources/crates.md, with versions checked on crates.io today. │
+  ├─────────┼────────────────────────────────────────────────────────────────┤
+  │ cbf96fd │ Fixes the build and release advice.                            │
+  ├─────────┼────────────────────────────────────────────────────────────────┤
+  │ d408b9c │ Adds the code-quality guidance and checks it during the        │
+  │         │ pre-compile self-review.                                       │
+  └─────────┴────────────────────────────────────────────────────────────────┘
+
+  What changed for each of your criteria:
+  - Fast binaries: the release profile now uses opt-level = 3 instead of "z",
+    which optimized for size. "z" is kept only for WASM and embedded targets.
+    There's also a "measure before and after" step using hyperfine, criterion
+    and flamegraph.
+  - Minimal unwrap(): a [lints.clippy] block (unwrap_used, expect_used,
+    indexing_slicing, pedantic) plus a clippy.toml that exempts tests. I tested
+    it on a throwaway crate: main gets flagged and test code doesn't. There's
+    also a table of safe replacements, covering indexing, byte slicing, overflow
+    and as casts, which can panic or silently corrupt data.
+  - Error handling: .context() on every ? that crosses file access, parsing or a
+    subprocess. Keep the underlying error rather than converting it to a
+    string, and show users Display output, not {:?}.
+  - Type system: newtypes for IDs, "parse, don't validate", enums instead of
+    combinations of flags, no _ => arm when matching on your own enums.
+  - Ownership: an order to try things in: borrow, then move, clone once, Arc,
+    and finally Arc<Mutex>. Plus std::thread::scope, and taking &[T], &Path or
+    impl AsRef<Path> as arguments.
+  - Memory: iterate instead of collecting into a Vec, with_capacity, mem::take,
+    Arc<str>.
+  - Simplicity: write the concrete version first. The one allowed exception is a
+    trait at an I/O boundary that exists so tests can swap in a fake (like
+    CommandRunner in channel-atlas).
+  - Cohesive components: modules organized by domain, private by default, I/O
+    kept at the edges, tempfile for tests that touch the file system.
+  - Idiomatic / best practice: clippy now runs as --all-targets -- -D warnings,
+    and Phase 1 has a new "design the types first" step.
+
+  Bugs fixed along the way:
+  - reqwest: the skill's features = ["rustls-tls"] would fail against reqwest
+    0.13, which has no such feature (rustls is now the default).
+  - serde_yaml: now marked deprecated; the catalog points to serde_yaml_ng or
+    serde_norway.
+  - ratatui: ratatui::init() already installs the terminal-restoring panic hook,
+    so the manual set_hook advice is gone. ratatui also re-exports crossterm,
+    so there's no separate dependency whose version could mismatch.
+  - tokio: the self-contradictory features = ["full"] examples are gone.
+  - memmap2: the skill now says that Mmap::map is unsafe.
+  - Linker section: documents today's lld/Xcode failure, how to confirm it with
+    RUSTFLAGS="", and the fix.
+
+  Left alone: the workflow phases, the golden-value testing section, your
+  edition-2024 note, and the hdb:rust-dev name in the frontmatter. That name
+  doesn't match the folder name hdb-rust-developer; tell me if you want them to
+  match. The repo also had unrelated uncommitted changes to six other skills,
+  and I didn't include those in these commits.
+
+  SKILL.md grew from 385 to 410 lines, even with the catalog moved out. Should I
+  push?
+
+⏺ Ran 4 stop hooks (ctrl+o to expand)
+  ⎿  Stop hook error: AUTO-SAVE checkpoint. Save key topics, decisions,
+  quotes, and code from this session to your memory system. Organize
+  into appropriate categories. Use verbatim quotes where possible.
+  Continue conversation after saving.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I saved to hdb-rust-dev-skill-preference.md:
+  - the skill revision (commits 188b8e6, cbf96fd, d408b9c)
+  - your "yes, make the edits and commit" instruction, quoted exactly
+  - the audit of what your Mac needs to build Rust: sccache 0.14 is outdated,
+    hdf5 is missing for yahoo_finance_example, and openssl-sys doesn't build on
+    macOS
+
+  Two questions are waiting on you: should I push the three skill commits, and
+  should the frontmatter name hdb:rust-dev change to match the folder name
+  hdb-rust-developer?
+
+✻ Cooked for 4m 7s · done 11:07 PM
+
+❯ the frontmatter name hdb:rust-dev change to match the folder name             
+  hdb-rust-developer                                                            
+  Don't push the commits.                                                       
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The old name also appears in README.md and in hdb-rust-wasm-ext/SKILL.md.
+  Neither file has uncommitted changes, so I'll update all six references
+  together.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The other changes in that diff are your earlier uncommitted edits to other
+  skills. My commit will include only the three renamed files, which had no
+  other changes.
+
+  Ran 2 shell commands (ctrl+o to expand)  ⎿  2 skills available
+
+⏺ I renamed the skill to hdb-rust-developer and committed it as 894d8c8. Nothing
+  has been pushed: main is 4 commits ahead of origin/main.
+
+  What changed:
+  - hdb-rust-developer/SKILL.md: the frontmatter name, the heading, the usage
+    line and the invocation line.
+  - README.md: the skill's section heading is now /hdb-rust-developer.
+  - hdb-rust-wasm-ext/SKILL.md: it now refers you to /hdb-rust-developer for the
+    batch-first workflow.
+
+  hdb:rust-dev no longer appears anywhere in the repo. The unrelated uncommitted
+  edits in other skills (aggregate-review.py, extract_transcripts.py,
+  streameditor.py, the mdbook font changes) are still uncommitted, as you left
+  them.
+
+✻ Brewed for 21s · done 11:08 PM
