@@ -93,13 +93,13 @@ When the user invokes `/hdb:rust-dev <task description>`:
 
 ### Phase 4: Validate
 
-12. **Run clippy for lint issues.**
+12. **Run clippy over every target, with warnings as errors.**
 
     ```bash
-    cargo clippy 2>&1
+    cargo clippy --all-targets -- -D warnings 2>&1
     ```
 
-    Fix any warnings. Clippy catches idiomatic issues that `cargo check` misses.
+    `--all-targets` includes tests, benches and examples, which plain `cargo clippy` skips. `-D warnings` makes a warning block completion instead of scrolling past. Fix the cause; add `#[allow(clippy::...)]` only with a comment saying why the lint is wrong *here*.
 
 13. **Run `cargo fmt --check`** to verify formatting. Apply `cargo fmt` if needed.
 
@@ -118,12 +118,26 @@ rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.lld"]
 
 Requires: `brew install lld`. On macOS the linker must be invoked as `ld64.lld` (not `lld`), which is the Mach-O compatible driver. Using plain `lld` will fail with "Invoke ld64.lld (macOS) instead". Cuts link time 50-80% on incremental builds.
 
+**Keep `lld` in step with Xcode.** `ld64.lld` reads the SDK's `.tbd` library stubs, and a new SDK can use a format an older `lld` rejects. Seen with Xcode 27: LLD 22 failed on every project with `could not load TAPI file … libSystem.tbd: malformed file … unknown architecture arm64e.x1-macos`, followed by hundreds of `undefined symbol` errors (`__error`, `_Unwind_GetIP`) — all consequences of `libSystem` not loading. `brew upgrade lld` (to 23) fixed it. When link errors appear after an Xcode or macOS update:
+
+1. `ld64.lld --version` and `xcrun --show-sdk-version` — suspect the pairing first.
+2. `RUSTFLAGS="" cargo build` confirms it: an empty `RUSTFLAGS` overrides the target rustflags, so Apple's `ld` links instead. (It changes the flags, so everything rebuilds.)
+3. `brew upgrade lld`, or remove the override until `lld` catches up.
+
 ### Compilation caching
 
 ```bash
-cargo install sccache
-export RUSTC_WRAPPER=sccache
+cargo install sccache --locked
 ```
+
+Then either `export RUSTC_WRAPPER=sccache`, or persist it in `~/.cargo/config.toml` (or a project's `.cargo/config.toml`):
+
+```toml
+[build]
+rustc-wrapper = "sccache"
+```
+
+Once configured, every `rustc` call goes through it — keep it updated with the same `cargo install` command.
 
 Caches compiled crates across builds. Saves time when switching branches, after `cargo clean`, or across projects sharing dependencies.
 
@@ -161,26 +175,28 @@ Reruns `cargo check` on every file save. Useful when the developer is editing co
 
 ## Release Profile
 
-For production binaries, add this to `Cargo.toml` to produce small, optimized, stripped binaries:
+For production binaries, add this to `Cargo.toml` to produce fast, stripped binaries:
 
 ```toml
 [profile.release]
 codegen-units = 1      # Better optimization, slower compile
 debug = false
 lto = true
-opt-level = "z"        # Optimize for size
+opt-level = 3          # Optimize for speed (the release default)
 panic = "abort"        # Don't include unwinding code
 strip = true           # Strip symbols from binary
 ```
 
 **What each setting does:**
 - `codegen-units = 1` — Allows LLVM to optimize across the entire crate as one unit. Produces faster/smaller code at the cost of slower release builds. Only affects `cargo build --release`.
-- `lto = true` — Link-Time Optimization across all crates. Eliminates dead code and inlines across crate boundaries. Significant size reduction.
-- `opt-level = "z"` — Optimize aggressively for binary size over speed. Use `"3"` instead if runtime performance matters more than binary size.
+- `lto = true` — Link-Time Optimization across all crates. Eliminates dead code and inlines across crate boundaries: faster and smaller. `lto = "thin"` gets most of the speed for much less link time.
+- `opt-level = 3` — Optimize for speed. Switch to `"z"` (or `"s"`) **only** when size is the constraint: WASM downloads, embedded targets. `"z"` disables loop vectorization and trims inlining, so CPU-bound code is usually slower — never pick it by default for a CLI or server.
 - `panic = "abort"` — Removes unwinding machinery (~10-20% size reduction). Panics terminate immediately. Incompatible with `catch_unwind()` — only use in applications, not libraries.
 - `strip = true` — Strips debug symbols and symbol tables from the final binary.
 
 **When to use:** CLI tools, web servers, deployable binaries. Do not apply `panic = "abort"` to library crates that may be used by others.
+
+**Measure, don't assume.** Profile-level choices, `rayon`, and data-structure changes are all performance claims. Time the release binary before and after (`hyperfine`), use `criterion` for hot functions (see `resources/crates.md`), and `cargo flamegraph` (or Instruments on macOS) to find where the time goes before optimizing anything.
 
 ## Rust-Specific Patterns
 
