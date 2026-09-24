@@ -31,7 +31,7 @@ When the user invokes `/hdb:rust-dev <task description>`:
    - **Integration points** — handlers, CLI wiring, tests (depends on core logic)
 
 3. **Verify third-party crate APIs before writing code that uses them.** For any crate you haven't used recently or any unfamiliar feature (template filters, integration crates, macro attributes):
-   - Check the docs for your **exact version combination** — e.g., `askama 0.12` + `axum 0.8` may not be compatible with `askama_axum 0.4`
+   - Check the docs for your **exact version combination** — e.g., a template engine, a web framework and the crate that bridges them must all agree on versions
    - If an integration crate bridges two dependencies, verify all three versions are compatible before writing any handlers or templates
    - When in doubt, write a minimal standalone example (`examples/smoke.rs`) and `cargo check` it before building on the API
 
@@ -228,116 +228,16 @@ Design function signatures to minimize ownership friction:
 
 ## Preferred Crates by Domain
 
-When the project has no existing precedent for a dependency, prefer these crates:
-
-### Command-line utilities
-
-```toml
-clap = { version = "4.3", features = ["derive"] }   # Argument parsing with derive macros
-dirs = "5.0"                                          # Platform-standard directories (~/.config, etc.)
-glob = "0.3"                                          # File path glob matching
-regex = "1.8"                                         # Regular expressions
-```
-
-- `clap` with `derive` feature for declarative argument definitions. Avoid hand-parsing `std::env::args`.
-- `dirs` for locating config/data/cache directories portably. Never hardcode `~/.config` — it differs on macOS and Windows.
-- `glob` for file pattern matching (e.g., `"src/**/*.rs"`).
-- `regex` is the standard regex engine. Compiles patterns to efficient automata. Use `RegexSet` when matching against multiple patterns.
-
-### Web applications
-
-```toml
-axum = "0.8"                                          # Web framework (async, tower-based)
-tokio = { version = "1.40", features = ["full"] }     # Async runtime
-tower-http = { version = "0.6", features = ["fs"] }   # HTTP middleware (static files, CORS, etc.)
-reqwest = { version = "0.12", features = ["rustls-tls"] }  # HTTP client
-askama = "0.12"                                       # Compile-time HTML templates
-```
-
-- **Avoid `askama_axum` and similar integration crates that lag behind framework releases.** Instead, render templates manually and return `Html`:
-  ```rust
-  let html = template.render().map_err(|e| /* error handling */)?;
-  Ok(Html(html))
-  ```
-  This avoids version coupling between the template engine and the web framework.
-
-### Asynchronous operation
-
-```toml
-tokio = { version = "1.40", features = ["full"] }     # Async runtime, timers, I/O, channels
-```
-
-- `features = ["full"]` enables everything (runtime, macros, net, fs, time, sync). For libraries, enable only what you need: `["rt-multi-thread", "macros"]`.
-- Prefer `tokio::spawn` for concurrent tasks, `tokio::select!` for racing futures.
-- Use `tokio::sync::Mutex` (not `std::sync::Mutex`) when holding a lock across `.await` points.
-
-### System code with hashing and parallel execution
-
-```toml
-blake3 = { version = "1.8", features = ["rayon"] }    # Fast cryptographic hashing (SIMD-accelerated)
-rayon = "1.10"                                         # Data parallelism (parallel iterators)
-memmap2 = "0.9"                                        # Memory-mapped file I/O
-```
-
-- `blake3` with `rayon` feature enables multi-threaded hashing of large files. Faster than SHA-256 for all input sizes.
-- `rayon` turns `.iter()` into `.par_iter()` for trivial parallelism. Use for CPU-bound work over collections. Do not mix with `tokio` — rayon has its own thread pool.
-- `memmap2` for zero-copy access to large files. Avoids reading entire files into memory.
-
-### WASM (WebAssembly)
-
-```toml
-yew = { version = "0.21", features = ["csr"] }        # Component framework (React-like)
-patternfly-yew = "0.6"                                 # PatternFly UI components for Yew
-```
-
-- `yew` with `csr` (client-side rendering) for browser-targeted WASM applications.
-- `patternfly-yew` provides pre-built UI components (tables, forms, navigation) following the PatternFly design system.
-- Build with `trunk serve` for development, `trunk build --release` for production.
-
-### Serialization and deserialization
-
-```toml
-serde = { version = "1", features = ["derive"] }       # Serialization framework
-serde_json = "1"                                        # JSON
-serde_yaml = "0.9"                                      # YAML
-toml = "0.8"                                            # TOML (config files)
-csv = "1.3"                                             # CSV reading/writing
-chrono = { version = "0.4", features = ["serde"] }      # DateTime with serde support
-```
-
-- Always enable `serde`'s `derive` feature. Use `#[derive(Serialize, Deserialize)]` on all data types that cross serialization boundaries.
-- `chrono` with `serde` feature for serializable timestamps. Use `chrono::DateTime<Utc>` as the standard time type.
-- For TOML config files, prefer `toml` crate over `serde_toml`.
-
-### Terminal / TUI applications
-
-```toml
-ratatui = "0.29"                                        # TUI framework (widgets, layout, rendering)
-crossterm = "0.28"                                      # Terminal manipulation backend
-```
-
-- `ratatui` is the actively maintained fork of `tui-rs`. Provides widgets (tables, lists, charts, paragraphs) and a layout system.
-- `crossterm` is the cross-platform terminal backend. Use with ratatui: `ratatui::prelude::CrosstermBackend`.
-- Pattern: initialize terminal in `main()`, restore on exit (including panic). Use `std::panic::set_hook` to ensure terminal cleanup.
-
-### Git operations
-
-```toml
-git2 = "0.19"                                           # libgit2 bindings
-```
-
-- `git2` provides full git operations (clone, commit, diff, log, blame) without shelling out to `git`.
-- Requires `libgit2` (bundled by default via `libgit2-sys`). No system dependency needed.
-- For simple operations (status, add, commit), shelling out to `git` via `std::process::Command` is simpler and avoids the compile-time cost of `git2`.
+When the project has no existing precedent for a dependency, read `resources/crates.md` (in this skill's directory). It lists preferred crates by domain — CLI, web, async, hashing/parallelism, WASM, serialization, TUI, git, benchmarking — with versions checked on a stated date and the traps each one has (e.g. reqwest 0.13 has no `rustls-tls` feature; `serde_yaml` is deprecated; ratatui re-exports `crossterm`). Re-check any version with `cargo search <crate> --limit 1` before adding it.
 
 ## Crate Compatibility
 
 When using multiple crates that integrate with each other, verify version compatibility **before** writing application code:
 
-- **Integration crates** (e.g., `askama_axum`, `tower-http`, `sqlx` with runtime features) bridge two or more dependencies. All bridged versions must be compatible. Check the integration crate's `Cargo.toml` for its dependency version requirements.
+- **Integration crates** (e.g., `tower-http`, `sqlx` with runtime features, template/web-framework glue crates) bridge two or more dependencies. All bridged versions must be compatible. Check the integration crate's `Cargo.toml` for its dependency version requirements.
 - **Test compatibility early.** After adding a new integration crate, run `cargo check` on a minimal use before writing handlers or business logic. Discovering incompatibility after writing 500 lines of handler code wastes the entire batch.
 - **When an integration crate lags behind its dependencies**, drop it and implement the glue manually. For example, if a template integration crate doesn't support the latest version of your web framework, render templates manually and wrap the output. A few lines of manual glue is better than pinning to an old framework version.
-- **Pin integration crate versions explicitly** (e.g., `askama_axum = "=0.4.0"`) when you need a specific compatible combination, to prevent `cargo update` from breaking it.
+- **Pin integration crate versions explicitly** (e.g., `some_glue = "=0.4.0"`) when you need a specific compatible combination, to prevent `cargo update` from breaking it.
 
 ## Testing Strategies
 
