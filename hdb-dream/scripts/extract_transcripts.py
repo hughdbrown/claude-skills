@@ -72,7 +72,7 @@ def main(hours: float, projects_dir: Path, max_chars: int, max_messages: int) ->
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     sessions_by_project: dict[str, list[tuple[Path, list[str]]]] = {}
 
-    for jsonl in sorted(projects_dir.glob("*/*.jsonl")):
+    for jsonl in sorted(projects_dir.rglob("*.jsonl")):
         mtime = datetime.fromtimestamp(jsonl.stat().st_mtime, tz=timezone.utc)
         if mtime < cutoff:
             continue
