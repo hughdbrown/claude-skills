@@ -18,12 +18,14 @@ class StreamingEditor:
         self.dirty = 0
 
     def __enter__(self) -> "StreamingEditor":
-        with open(self.path, encoding="utf-8", mode="w") as handle:
+        """ Opening the file for read, place in memory """
+        with open(self.path, encoding="utf-8", mode="r") as handle:
             self.lines = [line.rstrip() for line in handle]
         self.dirty = 0
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """ Writing any changes to disk """
         if self.dirty and exc_type is None:
             with open(self.path, encoding="utf-8", mode="w") as handle:
                 handle.write("\n".join(self.lines))
