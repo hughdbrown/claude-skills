@@ -50,7 +50,7 @@ fontsize      = "11pt"
 linestretch   = "1.1"
 mainfont      = "STIX Two Text"
 mathfont      = "STIX Two Math"
-monofont      = "Menlo"
+monofont      = "DejaVu Sans Mono"   # macOS: `brew install --cask font-dejavu`; Ubuntu: fonts-dejavu. Menlo is macOS-only.
 ```
 
 For a **formal** book, set `number-sections = true`, add theorem environments to

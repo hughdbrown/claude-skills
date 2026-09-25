@@ -247,7 +247,7 @@ and overlaps a build cannot.
 - **Diagrams: build real vector figures, not ASCII art.** For a math book,
   diagram quality matters — use the Typst/CeTZ pipeline (see *Diagrams — use real
   vector figures*); do **not** hand-draw ASCII diagrams. A plain fenced ASCII block
-  (monospace Menlo, which has the box-drawing glyphs `│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─` and `·`;
+  (monospace DejaVu Sans Mono, which has the box-drawing glyphs `│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─` and `·`;
   ASCII inside only — `x^2`, `-`, never Unicode superscripts/minus) is tolerable
   *only* for a trivial flowchart in a lightly-illustrated code book, and never
   inside admonish or math.
