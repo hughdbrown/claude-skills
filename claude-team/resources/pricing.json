@@ -1,0 +1,14 @@
+{
+  "_comment": "USD per 1M tokens, from PROMPT.md's public API-equivalent table. Edit when prices change. Model IDs match by prefix, longest first. Cache multipliers apply to the input price. Models missing here are reported as unpriced rather than guessed.",
+  "models": {
+    "claude-haiku-4-5": {"tier": "haiku", "input": 1.0, "output": 5.0},
+    "claude-sonnet-5":  {"tier": "sonnet", "input": 2.0, "output": 10.0},
+    "claude-opus-5-5":  {"tier": "opus", "input": 4.0, "output": 20.0}
+  },
+  "cache_multipliers": {
+    "write_5m": 1.25,
+    "write_1h": 2.0,
+    "read": 0.1
+  },
+  "baseline_model": "claude-opus-5-5"
+}
